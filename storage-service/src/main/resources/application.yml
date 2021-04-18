@@ -1,5 +1,9 @@
 server:
   port: 8081
+
+aws:
+  bucket: discover-vegan-images
+  region: eu-north-1
 #spring:
 #  datasource:
 #    url: jdbc:h2:file:C:/Dev/h2databases/storage-service
