@@ -2,6 +2,7 @@ package lt.liutikas.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.Upload;
 import lt.liutikas.configuration.exception.FileUploadException;
 import lt.liutikas.configuration.properties.AmazonProperties;
 import lt.liutikas.dto.UploadFileDto;
@@ -36,14 +37,17 @@ public class StorageService {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(multipartFile.getSize());
             objectMetadata.setContentType(multipartFile.getContentType());
-            transferManager.upload(amazonProperties.getBucket(), fileName, multipartFile.getInputStream(), objectMetadata);
-        } catch (IOException e) {
-            LOG.error(String.format("Failed to upload file to cloud storage {name: %s, size: %d}", fileName, multipartFile.getSize()));
+            Upload upload = transferManager.upload(amazonProperties.getBucket(), fileName, multipartFile.getInputStream(), objectMetadata);
+            upload.waitForCompletion();
+        } catch (IOException | InterruptedException e) {
+            LOG.error(String.format("Failed to upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
             throw new FileUploadException(e);
         }
 
         String fileUrl = String.format("https://%s.s3.amazonaws.com/%s", amazonProperties.getBucket(), fileName);
         System.out.println(fileUrl);
+
+        LOG.info(String.format("Upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
 
         UploadFileDto response = new UploadFileDto();
         response.setFileUrl(fileUrl);
