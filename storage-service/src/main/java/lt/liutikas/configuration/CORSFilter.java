@@ -1,4 +1,4 @@
-package lt.liutikas;
+package lt.liutikas.configuration;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
