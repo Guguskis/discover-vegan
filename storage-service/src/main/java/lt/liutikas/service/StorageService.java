@@ -30,7 +30,7 @@ public class StorageService {
         try {
             fileUrl = storageRepository.uploadFile(multipartFile, fileName);
         } catch (IOException | InterruptedException e) {
-            LOG.error(String.format("Failed to upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
+            LOG.error(String.format("Failed to upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()), e);
             throw new FileUploadException(e);
         }
 
