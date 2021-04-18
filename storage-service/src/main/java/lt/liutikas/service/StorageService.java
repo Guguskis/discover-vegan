@@ -1,11 +1,8 @@
 package lt.liutikas.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.Upload;
 import lt.liutikas.configuration.exception.FileUploadException;
-import lt.liutikas.configuration.properties.AmazonProperties;
 import lt.liutikas.dto.UploadFileDto;
+import lt.liutikas.repository.StorageRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +17,10 @@ public class StorageService {
 
     private static final Logger LOG = LoggerFactory.getLogger(StorageService.class);
 
-    private final TransferManager transferManager;
-    private final AmazonProperties amazonProperties;
+    private final StorageRepository storageRepository;
 
-    public StorageService(TransferManager transferManager, AmazonProperties amazonProperties) {
-        this.transferManager = transferManager;
-        this.amazonProperties = amazonProperties;
+    public StorageService(StorageRepository storageRepository) {
+        this.storageRepository = storageRepository;
     }
 
     public UploadFileDto uploadFile(MultipartFile multipartFile) {
@@ -33,19 +28,13 @@ public class StorageService {
         String fileExtension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         String fileName = uuid.toString() + "." + fileExtension;
 
+        String fileUrl;
         try {
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(multipartFile.getSize());
-            objectMetadata.setContentType(multipartFile.getContentType());
-            Upload upload = transferManager.upload(amazonProperties.getBucket(), fileName, multipartFile.getInputStream(), objectMetadata);
-            upload.waitForCompletion();
+            fileUrl = storageRepository.uploadFile(multipartFile, fileName);
         } catch (IOException | InterruptedException e) {
             LOG.error(String.format("Failed to upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
             throw new FileUploadException(e);
         }
-
-        String fileUrl = String.format("https://%s.s3.amazonaws.com/%s", amazonProperties.getBucket(), fileName);
-        System.out.println(fileUrl);
 
         LOG.info(String.format("Upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
 
