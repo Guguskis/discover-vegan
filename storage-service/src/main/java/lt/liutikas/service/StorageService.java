@@ -24,9 +24,7 @@ public class StorageService {
     }
 
     public UploadFileDto uploadFile(MultipartFile multipartFile) {
-        UUID uuid = UUID.randomUUID();
-        String fileExtension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
-        String fileName = uuid.toString() + "." + fileExtension;
+        String fileName = generateFileName(multipartFile);
 
         String fileUrl;
         try {
@@ -41,6 +39,12 @@ public class StorageService {
         UploadFileDto response = new UploadFileDto();
         response.setFileUrl(fileUrl);
         return response;
+    }
+
+    private String generateFileName(MultipartFile multipartFile) {
+        UUID uuid = UUID.randomUUID();
+        String fileExtension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        return uuid.toString() + "." + fileExtension;
     }
 
 }
