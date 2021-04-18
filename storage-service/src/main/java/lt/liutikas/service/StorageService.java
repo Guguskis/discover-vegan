@@ -27,12 +27,6 @@ public class StorageService {
         this.amazonProperties = amazonProperties;
     }
 
-//        private final S3AsyncClient s3AsyncClient;
-//
-//    public StorageService(S3AsyncClient s3AsyncClient) {
-//        this.s3AsyncClient = s3AsyncClient;
-//    }
-
     public UploadFileDto uploadFile(MultipartFile multipartFile) {
         UUID uuid = UUID.randomUUID();
         String fileExtension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());

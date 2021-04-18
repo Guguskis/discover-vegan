@@ -2,7 +2,6 @@ package lt.liutikas.configuration.properties;
 
 import com.amazonaws.regions.Regions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-//import software.amazon.awssdk.regions.Region;
 
 @ConfigurationProperties(prefix = "aws")
 public class AmazonProperties {

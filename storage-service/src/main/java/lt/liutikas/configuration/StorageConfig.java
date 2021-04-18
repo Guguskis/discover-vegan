@@ -11,25 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class StorageConfig {
-
-//    @Bean
-//    public S3AsyncClient s3client(AmazonProperties properties) {
-//        SdkAsyncHttpClient httpClient = NettyNioAsyncHttpClient.builder()
-//                .writeTimeout(Duration.ZERO)
-//                .maxConcurrency(64)
-//                .build();
-//        S3Configuration serviceConfiguration = S3Configuration.builder()
-//                .checksumValidationEnabled(false)
-//                .chunkedEncodingEnabled(true)
-//                .build();
-//        S3AsyncClientBuilder b = S3AsyncClient.builder().httpClient(httpClient)
-//                .region(properties.getRegion())
-//                .credentialsProvider(SystemPropertyCredentialsProvider.create())
-//                .serviceConfiguration(serviceConfiguration);
-//
-//        return b.build();
-//    }
-
+    
     @Bean
     public AmazonS3 getAmazonS3(AmazonProperties amazonProperties) {
         return AmazonS3ClientBuilder
