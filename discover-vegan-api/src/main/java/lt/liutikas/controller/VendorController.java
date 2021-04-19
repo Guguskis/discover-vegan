@@ -22,7 +22,7 @@ public class VendorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Vendor>> getVendors() {
+    public ResponseEntity<List<Vendor>> getVendors() {// todo add VendorType {PHYSICAL, DIGITAL}, return all if not provided
         return ResponseEntity.ok(vendorService.getVendors());
     }
 
