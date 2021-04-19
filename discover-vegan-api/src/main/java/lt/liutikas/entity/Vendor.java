@@ -8,18 +8,18 @@ public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Integer vendorId;
     private String name;
     private String imageUrl;
     private Double latitude;
     private Double longitude;
 
-    public Integer getId() {
-        return id;
+    public Integer getVendorId() {
+        return vendorId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setVendorId(Integer id) {
+        this.vendorId = id;
     }
 
     public String getName() {
