@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VendorService {
@@ -47,11 +47,24 @@ public class VendorService {
         return vendorRepository.findAll();
     }
 
-    public List<VendorProduct> getProducts(Integer vendorId) {
+    public List<VendorProductDto> getProducts(Integer vendorId) {
+
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+
+        if (vendor.isEmpty()) {
+            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+
+        List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor.get());
 
         LOG.info(String.format("Returned products for vendor {vendorId: %d}", vendorId));
 
-        return Arrays.asList();
+        return vendorProducts.stream()
+                .map(vendorProductAssembler::assembleVendorProductDto)
+                .collect(Collectors.toList());
     }
 
     public Vendor createVendor(CreateVendorDto createVendorDto) {

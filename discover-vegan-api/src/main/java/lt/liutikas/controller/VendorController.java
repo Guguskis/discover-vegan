@@ -4,7 +4,6 @@ import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.entity.Vendor;
-import lt.liutikas.entity.VendorProduct;
 import lt.liutikas.service.VendorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class VendorController {
     }
 
     @GetMapping("/{vendorId}/product")
-    public ResponseEntity<List<VendorProduct>> getProducts(@PathVariable Integer vendorId) {
+    public ResponseEntity<List<VendorProductDto>> getProducts(@PathVariable Integer vendorId) {
         return ResponseEntity.ok(vendorService.getProducts(vendorId));
     }
 
