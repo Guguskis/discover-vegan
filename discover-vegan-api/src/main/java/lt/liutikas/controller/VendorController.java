@@ -1,14 +1,13 @@
 package lt.liutikas.controller;
 
-import lt.liutikas.entity.Product;
+import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.entity.Vendor;
+import lt.liutikas.entity.VendorProduct;
 import lt.liutikas.service.VendorService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,8 +25,13 @@ public class VendorController {
         return ResponseEntity.ok(vendorService.getVendors());
     }
 
+    @PostMapping // todo for development, remove later
+    public ResponseEntity<Vendor> createVendor(@Valid CreateVendorDto createVendorDto) {
+        return ResponseEntity.ok(vendorService.createVendor(createVendorDto));
+    }
+
     @GetMapping("/{id}/product")
-    public ResponseEntity<List<Product>> getProducts(@PathVariable Integer id) {
+    public ResponseEntity<List<VendorProduct>> getProducts(@PathVariable Integer id) {
         return ResponseEntity.ok(vendorService.getProducts(id));
     }
 }

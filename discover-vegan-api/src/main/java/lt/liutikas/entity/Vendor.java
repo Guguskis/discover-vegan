@@ -1,7 +1,13 @@
 package lt.liutikas.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(schema = "DISCOVER_VEGAN_API")
 public class Vendor {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
     private String name;
     private String imageUrl;
