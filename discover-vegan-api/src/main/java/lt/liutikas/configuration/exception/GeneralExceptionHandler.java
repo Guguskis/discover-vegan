@@ -2,12 +2,11 @@ package lt.liutikas.configuration.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 
 @ControllerAdvice
@@ -28,14 +27,10 @@ public class GeneralExceptionHandler {
     }
 
     private String processFieldErrorsMessage(MethodArgumentNotValidException ex) {
-        StringBuilder errorMessage = new StringBuilder();
-
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        for (org.springframework.validation.FieldError fieldError : fieldErrors) {
-            errorMessage.append("'").append(fieldError.getField()).append("' ").append(fieldError.getDefaultMessage()).append(", ");
-        }
-
-        return errorMessage.toString();
+        return ex.getBindingResult()
+                .getFieldErrors().stream()
+                .map(fieldError -> "'" + fieldError.getField() + "' " + fieldError.getDefaultMessage())
+                .collect(Collectors.joining(", "));
     }
 
 }
