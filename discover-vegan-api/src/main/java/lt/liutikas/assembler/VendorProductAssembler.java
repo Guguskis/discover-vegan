@@ -28,7 +28,7 @@ public class VendorProductAssembler {
         vendorProductDto.setName(product.getName());
         vendorProductDto.setImageUrl(product.getImageUrl());
         vendorProductDto.setProducer(product.getProducer());
-        vendorProductDto.setPrice(vendorProductDto.getPrice());
+        vendorProductDto.setPrice(vendorProduct.getPrice());
 
         return vendorProductDto;
     }
