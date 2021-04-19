@@ -1,2 +1,20 @@
 server:
   port: 8080
+spring:
+  datasource:
+    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/discover-vegan-api;INIT=CREATE SCHEMA IF NOT EXISTS discover_vegan_api
+    driverClassName: org.h2.Driver
+    username: admin
+  #    url: jdbc:sqlserver://localhost:9001
+  #    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  h2:
+    console:
+      enabled: true
+      path: /database
+      settings:
+        web-allow-others: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    #    database-platform: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: update

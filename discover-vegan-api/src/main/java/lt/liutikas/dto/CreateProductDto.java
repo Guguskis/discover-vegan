@@ -1,25 +1,15 @@
-package lt.liutikas.entity;
+package lt.liutikas.dto;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
-@Entity
-@Table(schema = "DISCOVER_VEGAN_API")
-public class Product {
+public class CreateProductDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer productId;
+    @NotBlank
     private String name;
+    @NotBlank
     private String imageUrl;
+    @NotBlank
     private String producer;
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer id) {
-        this.productId = id;
-    }
 
     public String getName() {
         return name;
