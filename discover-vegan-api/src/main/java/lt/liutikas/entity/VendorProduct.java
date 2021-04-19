@@ -1,43 +1,47 @@
 package lt.liutikas.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(schema = "DISCOVER_VEGAN_API")
 public class VendorProduct {
 
-    private Integer id;
-    private String name;
-    private String description;
-    private String imageUrl;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long vendorProductId;
+
+    @ManyToOne
+    @JoinColumn(name = "VENDOR_ID")
+    private Vendor vendor;
+
+    @ManyToOne
+    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
+
     private Float price;
 
-    public Integer getId() {
-        return id;
+    public Long getVendorProductId() {
+        return vendorProductId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setVendorProductId(Long vendorProductId) {
+        this.vendorProductId = vendorProductId;
     }
 
-    public String getName() {
-        return name;
+    public Vendor getVendor() {
+        return vendor;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
     }
 
-    public String getDescription() {
-        return description;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Float getPrice() {

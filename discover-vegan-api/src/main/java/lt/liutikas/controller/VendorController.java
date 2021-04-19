@@ -1,6 +1,8 @@
 package lt.liutikas.controller;
 
 import lt.liutikas.dto.CreateVendorDto;
+import lt.liutikas.dto.CreateVendorProductDto;
+import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
 import lt.liutikas.service.VendorService;
@@ -30,8 +32,14 @@ public class VendorController {
         return ResponseEntity.ok(vendorService.createVendor(createVendorDto));
     }
 
-    @GetMapping("/{id}/product")
-    public ResponseEntity<List<VendorProduct>> getProducts(@PathVariable Integer id) {
-        return ResponseEntity.ok(vendorService.getProducts(id));
+    @GetMapping("/{vendorId}/product")
+    public ResponseEntity<List<VendorProduct>> getProducts(@PathVariable Integer vendorId) {
+        return ResponseEntity.ok(vendorService.getProducts(vendorId));
+    }
+
+    @PostMapping("/{vendorId}/product")
+    public ResponseEntity<VendorProductDto> createProduct(@PathVariable Integer vendorId,
+                                                          @RequestBody @Valid CreateVendorProductDto createVendorProductDto) {
+        return ResponseEntity.ok(vendorService.createProduct(vendorId, createVendorProductDto));
     }
 }

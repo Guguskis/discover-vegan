@@ -20,8 +20,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts(@RequestParam("name") String name) {
-        return ResponseEntity.ok(productService.getProducts(name));
+    public ResponseEntity<List<Product>> getProducts() {
+        return ResponseEntity.ok(productService.getProducts());
     }
 
     @PostMapping

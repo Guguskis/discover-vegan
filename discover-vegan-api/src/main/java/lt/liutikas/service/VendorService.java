@@ -1,9 +1,16 @@
 package lt.liutikas.service;
 
 import lt.liutikas.assembler.VendorAssembler;
+import lt.liutikas.assembler.VendorProductAssembler;
+import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateVendorDto;
+import lt.liutikas.dto.CreateVendorProductDto;
+import lt.liutikas.dto.VendorProductDto;
+import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.VendorProductRepository;
 import lt.liutikas.repository.VendorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +18,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VendorService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VendorService.class);
 
-    private final VendorRepository vendorRepository;
     private final VendorAssembler vendorAssembler;
+    private final VendorProductAssembler vendorProductAssembler;
 
-    public VendorService(VendorRepository vendorRepository, VendorAssembler vendorAssembler) {
+    private final VendorRepository vendorRepository;
+    private final VendorProductRepository vendorProductRepository;
+    private final ProductRepository productRepository;
+
+    public VendorService(VendorRepository vendorRepository, VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorProductRepository vendorProductRepository, ProductRepository productRepository) {
         this.vendorRepository = vendorRepository;
         this.vendorAssembler = vendorAssembler;
+        this.vendorProductAssembler = vendorProductAssembler;
+        this.vendorProductRepository = vendorProductRepository;
+        this.productRepository = productRepository;
     }
 
     public List<Vendor> getVendors() {
@@ -32,54 +47,11 @@ public class VendorService {
         return vendorRepository.findAll();
     }
 
-    public List<VendorProduct> getProducts(Integer id) {
+    public List<VendorProduct> getProducts(Integer vendorId) {
 
-        LOG.info(String.format("Returned products for vendor {id: %d}", id));
+        LOG.info(String.format("Returned products for vendor {vendorId: %d}", vendorId));
 
-        return Arrays.asList(
-                new VendorProduct() {{
-                    setId(1);
-                    setName("Tofu A");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/991-home_default/organic-tofu-picknicker-50g-viana.jpg");
-                    setPrice(4.19f);
-                }},
-                new VendorProduct() {{
-                    setId(2);
-                    setName("Tofu B");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/147-home_default/ekologiskas-keptas-tempeh.jpg");
-                    setPrice(4.19f);
-                }},
-                new VendorProduct() {{
-                    setId(3);
-                    setName("Tofu C");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/839-home_default/ekologiskas-fermentuotas-tofu-su-laiskiniais-cesnakais-130g-lord-of-tofu.jpg");
-                    setPrice(4.19f);
-                }},
-                new VendorProduct() {{
-                    setId(4);
-                    setName("Tofu D");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/549-home_default/ekologiskas-silkinis-tofu.jpg");
-                    setPrice(4.19f);
-                }},
-                new VendorProduct() {{
-                    setId(5);
-                    setName("Tofu E");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/991-home_default/organic-tofu-picknicker-50g-viana.jpg");
-                    setPrice(4.19f);
-                }},
-                new VendorProduct() {{
-                    setId(6);
-                    setName("Tofu F");
-                    setDescription("a lot of protein, low sugar, healthy");
-                    setImageUrl("https://www.veggo.lt/147-home_default/ekologiskas-keptas-tempeh.jpg");
-                    setPrice(4.19f);
-                }}
-        );
+        return Arrays.asList();
     }
 
     public Vendor createVendor(CreateVendorDto createVendorDto) {
@@ -89,4 +61,30 @@ public class VendorService {
 
         return vendor;
     }
+
+    public VendorProductDto createProduct(Integer vendorId, CreateVendorProductDto createVendorProductDto) {
+
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+
+        if (vendor.isEmpty()) {
+            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        Optional<Product> product = productRepository.findById(createVendorProductDto.getProductId());
+
+        if (product.isEmpty()) {
+            String message = String.format("Product not found {productId: %d}", createVendorProductDto.getProductId());
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor.get(), product.get());
+
+        vendorProduct = vendorProductRepository.save(vendorProduct);
+
+        return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
+    }
+
 }

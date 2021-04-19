@@ -19,6 +19,13 @@ public class GeneralExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleException(NotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
