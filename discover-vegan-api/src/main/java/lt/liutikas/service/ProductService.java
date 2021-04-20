@@ -1,12 +1,14 @@
 package lt.liutikas.service;
 
 import lt.liutikas.assembler.ProductAssembler;
+import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.entity.Product;
 import lt.liutikas.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,13 @@ public class ProductService {
     public Product createProduct(CreateProductDto createProductDto) {
         Product product = productAssembler.assembleProduct(createProductDto);
 
-        product = productRepository.save(product);
+        try {
+            product = productRepository.save(product);
+        } catch (DataIntegrityViolationException exception) {
+            String message = "Failed to insert product in database";
+            LOG.error(message, exception);
+            throw new BadRequestException(message);
+        }
 
         LOG.info(String.format("Created new product {productId: %d, name: '%s', producer: '%s'}",
                 product.getProductId(),

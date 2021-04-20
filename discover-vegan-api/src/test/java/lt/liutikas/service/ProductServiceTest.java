@@ -1,6 +1,7 @@
 package lt.liutikas.service;
 
 import lt.liutikas.assembler.ProductAssembler;
+import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.entity.Product;
 import lt.liutikas.repository.ProductRepository;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,4 +57,18 @@ public class ProductServiceTest {
         assertEquals(product.getProducer(), createdProduct.getProducer());
         assertEquals(product.getImageUrl(), createdProduct.getImageUrl());
     }
+
+    @Test(expected = BadRequestException.class)
+    public void createProduct_providedInvalidDataModel_throwsBadRequestException() {
+
+        CreateProductDto createProductDto = new CreateProductDto() {{
+            setName("Tofu");
+        }};
+
+        when(productRepository.save(any(Product.class)))
+                .thenThrow(DataIntegrityViolationException.class);
+
+        productService.createProduct(createProductDto);
+    }
+
 }

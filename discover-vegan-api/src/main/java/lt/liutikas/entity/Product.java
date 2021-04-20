@@ -9,7 +9,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer productId;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String imageUrl;
     private String producer;
 
