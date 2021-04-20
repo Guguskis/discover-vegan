@@ -2,6 +2,7 @@ package lt.liutikas.service;
 
 import lt.liutikas.assembler.VendorAssembler;
 import lt.liutikas.assembler.VendorProductAssembler;
+import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.entity.Product;
@@ -85,5 +86,39 @@ public class VendorServiceTest {
         assertEquals(product.getImageUrl(), vendorProductDto.getImageUrl());
         assertEquals(product.getProducer(), vendorProductDto.getProducer());
         assertEquals(createVendorProductDto.getPrice(), vendorProductDto.getPrice());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void createVendorProduct_givenNonExistingVendorId_throwsNotFound() {
+        CreateVendorProductDto createVendorProductDto = new CreateVendorProductDto();
+        createVendorProductDto.setProductId(10);
+        createVendorProductDto.setPrice(2f);
+
+        when(vendorRepository.findById(1))
+                .thenReturn(Optional.empty());
+
+        vendorService.createProduct(1, createVendorProductDto);
+
+        verify(vendorRepository, times(1))
+                .findById(1);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void createVendorProduct_givenNonExistingProductId_throwsNotFound() {
+        CreateVendorProductDto createVendorProductDto = new CreateVendorProductDto();
+        createVendorProductDto.setProductId(10);
+        createVendorProductDto.setPrice(2f);
+
+        when(vendorRepository.findById(1))
+                .thenReturn(Optional.of(new Vendor()));
+        when(productRepository.findById(10))
+                .thenReturn(Optional.empty());
+
+        vendorService.createProduct(1, createVendorProductDto);
+
+        verify(vendorRepository, times(1))
+                .findById(1);
+        verify(productRepository, times(1))
+                .findById(10);
     }
 }
