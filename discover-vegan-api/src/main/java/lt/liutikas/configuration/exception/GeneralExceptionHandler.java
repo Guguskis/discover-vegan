@@ -34,6 +34,14 @@ public class GeneralExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(BadRequestException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     private String processFieldErrorsMessage(MethodArgumentNotValidException ex) {
         return ex.getBindingResult()
                 .getFieldErrors().stream()
