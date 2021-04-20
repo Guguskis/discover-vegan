@@ -34,7 +34,7 @@ public class StorageService {
             throw new FileUploadException(e);
         }
 
-        LOG.info(String.format("Upload file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
+        LOG.info(String.format("Uploaded file to cloud storage {name: %s, sizeBytes: %d}", fileName, multipartFile.getSize()));
 
         UploadFileDto response = new UploadFileDto();
         response.setFileUrl(fileUrl);
