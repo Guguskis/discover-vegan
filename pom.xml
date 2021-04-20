@@ -18,7 +18,7 @@
     <description>Find cheapest vegan products and services fast!</description>
 
     <modules>
-        <module>storage-service</module>
+        <module>file-service</module>
         <module>discover-vegan-api</module>
     </modules>
 

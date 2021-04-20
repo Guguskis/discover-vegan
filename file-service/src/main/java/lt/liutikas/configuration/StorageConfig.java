@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class StorageConfig {
-    
+
     @Bean
     public AmazonS3 getAmazonS3(AmazonProperties amazonProperties) {
         return AmazonS3ClientBuilder

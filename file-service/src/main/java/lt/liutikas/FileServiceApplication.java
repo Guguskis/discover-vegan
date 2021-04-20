@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan({"lt.liutikas.configuration.properties", "software.amazon.awssdk.auth.credentials"})
-public class StorageServiceApplication {
+public class FileServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(StorageServiceApplication.class, args);
+        SpringApplication.run(FileServiceApplication.class, args);
     }
 
 }
