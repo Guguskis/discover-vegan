@@ -43,7 +43,14 @@ public class ProductService {
 
     public Product createProduct(CreateProductDto createProductDto) {
         Product product = productAssembler.assembleProduct(createProductDto);
+
         product = productRepository.save(product);
+
+        LOG.info(String.format("Created new product {productId: %d, name: '%s', producer: '%s'}",
+                product.getProductId(),
+                product.getName(),
+                product.getProducer()));
+
         return product;
     }
 }
