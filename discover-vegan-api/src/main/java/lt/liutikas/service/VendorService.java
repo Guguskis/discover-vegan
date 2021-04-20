@@ -32,10 +32,10 @@ public class VendorService {
     private final VendorProductRepository vendorProductRepository;
     private final ProductRepository productRepository;
 
-    public VendorService(VendorRepository vendorRepository, VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorProductRepository vendorProductRepository, ProductRepository productRepository) {
-        this.vendorRepository = vendorRepository;
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
+        this.vendorRepository = vendorRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.productRepository = productRepository;
     }
