@@ -2,7 +2,9 @@ package lt.liutikas.configuration.properties;
 
 import com.amazonaws.regions.Regions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@Component
 @ConfigurationProperties(prefix = "aws")
 public class AmazonProperties {
 
