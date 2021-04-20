@@ -20,11 +20,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -142,11 +144,11 @@ public class VendorServiceTest {
             setPrice(5f);
         }};
 
-        List<VendorProduct> products = Collections.singletonList(vendorProduct);
+        List<VendorProduct> vendorProducts = Collections.singletonList(vendorProduct);
         when(vendorRepository.findById(10))
                 .thenReturn(Optional.of(new Vendor()));
         when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+                .thenReturn(new PageImpl<>(vendorProducts, pageRequest, vendorProducts.size()));
 
         VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
         assertEquals(1, vendorProductPageDto.getProducts().size());
@@ -158,4 +160,63 @@ public class VendorServiceTest {
         assertEquals(product.getProducer(), returnedVendorProductDto.getProducer());
         assertEquals(vendorProduct.getPrice(), returnedVendorProductDto.getPrice());
     }
+
+    @Test
+    public void getProducts_pageSizeSmallerThanProductCount_returnedNextPageToken() {
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        Product product = new Product() {{
+            setProductId(1);
+            setName("Tofu");
+            setProducer("Sun wheat");
+            setImageUrl("https://www.test.com/image.png");
+        }};
+        VendorProduct vendorProduct = new VendorProduct() {{
+            setVendorProductId(1L);
+            setProduct(product);
+            setPrice(5f);
+        }};
+
+        List<VendorProduct> products = Arrays.asList(
+                vendorProduct,
+                vendorProduct,
+                vendorProduct
+        );
+        when(vendorRepository.findById(10))
+                .thenReturn(Optional.of(new Vendor()));
+        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        assertEquals(Integer.valueOf(1), vendorProductPageDto.getNextPageToken());
+    }
+
+    @Test
+    public void getProducts_pageSizeBiggerThanProductCount_nextPageTokenIsNull() {
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Product product = new Product() {{
+            setProductId(1);
+            setName("Tofu");
+            setProducer("Sun wheat");
+            setImageUrl("https://www.test.com/image.png");
+        }};
+        VendorProduct vendorProduct = new VendorProduct() {{
+            setVendorProductId(1L);
+            setProduct(product);
+            setPrice(5f);
+        }};
+
+        List<VendorProduct> products = Arrays.asList(
+                vendorProduct,
+                vendorProduct,
+                vendorProduct
+        );
+        when(vendorRepository.findById(10))
+                .thenReturn(Optional.of(new Vendor()));
+        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        assertNull(vendorProductPageDto.getNextPageToken());
+    }
+
 }
