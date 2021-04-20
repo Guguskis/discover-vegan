@@ -5,6 +5,7 @@ import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
+import lt.liutikas.dto.VendorProductPageDto;
 import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
@@ -16,7 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -120,5 +125,37 @@ public class VendorServiceTest {
                 .findById(1);
         verify(productRepository, times(1))
                 .findById(10);
+    }
+
+    @Test
+    public void getProducts_queriedOneProduct_returnsFullyMappedProduct() {
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        Product product = new Product() {{
+            setProductId(1);
+            setName("Tofu");
+            setProducer("Sun wheat");
+            setImageUrl("https://www.test.com/image.png");
+        }};
+        VendorProduct vendorProduct = new VendorProduct() {{
+            setVendorProductId(1L);
+            setProduct(product);
+            setPrice(5f);
+        }};
+
+        List<VendorProduct> products = Collections.singletonList(vendorProduct);
+        when(vendorRepository.findById(10))
+                .thenReturn(Optional.of(new Vendor()));
+        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        assertEquals(1, vendorProductPageDto.getProducts().size());
+        VendorProductDto returnedVendorProductDto = vendorProductPageDto.getProducts().get(0);
+
+        assertEquals(product.getProductId(), returnedVendorProductDto.getProductId());
+        assertEquals(product.getName(), returnedVendorProductDto.getName());
+        assertEquals(product.getImageUrl(), returnedVendorProductDto.getImageUrl());
+        assertEquals(product.getProducer(), returnedVendorProductDto.getProducer());
+        assertEquals(vendorProduct.getPrice(), returnedVendorProductDto.getPrice());
     }
 }
