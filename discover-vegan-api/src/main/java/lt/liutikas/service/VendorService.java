@@ -6,6 +6,7 @@ import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
+import lt.liutikas.dto.VendorProductPageDto;
 import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
@@ -14,6 +15,9 @@ import lt.liutikas.repository.VendorProductRepository;
 import lt.liutikas.repository.VendorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +51,7 @@ public class VendorService {
         return vendorRepository.findAll();
     }
 
-    public List<VendorProductDto> getProducts(Integer vendorId) {
+    public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
 
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
@@ -58,13 +62,22 @@ public class VendorService {
         }
 
 
-        List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor.get());
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor.get(), pageRequest);
+        Pageable nextVendorProductPage = vendorProductPage.nextPageable();
+        List<VendorProductDto> products = vendorProductPage.get()
+                .map(vendorProductAssembler::assembleVendorProductDto)
+                .collect(Collectors.toList());
+
+        VendorProductPageDto vendorProductPageDto = new VendorProductPageDto();
+        vendorProductPageDto.setProducts(products);
+
+        if (nextVendorProductPage.isPaged()) {
+            vendorProductPageDto.setNextPageToken(nextVendorProductPage.getPageNumber());
+        }
 
         LOG.info(String.format("Returned products for vendor {vendorId: %d}", vendorId));
 
-        return vendorProducts.stream()
-                .map(vendorProductAssembler::assembleVendorProductDto)
-                .collect(Collectors.toList());
+        return vendorProductPageDto;
     }
 
     public Vendor createVendor(CreateVendorDto createVendorDto) {
