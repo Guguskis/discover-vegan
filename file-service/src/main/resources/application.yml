@@ -6,7 +6,7 @@ aws:
   region: eu-north-1
 #spring:
 #  datasource:
-#    url: jdbc:h2:file:C:/Dev/h2databases/storage-service
+#    url: jdbc:h2:file:C:/Dev/h2databases/file-service
 #    driverClassName: org.h2.Driver
 #    username: admin
 #  h2:
