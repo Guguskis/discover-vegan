@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @RestController
@@ -30,7 +31,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody CreateProductDto createProductDto) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody CreateProductDto createProductDto) {
         return ResponseEntity.ok(productService.createProduct(createProductDto));
     }
 }
