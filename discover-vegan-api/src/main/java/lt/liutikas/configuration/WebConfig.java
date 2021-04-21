@@ -23,8 +23,8 @@ public class WebConfig {
                 .rootUri("https://maps.googleapis.com")
                 .build();
         restTemplate.getInterceptors().add((request, body, execution) -> {
-//            HttpRequest modifiedRequest = appendQueryParameter(request, "key", googleApiKey);
-            return execution.execute(request, body);
+            HttpRequest modifiedRequest = appendQueryParameter(request, "key", googleApiKey);
+            return execution.execute(modifiedRequest, body);
         });
         return restTemplate;
     }

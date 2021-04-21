@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class PlaceRepository {
 
-    private static final String FOOD_PLACES_URL = "/maps/api/place/nearbysearch/json?location={location}&radius={radius}&type=food&key={key}";
+    private static final String FOOD_PLACES_URL = "/maps/api/place/nearbysearch/json?location={location}&radius={radius}&type=food";
     private final RestTemplate googleRestTemplate;
 
     public PlaceRepository(RestTemplate googleRestTemplate) {
@@ -24,8 +24,7 @@ public class PlaceRepository {
                 FOOD_PLACES_URL,
                 PlacesResponse.class,
                 "54.72744555070343,25.341746138622348",
-                "5000",
-                "");
+                "5000");
 
         PlacesResponse placesResponse = responseEntity.getBody();
         if (placesResponse.getResults() != null) {
