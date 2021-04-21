@@ -1,5 +1,6 @@
 package lt.liutikas.repository;
 
+import lt.liutikas.dto.GetVendorDto;
 import lt.liutikas.dto.PlaceDto;
 import lt.liutikas.dto.PlacesResponse;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,23 @@ import java.util.List;
 public class PlaceRepository {
 
     private static final String FOOD_PLACES_URL = "/maps/api/place/nearbysearch/json?location={location}&radius={radius}&type=supermarket";
+    private static final int SEARCH_RADIUS = 5000;
+
     private final RestTemplate googleRestTemplate;
 
     public PlaceRepository(RestTemplate googleRestTemplate) {
         this.googleRestTemplate = googleRestTemplate;
     }
 
-    public List<PlaceDto> getFoodPlaces() {
+    public List<PlaceDto> getFoodPlaces(GetVendorDto getVendorDto) {
+
+        String coordinates = String.format("%f,%f", getVendorDto.getLatitude(), getVendorDto.getLongitude());
+
         ResponseEntity<PlacesResponse> responseEntity = googleRestTemplate.getForEntity(
                 FOOD_PLACES_URL,
                 PlacesResponse.class,
-                "54.72744555070343,25.341746138622348",
-                "5000");
+                coordinates,
+                String.valueOf(SEARCH_RADIUS));
 
         PlacesResponse placesResponse = responseEntity.getBody();
 

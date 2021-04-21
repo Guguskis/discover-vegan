@@ -1,9 +1,6 @@
 package lt.liutikas.controller;
 
-import lt.liutikas.dto.CreateVendorDto;
-import lt.liutikas.dto.CreateVendorProductDto;
-import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.dto.VendorProductPageDto;
+import lt.liutikas.dto.*;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.service.VendorService;
 import org.springframework.data.domain.PageRequest;
@@ -25,8 +22,12 @@ public class VendorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Vendor>> getVendors() {// todo add VendorType {PHYSICAL, DIGITAL}, return all if not provided
-        return ResponseEntity.ok(vendorService.getVendors());
+    public ResponseEntity<List<Vendor>> getVendors(@RequestParam Double latitude,
+                                                   @RequestParam Double longitude) {// todo add VendorType {PHYSICAL, DIGITAL}, return all if not provided
+        GetVendorDto getVendorDto = new GetVendorDto();
+        getVendorDto.setLatitude(latitude);
+        getVendorDto.setLongitude(longitude);
+        return ResponseEntity.ok(vendorService.getVendors(getVendorDto));
     }
 
     @PostMapping // todo for development, remove later

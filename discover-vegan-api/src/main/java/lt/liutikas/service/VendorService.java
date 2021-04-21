@@ -44,9 +44,9 @@ public class VendorService {
         this.placeRepository = placeRepository;
     }
 
-    public List<Vendor> getVendors() {
+    public List<Vendor> getVendors(GetVendorDto getVendorDto) {
 
-        List<PlaceDto> places = placeRepository.getFoodPlaces();
+        List<PlaceDto> places = placeRepository.getFoodPlaces(getVendorDto);
         List<String> placesIds = places.stream()
                 .map(PlaceDto::getPlace_id)
                 .collect(Collectors.toList());
@@ -56,7 +56,8 @@ public class VendorService {
 
         vendors.addAll(newVendors);
 
-        LOG.info(String.format("Returned vendors for location {latitude: %s, longitude: %s}", "XXXX", "YYYYY"));
+        LOG.info(String.format("Returned vendors for location {latitude: %f, longitude: %f}",
+                getVendorDto.getLatitude(), getVendorDto.getLongitude()));
 
         return vendors;
     }
