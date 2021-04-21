@@ -50,8 +50,15 @@ public class VendorService {
 
         List<Vendor> vendors = places.stream()
                 .map(placeDto -> {
+                    Location location = placeDto.getGeometry().getLocation();
+
                     Vendor vendor = new Vendor();
+
                     vendor.setName(placeDto.getName());
+                    vendor.setVendorId(1);
+                    vendor.setLatitude(location.getLat());
+                    vendor.setLongitude(location.getLng());
+
                     return vendor;
                 })
                 .collect(Collectors.toList());
