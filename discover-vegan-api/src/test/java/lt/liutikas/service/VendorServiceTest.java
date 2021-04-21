@@ -9,6 +9,7 @@ import lt.liutikas.dto.VendorProductPageDto;
 import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.repository.PlaceRepository;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.VendorProductRepository;
 import lt.liutikas.repository.VendorRepository;
@@ -39,6 +40,8 @@ public class VendorServiceTest {
     private VendorProductRepository vendorProductRepository;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private PlaceRepository placeRepository;
 
     private VendorService vendorService;
 
@@ -49,7 +52,8 @@ public class VendorServiceTest {
                 new VendorProductAssembler(),
                 vendorRepository,
                 vendorProductRepository,
-                productRepository);
+                productRepository,
+                placeRepository);
     }
 
     @Test

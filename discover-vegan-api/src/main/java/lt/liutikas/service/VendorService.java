@@ -3,13 +3,11 @@ package lt.liutikas.service;
 import lt.liutikas.assembler.VendorAssembler;
 import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
-import lt.liutikas.dto.CreateVendorDto;
-import lt.liutikas.dto.CreateVendorProductDto;
-import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.dto.VendorProductPageDto;
+import lt.liutikas.dto.*;
 import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.repository.PlaceRepository;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.VendorProductRepository;
 import lt.liutikas.repository.VendorRepository;
@@ -35,20 +33,33 @@ public class VendorService {
     private final VendorRepository vendorRepository;
     private final VendorProductRepository vendorProductRepository;
     private final ProductRepository productRepository;
+    private final PlaceRepository placeRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
         this.vendorRepository = vendorRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.productRepository = productRepository;
+        this.placeRepository = placeRepository;
     }
 
     public List<Vendor> getVendors() {
 
+        List<PlaceDto> places = placeRepository.getFoodPlaces();
+
+        List<Vendor> vendors = places.stream()
+                .map(placeDto -> {
+                    Vendor vendor = new Vendor();
+                    vendor.setName(placeDto.getName());
+                    return vendor;
+                })
+                .collect(Collectors.toList());
+
         LOG.info(String.format("Returned vendors for location {latitude: %s, longitude: %s}", "XXXX", "YYYYY"));
 
-        return vendorRepository.findAll();
+        return vendors;
+//        return vendorRepository.findAll();
     }
 
     public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
