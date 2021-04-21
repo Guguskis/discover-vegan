@@ -9,11 +9,15 @@ public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer vendorId;
+    @Column(nullable = false)
     private String externalPlaceId;
+    @Column(nullable = false)
     private String name;
-    private String imageUrl;
+    @Column(nullable = false)
     private Double latitude;
+    @Column(nullable = false)
     private Double longitude;
+    private String imageUrl;
 
     public Integer getVendorId() {
         return vendorId;
