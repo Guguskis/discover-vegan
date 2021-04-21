@@ -47,26 +47,34 @@ public class VendorService {
     public List<Vendor> getVendors() {
 
         List<PlaceDto> places = placeRepository.getFoodPlaces();
-
-        List<Vendor> vendors = places.stream()
-                .map(placeDto -> {
-                    Location location = placeDto.getGeometry().getLocation();
-
-                    Vendor vendor = new Vendor();
-
-                    vendor.setName(placeDto.getName());
-                    vendor.setVendorId(1);
-                    vendor.setLatitude(location.getLat());
-                    vendor.setLongitude(location.getLng());
-
-                    return vendor;
-                })
+        List<String> placesIds = places.stream()
+                .map(PlaceDto::getPlace_id)
                 .collect(Collectors.toList());
+
+        List<Vendor> vendors = vendorRepository.findByExternalPlaceIdIn(placesIds);
+        List<Vendor> newVendors = createVendorsForNewPlaces(vendors, places);
+
+        vendors.addAll(newVendors);
 
         LOG.info(String.format("Returned vendors for location {latitude: %s, longitude: %s}", "XXXX", "YYYYY"));
 
         return vendors;
-//        return vendorRepository.findAll();
+    }
+
+    private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<PlaceDto> places) {
+        List<String> vendorsIds = vendors.stream()
+                .map(Vendor::getExternalPlaceId)
+                .collect(Collectors.toList());
+
+        List<PlaceDto> newPlaces = places.stream()
+                .filter(placeDto -> !vendorsIds.contains(placeDto.getPlace_id()))
+                .collect(Collectors.toList());
+
+        List<Vendor> newVendors = newPlaces.stream()
+                .map(vendorAssembler::assemblerVendor)
+                .collect(Collectors.toList());
+
+        return vendorRepository.saveAll(newVendors);
     }
 
     public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {

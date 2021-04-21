@@ -9,6 +9,7 @@ public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer vendorId;
+    private String externalPlaceId;
     private String name;
     private String imageUrl;
     private Double latitude;
@@ -20,6 +21,14 @@ public class Vendor {
 
     public void setVendorId(Integer id) {
         this.vendorId = id;
+    }
+
+    public String getExternalPlaceId() {
+        return externalPlaceId;
+    }
+
+    public void setExternalPlaceId(String externalPlaceId) {
+        this.externalPlaceId = externalPlaceId;
     }
 
     public String getName() {
