@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class VendorAssembler {
 
-    public Vendor assemblerVendor(CreateVendorDto createVendorDto) {
+    public Vendor assembleVendor(CreateVendorDto createVendorDto) {
         Vendor vendor = new Vendor();
 
         vendor.setName(createVendorDto.getName());
@@ -20,7 +20,7 @@ public class VendorAssembler {
         return vendor;
     }
 
-    public Vendor assemblerVendor(PlaceDto placeDto) {
+    public Vendor assembleVendor(PlaceDto placeDto) {
         Location location = placeDto.getGeometry().getLocation();
 
         Vendor vendor = new Vendor();

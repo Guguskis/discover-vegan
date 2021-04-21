@@ -71,7 +71,7 @@ public class VendorService {
                 .collect(Collectors.toList());
 
         List<Vendor> newVendors = newPlaces.stream()
-                .map(vendorAssembler::assemblerVendor)
+                .map(vendorAssembler::assembleVendor)
                 .collect(Collectors.toList());
 
         return vendorRepository.saveAll(newVendors);
@@ -107,7 +107,7 @@ public class VendorService {
     }
 
     public Vendor createVendor(CreateVendorDto createVendorDto) {
-        Vendor vendor = vendorAssembler.assemblerVendor(createVendorDto);
+        Vendor vendor = vendorAssembler.assembleVendor(createVendorDto);
 
         vendor = vendorRepository.save(vendor);
 
