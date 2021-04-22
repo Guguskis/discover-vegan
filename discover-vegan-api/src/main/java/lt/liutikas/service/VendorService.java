@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,8 +46,13 @@ public class VendorService {
     }
 
     public List<Vendor> getVendors(GetVendorDto getVendorDto) {
+        Location location = getVendorDto.getLocation();
 
-        List<PlaceDto> places = placeRepository.getFoodPlaces(getVendorDto);
+        List<PlaceDto> places = new ArrayList<>();
+
+        places.addAll(placeRepository.getPlaces(location, "store"));
+        places.addAll(placeRepository.getPlaces(location, "restaurant"));
+
         List<String> placesIds = places.stream()
                 .map(PlaceDto::getPlace_id)
                 .collect(Collectors.toList());
@@ -57,7 +63,7 @@ public class VendorService {
         vendors.addAll(newVendors);
 
         LOG.info(String.format("Returned vendors for location {latitude: %f, longitude: %f}",
-                getVendorDto.getLatitude(), getVendorDto.getLongitude()));
+                location.getLat(), location.getLng()));
 
         return vendors;
     }

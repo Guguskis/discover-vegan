@@ -2,22 +2,13 @@ package lt.liutikas.dto;
 
 public class GetVendorDto {
 
-    private Double latitude;
-    private Double longitude;
+    private Location location;
 
-    public Double getLatitude() {
-        return latitude;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

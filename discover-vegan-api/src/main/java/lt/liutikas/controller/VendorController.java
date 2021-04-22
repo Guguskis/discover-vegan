@@ -24,9 +24,12 @@ public class VendorController {
     @GetMapping
     public ResponseEntity<List<Vendor>> getVendors(@RequestParam Double latitude,
                                                    @RequestParam Double longitude) {// todo add VendorType {PHYSICAL, DIGITAL}, return all if not provided
+        Location location = new Location();
+        location.setLat(latitude);
+        location.setLng(longitude);
         GetVendorDto getVendorDto = new GetVendorDto();
-        getVendorDto.setLatitude(latitude);
-        getVendorDto.setLongitude(longitude);
+        getVendorDto.setLocation(location);
+
         return ResponseEntity.ok(vendorService.getVendors(getVendorDto));
     }
 
