@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 public class PlaceRepository {
 
     private static final List<String> FOOD_PLACE_TYPES = Arrays.asList("food", "restaurant", "store", "cafe", "bar", "supermarket");
-    private static final String FOOD_PLACES_ENDPOINT = "/maps/api/place/nearbysearch/json?location={location}&radius={radius}&keyword=food&pagetoken={next_page_token}";
-    private static final int SEARCH_RADIUS = 5000;
+    private static final String FOOD_PLACES_ENDPOINT = "/maps/api/place/nearbysearch/json?location={location}&rankby=distance&keyword={keyword}&pagetoken={next_page_token}";
 
     private final RestTemplate googleRestTemplate;
 
@@ -39,7 +38,7 @@ public class PlaceRepository {
                     FOOD_PLACES_ENDPOINT,
                     PlacesResponse.class,
                     coordinates,
-                    String.valueOf(SEARCH_RADIUS),
+                    "food",
                     placesResponse.getNext_page_token());
 
             placesResponse = responseEntity.getBody();
