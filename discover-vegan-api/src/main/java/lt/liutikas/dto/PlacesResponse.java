@@ -5,7 +5,7 @@ import java.util.List;
 public class PlacesResponse {
 
     private String next_page_token;
-    public List<PlaceDto> results;
+    public List<Place> results;
 
     public String getNext_page_token() {
         return next_page_token;
@@ -15,11 +15,11 @@ public class PlacesResponse {
         this.next_page_token = next_page_token;
     }
 
-    public List<PlaceDto> getResults() {
+    public List<Place> getResults() {
         return results;
     }
 
-    public void setResults(List<PlaceDto> results) {
+    public void setResults(List<Place> results) {
         this.results = results;
     }
 }

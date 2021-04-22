@@ -1,7 +1,7 @@
 package lt.liutikas.repository;
 
 import lt.liutikas.dto.Location;
-import lt.liutikas.dto.PlaceDto;
+import lt.liutikas.dto.Place;
 import lt.liutikas.dto.PlacesResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,8 +21,8 @@ public class PlaceRepository {
         this.googleRestTemplate = googleRestTemplate;
     }
 
-    public List<PlaceDto> getPlaces(Location location, String keyword) {
-        List<PlaceDto> places = new ArrayList<>();
+    public List<Place> getPlaces(Location location, Place.Type keyword) {
+        List<Place> places = new ArrayList<>();
         PlacesResponse placesResponse = new PlacesResponse();
 
         do {

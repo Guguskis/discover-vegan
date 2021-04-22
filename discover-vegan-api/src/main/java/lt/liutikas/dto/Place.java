@@ -2,7 +2,7 @@ package lt.liutikas.dto;
 
 import java.util.List;
 
-public class PlaceDto {
+public class Place {
 
     private String name;
     private String place_id;
@@ -48,5 +48,9 @@ public class PlaceDto {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
+    }
+
+    public static enum Type {
+        RESTAURANT, STORE
     }
 }

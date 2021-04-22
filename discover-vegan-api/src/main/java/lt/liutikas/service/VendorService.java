@@ -48,13 +48,13 @@ public class VendorService {
     public List<Vendor> getVendors(GetVendorDto getVendorDto) {
         Location location = getVendorDto.getLocation();
 
-        List<PlaceDto> places = new ArrayList<>();
+        List<Place> places = new ArrayList<>();
 
-        places.addAll(placeRepository.getPlaces(location, "store"));
-        places.addAll(placeRepository.getPlaces(location, "restaurant"));
+        places.addAll(placeRepository.getPlaces(location, Place.Type.STORE));
+        places.addAll(placeRepository.getPlaces(location, Place.Type.RESTAURANT));
 
         List<String> placesIds = places.stream()
-                .map(PlaceDto::getPlace_id)
+                .map(Place::getPlace_id)
                 .collect(Collectors.toList());
 
         List<Vendor> vendors = vendorRepository.findByExternalPlaceIdIn(placesIds);
@@ -68,13 +68,13 @@ public class VendorService {
         return vendors;
     }
 
-    private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<PlaceDto> places) {
+    private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {
         List<String> vendorsIds = vendors.stream()
                 .map(Vendor::getExternalPlaceId)
                 .collect(Collectors.toList());
 
-        List<PlaceDto> newPlaces = places.stream()
-                .filter(placeDto -> !vendorsIds.contains(placeDto.getPlace_id()))
+        List<Place> newPlaces = places.stream()
+                .filter(place -> !vendorsIds.contains(place.getPlace_id()))
                 .collect(Collectors.toList());
 
         List<Vendor> newVendors = newPlaces.stream()

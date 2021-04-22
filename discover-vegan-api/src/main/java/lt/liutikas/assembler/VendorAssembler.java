@@ -2,7 +2,7 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.Location;
-import lt.liutikas.dto.PlaceDto;
+import lt.liutikas.dto.Place;
 import lt.liutikas.entity.Vendor;
 import org.springframework.stereotype.Component;
 
@@ -20,16 +20,16 @@ public class VendorAssembler {
         return vendor;
     }
 
-    public Vendor assembleVendor(PlaceDto placeDto) {
-        Location location = placeDto.getGeometry().getLocation();
+    public Vendor assembleVendor(Place place) {
+        Location location = place.getGeometry().getLocation();
 
         Vendor vendor = new Vendor();
 
-        vendor.setName(placeDto.getName());
-        vendor.setExternalPlaceId(placeDto.getPlace_id());
+        vendor.setName(place.getName());
+        vendor.setExternalPlaceId(place.getPlace_id());
         vendor.setLatitude(location.getLat());
         vendor.setLongitude(location.getLng());
-        vendor.setAddress(placeDto.getVicinity());
+        vendor.setAddress(place.getVicinity());
 
         return vendor;
     }
