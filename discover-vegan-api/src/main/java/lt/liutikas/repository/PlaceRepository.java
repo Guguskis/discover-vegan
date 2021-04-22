@@ -8,11 +8,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PlaceRepository {
 
+    private static final List<String> FOOD_PLACE_TYPES = Arrays.asList("food", "restaurant", "store", "cafe", "bar", "supermarket");
     private static final String PLACES_ENDPOINT = "/maps/api/place/nearbysearch/json?location={location}&rankby=distance&keyword={keyword}&pagetoken={next_page_token}";
 
     private final RestTemplate googleRestTemplate;
@@ -21,7 +24,7 @@ public class PlaceRepository {
         this.googleRestTemplate = googleRestTemplate;
     }
 
-    public List<Place> getPlaces(Location location, Place.Type keyword) {
+    public List<Place> getFoodPlaces(Location location, Place.Type keyword) {
         List<Place> places = new ArrayList<>();
         PlacesResponse placesResponse = new PlacesResponse();
 
@@ -38,6 +41,13 @@ public class PlaceRepository {
 
         } while (placesResponse.getNext_page_token() != null);
 
-        return places;
+        return filterFoodPlaces(places);
+    }
+
+    private List<Place> filterFoodPlaces(List<Place> places) {
+        return places.stream()
+                .filter(place -> place.getTypes().stream()
+                        .anyMatch(FOOD_PLACE_TYPES::contains))
+                .collect(Collectors.toList());
     }
 }

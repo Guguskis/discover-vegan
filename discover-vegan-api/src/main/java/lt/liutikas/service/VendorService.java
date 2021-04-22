@@ -50,8 +50,8 @@ public class VendorService {
 
         List<Place> places = new ArrayList<>();
 
-        places.addAll(placeRepository.getPlaces(location, Place.Type.STORE));
-        places.addAll(placeRepository.getPlaces(location, Place.Type.RESTAURANT));
+        places.addAll(placeRepository.getFoodPlaces(location, Place.Type.STORE));
+        places.addAll(placeRepository.getFoodPlaces(location, Place.Type.RESTAURANT));
 
         List<String> placesIds = places.stream()
                 .map(Place::getPlace_id)
