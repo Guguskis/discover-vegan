@@ -4,6 +4,7 @@ import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
 import lt.liutikas.entity.Vendor;
+import lt.liutikas.entity.VendorType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,6 +31,7 @@ public class VendorAssembler {
         vendor.setLatitude(location.getLat());
         vendor.setLongitude(location.getLng());
         vendor.setAddress(place.getVicinity());
+        vendor.setVendorType(VendorType.valueOf(place.getVendorType().toString()));
 
         return vendor;
     }

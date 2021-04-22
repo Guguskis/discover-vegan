@@ -19,6 +19,8 @@ public class Vendor {
     private Double longitude;
     private String address;
     private String imageUrl;
+    @Column(nullable = false)
+    private VendorType vendorType;
 
     public Integer getVendorId() {
         return vendorId;
@@ -74,5 +76,13 @@ public class Vendor {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public VendorType getVendorType() {
+        return vendorType;
+    }
+
+    public void setVendorType(VendorType vendorType) {
+        this.vendorType = vendorType;
     }
 }

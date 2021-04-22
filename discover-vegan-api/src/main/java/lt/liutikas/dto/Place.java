@@ -1,5 +1,7 @@
 package lt.liutikas.dto;
 
+import lt.liutikas.entity.VendorType;
+
 import java.util.List;
 
 public class Place {
@@ -9,6 +11,7 @@ public class Place {
     private Geometry geometry;
     private List<String> types;
     private String vicinity;
+    private VendorType vendorType;
 
     public String getName() {
         return name;
@@ -50,7 +53,11 @@ public class Place {
         this.vicinity = vicinity;
     }
 
-    public static enum Type {
-        RESTAURANT, STORE
+    public VendorType getVendorType() {
+        return vendorType;
+    }
+
+    public void setVendorType(VendorType vendorType) {
+        this.vendorType = vendorType;
     }
 }

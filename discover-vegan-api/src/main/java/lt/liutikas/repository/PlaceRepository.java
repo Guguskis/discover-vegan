@@ -3,6 +3,7 @@ package lt.liutikas.repository;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
 import lt.liutikas.dto.PlacesResponse;
+import lt.liutikas.entity.VendorType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +25,7 @@ public class PlaceRepository {
         this.googleRestTemplate = googleRestTemplate;
     }
 
-    public List<Place> getFoodPlaces(Location location, Place.Type keyword) {
+    public List<Place> getFoodPlaces(Location location, VendorType vendorType) {
         List<Place> places = new ArrayList<>();
         PlacesResponse placesResponse = new PlacesResponse();
 
@@ -33,7 +34,7 @@ public class PlaceRepository {
                     PLACES_ENDPOINT,
                     PlacesResponse.class,
                     String.format("%f,%f", location.getLat(), location.getLng()),
-                    keyword,
+                    vendorType,
                     placesResponse.getNext_page_token());
 
             placesResponse = responseEntity.getBody();
@@ -41,7 +42,9 @@ public class PlaceRepository {
 
         } while (placesResponse.getNext_page_token() != null);
 
-        return filterFoodPlaces(places);
+        List<Place> foodPlaces = filterFoodPlaces(places);
+        foodPlaces.forEach(place -> place.setVendorType(vendorType));
+        return foodPlaces;
     }
 
     private List<Place> filterFoodPlaces(List<Place> places) {

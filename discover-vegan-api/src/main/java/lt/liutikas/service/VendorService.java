@@ -7,6 +7,7 @@ import lt.liutikas.dto.*;
 import lt.liutikas.entity.Product;
 import lt.liutikas.entity.Vendor;
 import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.entity.VendorType;
 import lt.liutikas.repository.PlaceRepository;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.VendorProductRepository;
@@ -47,11 +48,20 @@ public class VendorService {
 
     public List<Vendor> getVendors(GetVendorDto getVendorDto) {
         Location location = getVendorDto.getLocation();
+        VendorType vendorType = getVendorDto.getType();
 
         List<Place> places = new ArrayList<>();
 
-        places.addAll(placeRepository.getFoodPlaces(location, Place.Type.STORE));
-        places.addAll(placeRepository.getFoodPlaces(location, Place.Type.RESTAURANT));
+        if (vendorType == null) {
+            places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+            places.addAll(placeRepository.getFoodPlaces(location, VendorType.RESTAURANT));
+        }
+        if (vendorType == VendorType.STORE) {
+            places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+        }
+        if (vendorType == VendorType.RESTAURANT) {
+            places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+        }
 
         List<String> placesIds = places.stream()
                 .map(Place::getPlace_id)
