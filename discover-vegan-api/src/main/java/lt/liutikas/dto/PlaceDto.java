@@ -8,6 +8,7 @@ public class PlaceDto {
     private String place_id;
     private Geometry geometry;
     private List<String> types;
+    private String vicinity;
 
     public String getName() {
         return name;
@@ -39,5 +40,13 @@ public class PlaceDto {
 
     public void setTypes(List<String> types) {
         this.types = types;
+    }
+
+    public String getVicinity() {
+        return vicinity;
+    }
+
+    public void setVicinity(String vicinity) {
+        this.vicinity = vicinity;
     }
 }

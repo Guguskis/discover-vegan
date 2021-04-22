@@ -17,6 +17,7 @@ public class Vendor {
     private Double latitude;
     @Column(nullable = false)
     private Double longitude;
+    private String address;
     private String imageUrl;
 
     public Integer getVendorId() {
@@ -49,6 +50,14 @@ public class Vendor {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Double getLatitude() {

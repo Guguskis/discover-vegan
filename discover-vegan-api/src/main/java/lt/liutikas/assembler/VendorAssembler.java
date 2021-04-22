@@ -29,6 +29,7 @@ public class VendorAssembler {
         vendor.setExternalPlaceId(placeDto.getPlace_id());
         vendor.setLatitude(location.getLat());
         vendor.setLongitude(location.getLng());
+        vendor.setAddress(placeDto.getVicinity());
 
         return vendor;
     }
