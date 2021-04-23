@@ -55,12 +55,13 @@ public class VendorService {
         if (vendorType == null) {
             places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
             places.addAll(placeRepository.getFoodPlaces(location, VendorType.RESTAURANT));
-        }
-        if (vendorType == VendorType.STORE) {
-            places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
-        }
-        if (vendorType == VendorType.RESTAURANT) {
-            places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+        } else {
+            if (vendorType == VendorType.STORE) {
+                places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+            }
+            if (vendorType == VendorType.RESTAURANT) {
+                places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+            }
         }
 
         List<String> placesIds = places.stream()
