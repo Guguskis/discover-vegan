@@ -13,6 +13,8 @@ public class User {
     private String passwordHash;
     @Column(nullable = false)
     private String email;
+    @Column(nullable = false)
+    private UserType userType;
 
     public Integer getUserId() {
         return userId;
@@ -36,5 +38,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 }
