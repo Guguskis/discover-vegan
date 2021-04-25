@@ -51,6 +51,7 @@ public class UserService {
         loginResponseDto.setToken(tokenUtil.getToken(
                 user.getUserId(),
                 user.getUserType()));
+        loginResponseDto.setUserType(user.getUserType());
 
         return loginResponseDto;
     }
