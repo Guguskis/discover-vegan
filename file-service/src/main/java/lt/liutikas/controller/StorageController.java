@@ -20,8 +20,7 @@ public class StorageController {
     }
 
     @PostMapping("/file")
-    public ResponseEntity<UploadFileDto> uploadFile(@RequestParam("file") MultipartFile multipartFile) throws InterruptedException {
-        Thread.sleep(1000);
+    public ResponseEntity<UploadFileDto> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
         return ResponseEntity.ok(storageService.uploadFile(multipartFile));
     }
 }
