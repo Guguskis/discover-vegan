@@ -5,7 +5,8 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateUserRequestDto;
 import lt.liutikas.dto.CreateUserResponseDto;
-import lt.liutikas.dto.GetTokenDto;
+import lt.liutikas.dto.GetTokenRequestDto;
+import lt.liutikas.dto.GetTokenResponseDto;
 import lt.liutikas.model.User;
 import lt.liutikas.repository.UserRepository;
 import lt.liutikas.utility.TokenUtil;
@@ -28,30 +29,30 @@ public class UserService {
         this.tokenUtil = tokenUtil;
     }
 
-    public GetTokenDto getToken(String email, String password) {
+    public GetTokenResponseDto getToken(GetTokenRequestDto getTokenRequestDto) {
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(getTokenRequestDto.getEmail());
 
         if (optionalUser.isEmpty()) {
-            String message = String.format("User not found {email: '%s'}", email);
+            String message = String.format("User not found {email: '%s'}", getTokenRequestDto.getEmail());
             LOG.error(message);
             throw new NotFoundException(message);
         }
 
         User user = optionalUser.get();
-        if (!passwordsMatch(user, password)) {
+        if (!passwordsMatch(user, getTokenRequestDto.getPassword())) {
             String message = String.format("Incorrect password {userId: %d}", user.getUserId());
             LOG.error(message);
             throw new BadRequestException(message);
         }
 
-        GetTokenDto getTokenDto = new GetTokenDto();
+        GetTokenResponseDto getTokenResponseDto = new GetTokenResponseDto();
 
-        getTokenDto.setToken(tokenUtil.getToken(
+        getTokenResponseDto.setToken(tokenUtil.getToken(
                 user.getUserId(),
                 user.getUserType()));
 
-        return getTokenDto;
+        return getTokenResponseDto;
     }
 
     private boolean passwordsMatch(User user, String password) {

@@ -1,6 +1,6 @@
 package lt.liutikas.dto;
 
-public class LoginRequestDto {
+public class GetTokenRequestDto {
 
     private String email;
     private String password;

@@ -2,10 +2,14 @@ package lt.liutikas.controller;
 
 import lt.liutikas.dto.CreateUserRequestDto;
 import lt.liutikas.dto.CreateUserResponseDto;
-import lt.liutikas.dto.GetTokenDto;
+import lt.liutikas.dto.GetTokenRequestDto;
+import lt.liutikas.dto.GetTokenResponseDto;
 import lt.liutikas.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
@@ -17,10 +21,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/token")
-    private ResponseEntity<GetTokenDto> getToken(@RequestParam String email,
-                                                 @RequestParam String password) {
-        return ResponseEntity.ok(userService.getToken(email, password));
+    @PostMapping("/token")
+    private ResponseEntity<GetTokenResponseDto> getToken(@RequestBody GetTokenRequestDto getTokenRequestDto) {
+        return ResponseEntity.ok(userService.getToken(getTokenRequestDto));
     }
 
     @PostMapping

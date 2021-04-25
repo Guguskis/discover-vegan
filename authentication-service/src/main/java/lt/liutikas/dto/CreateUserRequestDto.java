@@ -2,10 +2,15 @@ package lt.liutikas.dto;
 
 import lt.liutikas.model.UserType;
 
+import javax.validation.constraints.NotBlank;
+
 public class CreateUserRequestDto {
 
+    @NotBlank
     private String email;
+    @NotBlank
     private String password;
+    @NotBlank
     private UserType userType;
 
     public String getEmail() {

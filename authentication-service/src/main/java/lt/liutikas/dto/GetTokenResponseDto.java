@@ -1,6 +1,6 @@
 package lt.liutikas.dto;
 
-public class GetTokenDto {
+public class GetTokenResponseDto {
 
     private String token;
 
