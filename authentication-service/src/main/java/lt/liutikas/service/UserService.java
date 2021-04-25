@@ -43,7 +43,7 @@ public class UserService {
         if (!passwordsMatch(user, getTokenRequestDto.getPassword())) {
             String message = String.format("Incorrect password {userId: %d}", user.getUserId());
             LOG.error(message);
-            throw new BadRequestException(message);
+            throw new BadRequestException(message, "INCORRECT_PASSWORD");
         }
 
         GetTokenResponseDto getTokenResponseDto = new GetTokenResponseDto();
