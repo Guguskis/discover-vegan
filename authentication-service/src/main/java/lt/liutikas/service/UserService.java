@@ -40,7 +40,7 @@ public class UserService {
 
         User user = optionalUser.get();
         if (!passwordsMatch(user, password)) {
-            String message = "Passwords don't match";
+            String message = String.format("Incorrect password {userId: %d}", user.getUserId());
             LOG.error(message);
             throw new BadRequestException(message);
         }
