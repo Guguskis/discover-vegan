@@ -46,6 +46,7 @@
         <mssql-jdbc.version>9.2.1.jre11</mssql-jdbc.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
         <guava.version>28.1-jre</guava.version>
+        <java-jwt.version>3.15.0</java-jwt.version>
     </properties>
 
     <dependencyManagement>
@@ -139,6 +140,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${java-jwt.version}</version>
             </dependency>
             <!--TESTING DEPENDENCIES-->
             <dependency>

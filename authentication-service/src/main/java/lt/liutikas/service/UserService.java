@@ -9,6 +9,7 @@ import lt.liutikas.dto.SignUpRequestDto;
 import lt.liutikas.dto.SignUpResponseDto;
 import lt.liutikas.model.User;
 import lt.liutikas.repository.UserRepository;
+import lt.liutikas.utility.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,11 @@ public class UserService {
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final TokenUtil tokenUtil;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TokenUtil tokenUtil) {
         this.userRepository = userRepository;
+        this.tokenUtil = tokenUtil;
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -45,7 +48,9 @@ public class UserService {
 
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
-        loginResponseDto.setToken("ASD");
+        loginResponseDto.setToken(tokenUtil.getToken(
+                user.getUserId(),
+                user.getUserType()));
 
         return loginResponseDto;
     }
@@ -67,6 +72,7 @@ public class UserService {
         User user = new User();
         user.setEmail(signUpRequestDto.getEmail());
         user.setPasswordHash(getHash(signUpRequestDto.getPassword()));
+        user.setUserType(signUpRequestDto.getUserType());
 
         user = userRepository.save(user);
 
