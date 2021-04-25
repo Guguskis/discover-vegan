@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 public class PlaceRepository {
 
-    private static final List<String> FOOD_PLACE_TYPES = Arrays.asList("food", "restaurant", "store", "cafe", "bar", "supermarket");
+    private static final List<String> FOOD_PLACE_TYPES = Arrays.asList("food", "restaurant", "cafe", "bar");
     private static final String PLACES_ENDPOINT = "/maps/api/place/nearbysearch/json?location={location}&rankby=distance&keyword={keyword}&pagetoken={next_page_token}";
 
     private final RestTemplate googleRestTemplate;
