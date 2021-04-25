@@ -5,8 +5,7 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateUserRequestDto;
 import lt.liutikas.dto.CreateUserResponseDto;
-import lt.liutikas.dto.LoginRequestDto;
-import lt.liutikas.dto.LoginResponseDto;
+import lt.liutikas.dto.GetTokenDto;
 import lt.liutikas.model.User;
 import lt.liutikas.repository.UserRepository;
 import lt.liutikas.utility.TokenUtil;
@@ -29,35 +28,34 @@ public class UserService {
         this.tokenUtil = tokenUtil;
     }
 
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+    public GetTokenDto getToken(String email, String password) {
 
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDto.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            String message = String.format("User not found {email: '%s'}", loginRequestDto.getEmail());
+            String message = String.format("User not found {email: '%s'}", email);
             LOG.error(message);
             throw new NotFoundException(message);
         }
 
         User user = optionalUser.get();
-        if (!passwordsMatch(loginRequestDto, user)) {
+        if (!passwordsMatch(user, password)) {
             String message = "Passwords don't match";
             LOG.error(message);
             throw new BadRequestException(message);
         }
 
-        LoginResponseDto loginResponseDto = new LoginResponseDto();
+        GetTokenDto getTokenDto = new GetTokenDto();
 
-        loginResponseDto.setToken(tokenUtil.getToken(
+        getTokenDto.setToken(tokenUtil.getToken(
                 user.getUserId(),
                 user.getUserType()));
-        loginResponseDto.setUserType(user.getUserType());
 
-        return loginResponseDto;
+        return getTokenDto;
     }
 
-    private boolean passwordsMatch(LoginRequestDto loginRequestDto, User user) {
-        return user.getPasswordHash().equals(getHash(loginRequestDto.getPassword()));
+    private boolean passwordsMatch(User user, String password) {
+        return user.getPasswordHash().equals(getHash(password));
     }
 
     public CreateUserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
