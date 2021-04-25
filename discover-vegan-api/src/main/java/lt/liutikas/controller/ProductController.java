@@ -24,10 +24,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ProductsPageDto> getProducts(@Min(0) @RequestParam(value = "pageToken", defaultValue = "0") Integer pageToken,
-                                                       @Min(1) @RequestParam(value = "pageSize", defaultValue = "50") Integer pageSize) {
+    public ResponseEntity<ProductsPageDto> getProducts(@RequestParam(defaultValue = "0") @Min(0) Integer pageToken,
+                                                       @RequestParam(defaultValue = "50") @Min(1) Integer pageSize,
+                                                       @RequestParam String query) {
         PageRequest pageable = PageRequest.of(pageToken, pageSize);
-        return ResponseEntity.ok(productService.getProducts(pageable));
+        return ResponseEntity.ok(productService.getProducts(pageable, query));
     }
 
     @PostMapping

@@ -93,7 +93,7 @@ public class ProductServiceTest {
         when(productRepository.findAll(any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
-        ProductsPageDto productsPageDto = productService.getProducts(pageRequest);
+        ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
         assertEquals(1, productsPageDto.getProducts().size());
         Product returnedProduct = productsPageDto.getProducts().get(0);
 
@@ -115,7 +115,7 @@ public class ProductServiceTest {
         when(productRepository.findAll(any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(products, pageRequest, 3));
 
-        ProductsPageDto productsPageDto = productService.getProducts(pageRequest);
+        ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
 
         verify(productRepository, times(1))
                 .findAll(any(PageRequest.class));
@@ -134,7 +134,7 @@ public class ProductServiceTest {
         when(productRepository.findAll(any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(products, pageRequest, 2));
 
-        ProductsPageDto productsPageDto = productService.getProducts(pageRequest);
+        ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
 
         verify(productRepository, times(1))
                 .findAll(any(PageRequest.class));

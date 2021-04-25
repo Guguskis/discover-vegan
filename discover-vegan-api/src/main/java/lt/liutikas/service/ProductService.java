@@ -26,11 +26,11 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductsPageDto getProducts(Pageable pageable) {
+    public ProductsPageDto getProducts(Pageable pageable, String query) {
+        query = "%" + query + "%";
 
-        Page<Product> productsPage = productRepository.findAll(pageable);
+        Page<Product> productsPage = productRepository.findByNameLikeOrProducerLikeIgnoreCaseOrderByNameAsc(pageable, query, query);
         Pageable nextPageable = productsPage.nextPageable();
-
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
         productsPageDto.setProducts(productsPage.getContent());
