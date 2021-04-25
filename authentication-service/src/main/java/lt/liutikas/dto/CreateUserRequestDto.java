@@ -2,7 +2,7 @@ package lt.liutikas.dto;
 
 import lt.liutikas.model.UserType;
 
-public class SignUpRequestDto {
+public class CreateUserRequestDto {
 
     private String email;
     private String password;

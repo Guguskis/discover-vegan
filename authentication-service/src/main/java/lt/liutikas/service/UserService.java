@@ -3,10 +3,10 @@ package lt.liutikas.service;
 import com.google.common.hash.Hashing;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
+import lt.liutikas.dto.CreateUserRequestDto;
+import lt.liutikas.dto.CreateUserResponseDto;
 import lt.liutikas.dto.LoginRequestDto;
 import lt.liutikas.dto.LoginResponseDto;
-import lt.liutikas.dto.SignUpRequestDto;
-import lt.liutikas.dto.SignUpResponseDto;
 import lt.liutikas.model.User;
 import lt.liutikas.repository.UserRepository;
 import lt.liutikas.utility.TokenUtil;
@@ -60,29 +60,29 @@ public class UserService {
         return user.getPasswordHash().equals(getHash(loginRequestDto.getPassword()));
     }
 
-    public SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto) {
+    public CreateUserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
 
-        Optional<User> existingUser = userRepository.findByEmail(signUpRequestDto.getEmail());
+        Optional<User> existingUser = userRepository.findByEmail(createUserRequestDto.getEmail());
 
         if (existingUser.isPresent()) {
-            String message = String.format("Property already taken {email: '%s'}", signUpRequestDto.getEmail());
+            String message = String.format("Property already taken {email: '%s'}", createUserRequestDto.getEmail());
             LOG.error(message);
             throw new BadRequestException(message);
         }
 
         User user = new User();
-        user.setEmail(signUpRequestDto.getEmail());
-        user.setPasswordHash(getHash(signUpRequestDto.getPassword()));
-        user.setUserType(signUpRequestDto.getUserType());
+        user.setEmail(createUserRequestDto.getEmail());
+        user.setPasswordHash(getHash(createUserRequestDto.getPassword()));
+        user.setUserType(createUserRequestDto.getUserType());
 
         user = userRepository.save(user);
 
         LOG.info(String.format("New user signed up {userId: %d}", user.getUserId()));
 
-        SignUpResponseDto signUpResponseDto = new SignUpResponseDto();
-        signUpResponseDto.setUserId(user.getUserId());
+        CreateUserResponseDto createUserResponseDto = new CreateUserResponseDto();
+        createUserResponseDto.setUserId(user.getUserId());
 
-        return signUpResponseDto;
+        return createUserResponseDto;
     }
 
     private String getHash(String password) {

@@ -1,9 +1,9 @@
 package lt.liutikas.controller;
 
+import lt.liutikas.dto.CreateUserRequestDto;
+import lt.liutikas.dto.CreateUserResponseDto;
 import lt.liutikas.dto.LoginRequestDto;
 import lt.liutikas.dto.LoginResponseDto;
-import lt.liutikas.dto.SignUpRequestDto;
-import lt.liutikas.dto.SignUpResponseDto;
 import lt.liutikas.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -26,9 +26,9 @@ public class UserController {
         return ResponseEntity.ok(userService.login(loginRequestDto));
     }
 
-    @PostMapping("/signup")
-    private ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
-        return ResponseEntity.ok(userService.signUp(signUpRequestDto));
+    @PostMapping
+    private ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto createUserRequestDto) {
+        return ResponseEntity.ok(userService.createUser(createUserRequestDto));
     }
 
 }

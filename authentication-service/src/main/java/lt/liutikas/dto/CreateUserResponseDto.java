@@ -1,6 +1,6 @@
 package lt.liutikas.dto;
 
-public class SignUpResponseDto {
+public class CreateUserResponseDto {
 
     private Integer userId;
 
