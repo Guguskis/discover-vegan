@@ -3,7 +3,7 @@ package lt.liutikas.repository;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
 import lt.liutikas.dto.PlacesResponse;
-import lt.liutikas.entity.VendorType;
+import lt.liutikas.model.VendorType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

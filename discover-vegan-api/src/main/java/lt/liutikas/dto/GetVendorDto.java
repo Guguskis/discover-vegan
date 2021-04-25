@@ -1,6 +1,6 @@
 package lt.liutikas.dto;
 
-import lt.liutikas.entity.VendorType;
+import lt.liutikas.model.VendorType;
 
 public class GetVendorDto {
 

@@ -2,9 +2,9 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.entity.Product;
-import lt.liutikas.entity.Vendor;
-import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
 import org.springframework.stereotype.Component;
 
 @Component

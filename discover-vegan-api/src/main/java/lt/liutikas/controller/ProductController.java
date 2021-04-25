@@ -2,7 +2,7 @@ package lt.liutikas.controller;
 
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductsPageDto;
-import lt.liutikas.entity.Product;
+import lt.liutikas.model.Product;
 import lt.liutikas.service.ProductService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;

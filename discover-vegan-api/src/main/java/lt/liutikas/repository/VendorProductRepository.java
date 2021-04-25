@@ -1,7 +1,7 @@
 package lt.liutikas.repository;
 
-import lt.liutikas.entity.Vendor;
-import lt.liutikas.entity.VendorProduct;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

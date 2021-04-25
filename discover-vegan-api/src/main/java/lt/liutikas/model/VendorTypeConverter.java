@@ -1,4 +1,4 @@
-package lt.liutikas.entity;
+package lt.liutikas.model;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

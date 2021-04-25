@@ -1,6 +1,6 @@
 package lt.liutikas.repository;
 
-import lt.liutikas.entity.Product;
+import lt.liutikas.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

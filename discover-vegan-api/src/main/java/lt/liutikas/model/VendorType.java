@@ -1,4 +1,4 @@
-package lt.liutikas.entity;
+package lt.liutikas.model;
 
 public enum VendorType {
     RESTAURANT("Restaurant"), STORE("Store");

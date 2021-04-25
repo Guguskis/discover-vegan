@@ -3,8 +3,8 @@ package lt.liutikas.assembler;
 import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
-import lt.liutikas.entity.Vendor;
-import lt.liutikas.entity.VendorType;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorType;
 import org.springframework.stereotype.Component;
 
 @Component

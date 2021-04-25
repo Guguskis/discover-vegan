@@ -1,7 +1,7 @@
 package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateProductDto;
-import lt.liutikas.entity.Product;
+import lt.liutikas.model.Product;
 import org.springframework.stereotype.Component;
 
 @Component

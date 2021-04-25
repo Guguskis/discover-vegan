@@ -4,7 +4,7 @@ import lt.liutikas.assembler.ProductAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductsPageDto;
-import lt.liutikas.entity.Product;
+import lt.liutikas.model.Product;
 import lt.liutikas.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

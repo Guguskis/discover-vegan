@@ -1,8 +1,8 @@
 package lt.liutikas.controller;
 
 import lt.liutikas.dto.*;
-import lt.liutikas.entity.Vendor;
-import lt.liutikas.entity.VendorType;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorType;
 import lt.liutikas.service.VendorService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;

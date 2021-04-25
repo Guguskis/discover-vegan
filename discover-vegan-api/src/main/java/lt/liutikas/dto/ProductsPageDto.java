@@ -1,6 +1,6 @@
 package lt.liutikas.dto;
 
-import lt.liutikas.entity.Product;
+import lt.liutikas.model.Product;
 
 import java.util.List;
 
