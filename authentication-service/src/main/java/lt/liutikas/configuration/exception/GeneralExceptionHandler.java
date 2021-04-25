@@ -39,6 +39,7 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponse> methodArgumentNotValidException(BadRequestException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorCode(ex.getErrorCode());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 

@@ -66,7 +66,7 @@ public class UserService {
         if (existingUser.isPresent()) {
             String message = String.format("Property already taken {email: '%s'}", createUserRequestDto.getEmail());
             LOG.error(message);
-            throw new BadRequestException(message);
+            throw new BadRequestException(message, "EMAIL_TAKEN");
         }
 
         User user = new User();
