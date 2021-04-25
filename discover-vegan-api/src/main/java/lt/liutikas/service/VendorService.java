@@ -60,7 +60,7 @@ public class VendorService {
                 places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
             }
             if (vendorType == VendorType.RESTAURANT) {
-                places.addAll(placeRepository.getFoodPlaces(location, VendorType.STORE));
+                places.addAll(placeRepository.getFoodPlaces(location, VendorType.RESTAURANT));
             }
         }
 
