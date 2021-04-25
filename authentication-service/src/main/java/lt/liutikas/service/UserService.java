@@ -1,0 +1,64 @@
+package lt.liutikas.service;
+
+import com.google.common.hash.Hashing;
+import lt.liutikas.configuration.exception.BadRequestException;
+import lt.liutikas.dto.LoginRequestDto;
+import lt.liutikas.dto.LoginResponseDto;
+import lt.liutikas.dto.SignUpRequestDto;
+import lt.liutikas.dto.SignUpResponseDto;
+import lt.liutikas.model.User;
+import lt.liutikas.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+public class UserService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+
+        return loginResponseDto;
+    }
+
+    public SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto) {
+
+        Optional<User> existingUser = userRepository.findByEmail(signUpRequestDto.getEmail());
+
+        if (existingUser.isPresent()) {
+            String message = String.format("Property already taken {email: '%s'}", signUpRequestDto.getEmail());
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+
+        User user = new User();
+        user.setEmail(signUpRequestDto.getEmail());
+        user.setPasswordHash(getHash(signUpRequestDto.getPassword()));
+
+        user = userRepository.save(user);
+
+        LOG.info(String.format("New user signed up {userId: %d}", user.getUserId()));
+
+        SignUpResponseDto signUpResponseDto = new SignUpResponseDto();
+        signUpResponseDto.setUserId(user.getUserId());
+
+        return signUpResponseDto;
+    }
+
+    private String getHash(String password) {
+        return Hashing.sha256()
+                .hashUnencodedChars(password)
+                .toString();
+    }
+
+}

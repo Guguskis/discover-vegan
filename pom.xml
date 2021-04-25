@@ -20,6 +20,7 @@
     <modules>
         <module>file-service</module>
         <module>discover-vegan-api</module>
+        <module>authentication-service</module>
     </modules>
 
     <properties>
@@ -44,6 +45,7 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <mssql-jdbc.version>9.2.1.jre11</mssql-jdbc.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
+        <guava.version>28.1-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -132,6 +134,11 @@
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
                 <version>${mssql-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <!--TESTING DEPENDENCIES-->
             <dependency>

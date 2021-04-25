@@ -1,0 +1,24 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/authentication-service;INIT=CREATE SCHEMA IF NOT EXISTS AUTHENTICATION_SERVICE
+    driverClassName: org.h2.Driver
+    username: admin
+  #    url: jdbc:sqlserver://localhost:9001
+  #    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  h2:
+    console:
+      enabled: true
+      path: /database
+      settings:
+        web-allow-others: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    #    database-platform: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: update
+web:
+  access-control-allow-origin: "*"
+  access-control-allow-headers: "*"
+  access-control-allow-methods: "OPTIONS, POST, GET, PATCH, DELETE"
