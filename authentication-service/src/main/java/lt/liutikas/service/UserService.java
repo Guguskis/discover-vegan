@@ -2,6 +2,7 @@ package lt.liutikas.service;
 
 import com.google.common.hash.Hashing;
 import lt.liutikas.configuration.exception.BadRequestException;
+import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.LoginRequestDto;
 import lt.liutikas.dto.LoginResponseDto;
 import lt.liutikas.dto.SignUpRequestDto;
@@ -26,9 +27,31 @@ public class UserService {
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDto.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            String message = String.format("User not found {email: '%s'}", loginRequestDto.getEmail());
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        User user = optionalUser.get();
+        if (!passwordsMatch(loginRequestDto, user)) {
+            String message = "Passwords don't match";
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
+        loginResponseDto.setToken("ASD");
+
         return loginResponseDto;
+    }
+
+    private boolean passwordsMatch(LoginRequestDto loginRequestDto, User user) {
+        return user.getPasswordHash().equals(getHash(loginRequestDto.getPassword()));
     }
 
     public SignUpResponseDto signUp(SignUpRequestDto signUpRequestDto) {
