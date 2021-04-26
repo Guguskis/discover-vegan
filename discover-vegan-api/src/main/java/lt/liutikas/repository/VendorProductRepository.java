@@ -1,5 +1,6 @@
 package lt.liutikas.repository;
 
+import lt.liutikas.model.Product;
 import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorProduct;
 import org.springframework.data.domain.Page;
@@ -12,4 +13,6 @@ public interface VendorProductRepository extends JpaRepository<VendorProduct, Lo
 
 
     Page<VendorProduct> findAllByVendor(Vendor vendor, Pageable pageable);
+
+    Page<VendorProduct> findAllByProduct(Product product, Pageable pageable);
 }

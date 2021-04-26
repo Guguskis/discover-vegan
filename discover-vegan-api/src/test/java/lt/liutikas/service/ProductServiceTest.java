@@ -1,11 +1,13 @@
 package lt.liutikas.service;
 
 import lt.liutikas.assembler.ProductAssembler;
+import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.VendorProductRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +31,14 @@ public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private VendorProductRepository vendorProductRepository;
 
     private ProductService productService;
 
     @Before
     public void setUp() {
-        productService = new ProductService(new ProductAssembler(), productRepository);
+        productService = new ProductService(new ProductAssembler(), productRepository, vendorProductRepository, new ProductVendorAssembler());
     }
 
     @Test

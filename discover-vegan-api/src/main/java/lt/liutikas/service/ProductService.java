@@ -1,17 +1,28 @@
 package lt.liutikas.service;
 
 import lt.liutikas.assembler.ProductAssembler;
+import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
+import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateProductDto;
+import lt.liutikas.dto.ProductVendorPage;
 import lt.liutikas.dto.ProductsPageDto;
+import lt.liutikas.dto.VendorByProductDto;
 import lt.liutikas.model.Product;
+import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.VendorProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -20,10 +31,15 @@ public class ProductService {
 
     private final ProductAssembler productAssembler;
     private final ProductRepository productRepository;
+    private final VendorProductRepository vendorProductRepository;
+    private final ProductVendorAssembler productVendorAssembler;
 
-    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository) {
+
+    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, VendorProductRepository vendorProductRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
         this.productRepository = productRepository;
+        this.vendorProductRepository = vendorProductRepository;
+        this.productVendorAssembler = productVendorAssembler;
     }
 
     public ProductsPageDto getProducts(Pageable pageable, String query) {
@@ -60,5 +76,32 @@ public class ProductService {
                 product.getProducer()));
 
         return product;
+    }
+
+    public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, Integer productId) {
+
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (product.isEmpty()) {
+            String message = String.format("Product not found {productId: %d}", productId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByProduct(product.get(), pageable);
+        Pageable nextPageable = vendorProductPage.nextPageable();
+
+        List<VendorByProductDto> vendorByProductDtos = vendorProductPage.stream()
+                .map(productVendorAssembler::assemble)
+                .collect(Collectors.toList());
+
+        ProductVendorPage productVendorPage = new ProductVendorPage();
+        productVendorPage.setDetails(vendorByProductDtos);
+
+        if (nextPageable.isPaged()) {
+            productVendorPage.setNextPageToken(nextPageable.getPageNumber());
+        }
+
+        return productVendorPage;
     }
 }
