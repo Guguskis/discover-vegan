@@ -27,9 +27,9 @@ public class ProductService {
     }
 
     public ProductsPageDto getProducts(Pageable pageable, String query) {
-        query = "%" + query + "%";
+        String formattedQuery = "%" + query + "%";
 
-        Page<Product> productsPage = productRepository.findByNameLikeOrProducerLikeIgnoreCaseOrderByNameAsc(pageable, query, query);
+        Page<Product> productsPage = productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(pageable, formattedQuery);
         Pageable nextPageable = productsPage.nextPageable();
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
@@ -38,7 +38,7 @@ public class ProductService {
             productsPageDto.setNextPageToken(nextPageable.getPageNumber());
         }
 
-        LOG.info(String.format("Returned products {pageToken: %d, pageSize: %d}", pageable.getPageNumber(), pageable.getPageSize()));
+        LOG.info(String.format("Returned products {query: '%s', pageToken: %d, pageSize: %d}", query, pageable.getPageNumber(), pageable.getPageSize()));
 
         return productsPageDto;
     }

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    Page<Product> findByNameLikeOrProducerLikeIgnoreCaseOrderByNameAsc(Pageable pageable, String name, String query);
+    Page<Product> findByNameLikeIgnoreCaseOrderByNameAsc(Pageable pageable, String name);
 }
