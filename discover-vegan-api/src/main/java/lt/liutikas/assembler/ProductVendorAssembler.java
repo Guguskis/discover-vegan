@@ -25,6 +25,7 @@ public class ProductVendorAssembler {
 
     private VendorDto assembleVendorDto(Vendor vendor) {
         VendorDto vendorDto = new VendorDto();
+        vendorDto.setVendorId(vendor.getVendorId());
         vendorDto.setName(vendor.getName());
         vendorDto.setAddress(vendor.getAddress());
         vendorDto.setType(vendor.getVendorType());

@@ -4,11 +4,20 @@ import lt.liutikas.model.VendorType;
 
 public class VendorDto {
 
+    private Integer vendorId;
     private String name;
     private Double latitude;
     private Double longitude;
     private VendorType type;
     private String address;
+
+    public Integer getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Integer vendorId) {
+        this.vendorId = vendorId;
+    }
 
     public String getName() {
         return name;
