@@ -124,20 +124,24 @@ public class VendorService {
     public VendorProductDto createProduct(Integer vendorId, CreateVendorProductDto createVendorProductDto) {
 
         Vendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(createVendorProductDto.getProductId());
 
-        Optional<Product> product = productRepository.findById(createVendorProductDto.getProductId());
-
-        if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", createVendorProductDto.getProductId());
-            LOG.error(message);
-            throw new NotFoundException(message);
-        }
-
-        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor, product.get());
+        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor, product);
 
         vendorProduct = vendorProductRepository.save(vendorProduct);
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
+    }
+
+    private Product assertProductFound(Integer productId) {
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (product.isEmpty()) {
+            String message = String.format("Product not found {productId: %d}", productId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+        return product.get();
     }
 
     private Vendor assertVendorFound(Integer vendorId) {
