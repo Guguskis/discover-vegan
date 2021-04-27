@@ -46,7 +46,7 @@ public class VendorService {
         this.placeRepository = placeRepository;
     }
 
-    public List<Vendor> getVendors(GetVendorDto getVendorDto) {
+    public List<VendorDto> getVendors(GetVendorDto getVendorDto) {
         Location location = getVendorDto.getLocation();
         VendorType vendorType = getVendorDto.getType();
 
@@ -73,10 +73,14 @@ public class VendorService {
 
         vendors.addAll(newVendors);
 
+        List<VendorDto> vendorDtos = vendors.stream()
+                .map(vendorAssembler::assembleVendor)
+                .collect(Collectors.toList());
+
         LOG.info(String.format("Returned vendors for location {latitude: %f, longitude: %f}",
                 location.getLat(), location.getLng()));
 
-        return vendors;
+        return vendorDtos;
     }
 
     private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {

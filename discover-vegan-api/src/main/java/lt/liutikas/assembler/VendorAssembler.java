@@ -3,6 +3,7 @@ package lt.liutikas.assembler;
 import lt.liutikas.dto.CreateVendorDto;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
+import lt.liutikas.dto.VendorDto;
 import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorType;
 import org.springframework.stereotype.Component;
@@ -36,4 +37,17 @@ public class VendorAssembler {
         return vendor;
     }
 
+    public VendorDto assembleVendor(Vendor vendor) {
+        VendorDto vendorDto = new VendorDto();
+
+        vendorDto.setVendorId(vendor.getVendorId());
+        vendorDto.setName(vendor.getName());
+        vendorDto.setLatitude(vendor.getLatitude());
+        vendorDto.setLongitude(vendor.getLongitude());
+        vendorDto.setAddress(vendor.getAddress());
+        vendorDto.setVendorType(vendor.getVendorType());
+        vendorDto.setProductCount(vendor.getVendorProducts().size());
+
+        return vendorDto;
+    }
 }

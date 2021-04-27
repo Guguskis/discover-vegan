@@ -1,6 +1,7 @@
 package lt.liutikas.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(schema = "DISCOVER_VEGAN_API")
@@ -21,6 +22,9 @@ public class Vendor {
     private String imageUrl;
     @Column(nullable = false)
     private VendorType vendorType;
+    @OneToMany
+    @JoinColumn(name = "VENDOR_ID")
+    private List<VendorProduct> vendorProducts;
 
     public Integer getVendorId() {
         return vendorId;
@@ -84,5 +88,13 @@ public class Vendor {
 
     public void setVendorType(VendorType vendorType) {
         this.vendorType = vendorType;
+    }
+
+    public List<VendorProduct> getVendorProducts() {
+        return vendorProducts;
+    }
+
+    public void setVendorProducts(List<VendorProduct> vendorProducts) {
+        this.vendorProducts = vendorProducts;
     }
 }

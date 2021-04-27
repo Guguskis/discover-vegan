@@ -28,7 +28,7 @@ public class ProductVendorAssembler {
         vendorDto.setVendorId(vendor.getVendorId());
         vendorDto.setName(vendor.getName());
         vendorDto.setAddress(vendor.getAddress());
-        vendorDto.setType(vendor.getVendorType());
+        vendorDto.setVendorType(vendor.getVendorType());
         vendorDto.setLatitude(vendor.getLatitude());
         vendorDto.setLongitude(vendor.getLongitude());
         return vendorDto;

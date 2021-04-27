@@ -8,8 +8,9 @@ public class VendorDto {
     private String name;
     private Double latitude;
     private Double longitude;
-    private VendorType type;
+    private VendorType vendorType;
     private String address;
+    private Integer productCount;
 
     public Integer getVendorId() {
         return vendorId;
@@ -43,12 +44,12 @@ public class VendorDto {
         this.longitude = longitude;
     }
 
-    public VendorType getType() {
-        return type;
+    public VendorType getVendorType() {
+        return vendorType;
     }
 
-    public void setType(VendorType type) {
-        this.type = type;
+    public void setVendorType(VendorType vendorType) {
+        this.vendorType = vendorType;
     }
 
     public String getAddress() {
@@ -57,5 +58,13 @@ public class VendorDto {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
     }
 }
