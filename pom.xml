@@ -13,7 +13,7 @@
 
     <groupId>lt.liutikas</groupId>
     <artifactId>discover-vegan</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>discover-vegan</name>
     <description>Find cheapest vegan products and services fast!</description>
 
