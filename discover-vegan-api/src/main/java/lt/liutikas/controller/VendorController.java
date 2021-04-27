@@ -48,4 +48,12 @@ public class VendorController {
                                                           @RequestBody @Valid CreateVendorProductDto createVendorProductDto) {
         return ResponseEntity.ok(vendorService.createProduct(vendorId, createVendorProductDto));
     }
+
+    @PatchMapping("/{vendorId}/product/{productId}")
+    public ResponseEntity<VendorProductDto> patchProduct(@PathVariable Integer vendorId,
+                                                         @PathVariable Integer productId,
+                                                         @RequestBody @Valid PatchVendorProductDto patchVendorProductDto) {
+        return ResponseEntity.ok(vendorService.patchProduct(vendorId, productId, patchVendorProductDto));
+    }
+
 }

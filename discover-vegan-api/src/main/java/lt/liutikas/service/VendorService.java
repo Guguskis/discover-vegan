@@ -144,6 +144,38 @@ public class VendorService {
         return product.get();
     }
 
+    public VendorProductDto patchProduct(Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
+
+        Vendor vendor = assertVendorFound(vendorId);
+        assertProductFound(productId);
+
+        List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor);
+
+        Optional<VendorProduct> vendorProductOptional = vendorProducts.stream().filter(vendorProductT -> vendorProductT
+                .getProduct()
+                .getProductId()
+                .equals(productId))
+                .findFirst();
+
+        if (vendorProductOptional.isEmpty()) {
+            String message = String.format("Vendor product not found {vendorId: %d, productId: %d}", vendorId, productId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        VendorProduct vendorProduct = vendorProductOptional.get();
+
+        if (patchVendorProductDto.getPrice() != null) {
+            vendorProduct.setPrice(patchVendorProductDto.getPrice());
+        }
+
+        vendorProduct = vendorProductRepository.save(vendorProduct);
+
+        LOG.info(String.format("Patched vendor product {vendorId: %d, productId: %d}", vendorId, productId));
+
+        return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
+    }
+
     private Vendor assertVendorFound(Integer vendorId) {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
