@@ -101,16 +101,9 @@ public class VendorService {
 
     public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
 
-        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+        Vendor vendor = assertVendorFound(vendorId);
 
-        if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
-            LOG.error(message);
-            throw new NotFoundException(message);
-        }
-
-
-        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor.get(), pageRequest);
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor, pageRequest);
         Pageable nextVendorProductPage = vendorProductPage.nextPageable();
         List<VendorProductDto> products = vendorProductPage.get()
                 .map(vendorProductAssembler::assembleVendorProductDto)
@@ -130,13 +123,7 @@ public class VendorService {
 
     public VendorProductDto createProduct(Integer vendorId, CreateVendorProductDto createVendorProductDto) {
 
-        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
-
-        if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
-            LOG.error(message);
-            throw new NotFoundException(message);
-        }
+        Vendor vendor = assertVendorFound(vendorId);
 
         Optional<Product> product = productRepository.findById(createVendorProductDto.getProductId());
 
@@ -146,11 +133,22 @@ public class VendorService {
             throw new NotFoundException(message);
         }
 
-        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor.get(), product.get());
+        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor, product.get());
 
         vendorProduct = vendorProductRepository.save(vendorProduct);
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
+    private Vendor assertVendorFound(Integer vendorId) {
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+
+        if (vendor.isEmpty()) {
+            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            LOG.error(message);
+            throw new NotFoundException(message);
+        }
+
+        return vendor.get();
+    }
 }
