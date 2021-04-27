@@ -31,7 +31,7 @@ public class UserService {
 
     public GetTokenResponseDto getToken(GetTokenRequestDto getTokenRequestDto) {
 
-        Optional<User> optionalUser = userRepository.findByEmail(getTokenRequestDto.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(getTokenRequestDto.getEmail());
 
         if (optionalUser.isEmpty()) {
             String message = String.format("User not found {email: '%s'}", getTokenRequestDto.getEmail());
@@ -61,7 +61,7 @@ public class UserService {
 
     public CreateUserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
 
-        Optional<User> existingUser = userRepository.findByEmail(createUserRequestDto.getEmail());
+        Optional<User> existingUser = userRepository.findByEmailIgnoreCase(createUserRequestDto.getEmail());
 
         if (existingUser.isPresent()) {
             String message = String.format("Property already taken {email: '%s'}", createUserRequestDto.getEmail());
