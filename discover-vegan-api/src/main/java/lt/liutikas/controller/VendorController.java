@@ -36,11 +36,6 @@ public class VendorController {
         return ResponseEntity.ok(vendorService.getVendors(getVendorDto));
     }
 
-    @PostMapping // todo for development, remove later
-    public ResponseEntity<Vendor> createVendor(@Valid CreateVendorDto createVendorDto) {
-        return ResponseEntity.ok(vendorService.createVendor(createVendorDto));
-    }
-
     @GetMapping("/{vendorId}/product")
     public ResponseEntity<VendorProductPageDto> getProducts(@PathVariable Integer vendorId,
                                                             @Min(0) @RequestParam(value = "pageToken", defaultValue = "0") Integer pageToken,

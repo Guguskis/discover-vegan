@@ -124,14 +124,6 @@ public class VendorService {
         return vendorProductPageDto;
     }
 
-    public Vendor createVendor(CreateVendorDto createVendorDto) {
-        Vendor vendor = vendorAssembler.assembleVendor(createVendorDto);
-
-        vendor = vendorRepository.save(vendor);
-
-        return vendor;
-    }
-
     public VendorProductDto createProduct(Integer vendorId, CreateVendorProductDto createVendorProductDto) {
 
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
