@@ -4,6 +4,7 @@ import lt.liutikas.assembler.ProductAssembler;
 import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
+import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.repository.ProductRepository;
@@ -99,7 +100,7 @@ public class ProductServiceTest {
 
         ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
         assertEquals(1, productsPageDto.getProducts().size());
-        Product returnedProduct = productsPageDto.getProducts().get(0);
+        ProductDto returnedProduct = productsPageDto.getProducts().get(0);
 
         assertEquals(product.getProductId(), returnedProduct.getProductId());
         assertEquals(product.getName(), returnedProduct.getName());

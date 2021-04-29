@@ -1,18 +1,16 @@
 package lt.liutikas.dto;
 
-import lt.liutikas.model.Product;
-
 import java.util.List;
 
 public class ProductsPageDto extends PaginationResponse {
 
-    private List<Product> products;
+    private List<ProductDto> products;
 
-    public List<Product> getProducts() {
+    public List<ProductDto> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(List<ProductDto> products) {
         this.products = products;
     }
 }

@@ -1,6 +1,7 @@
 package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateProductDto;
+import lt.liutikas.dto.ProductDto;
 import lt.liutikas.model.Product;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,17 @@ public class ProductAssembler {
         product.setProducer(createProductDto.getProducer());
 
         return product;
+    }
+
+    public ProductDto assembleProduct(Product product) {
+        ProductDto productDto = new ProductDto();
+
+        productDto.setProductId(product.getProductId());
+        productDto.setName(product.getName());
+        productDto.setImageUrl(product.getImageUrl());
+        productDto.setProducer(product.getProducer());
+
+        return productDto;
     }
 
 }

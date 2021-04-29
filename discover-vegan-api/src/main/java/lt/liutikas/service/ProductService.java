@@ -4,10 +4,7 @@ import lt.liutikas.assembler.ProductAssembler;
 import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
-import lt.liutikas.dto.CreateProductDto;
-import lt.liutikas.dto.ProductVendorPage;
-import lt.liutikas.dto.ProductsPageDto;
-import lt.liutikas.dto.VendorByProductDto;
+import lt.liutikas.dto.*;
 import lt.liutikas.model.Product;
 import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.ProductRepository;
@@ -49,7 +46,17 @@ public class ProductService {
         Pageable nextPageable = productsPage.nextPageable();
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
-        productsPageDto.setProducts(productsPage.getContent());
+
+        List<ProductDto> productDtos = productsPage.getContent()
+                .stream()
+                .filter(product -> {
+                    List<VendorProduct> vendorProducts = product.getVendorProducts();
+                    return vendorProducts != null && vendorProducts.size() > 0;
+                })
+                .map(productAssembler::assembleProduct)
+                .collect(Collectors.toList());
+
+        productsPageDto.setProducts(productDtos);
         if (nextPageable.isPaged()) {
             productsPageDto.setNextPageToken(nextPageable.getPageNumber());
         }
