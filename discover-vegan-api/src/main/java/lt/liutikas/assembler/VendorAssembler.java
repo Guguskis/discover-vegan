@@ -46,7 +46,9 @@ public class VendorAssembler {
         vendorDto.setLongitude(vendor.getLongitude());
         vendorDto.setAddress(vendor.getAddress());
         vendorDto.setVendorType(vendor.getVendorType());
-        vendorDto.setProductCount(vendor.getVendorProducts().size());
+        if (vendor.getVendorProducts() != null) {
+            vendorDto.setProductCount(vendor.getVendorProducts().size());
+        }
 
         return vendorDto;
     }
