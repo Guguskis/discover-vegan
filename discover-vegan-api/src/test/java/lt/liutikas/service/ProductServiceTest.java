@@ -2,6 +2,7 @@ package lt.liutikas.service;
 
 import lt.liutikas.assembler.ProductAssembler;
 import lt.liutikas.assembler.ProductVendorAssembler;
+import lt.liutikas.assembler.VendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
@@ -39,7 +40,7 @@ public class ProductServiceTest {
 
     @Before
     public void setUp() {
-        productService = new ProductService(new ProductAssembler(), productRepository, vendorProductRepository, new ProductVendorAssembler());
+        productService = new ProductService(new ProductAssembler(), productRepository, vendorProductRepository, new ProductVendorAssembler(new VendorAssembler()));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package lt.liutikas.assembler;
 
 import lt.liutikas.dto.VendorByProductDto;
-import lt.liutikas.dto.VendorDto;
 import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.model.Vendor;
@@ -11,6 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductVendorAssembler {
 
+    private final VendorAssembler vendorAssembler;
+
+    public ProductVendorAssembler(VendorAssembler vendorAssembler) {
+        this.vendorAssembler = vendorAssembler;
+    }
+
     public VendorByProductDto assemble(VendorProduct vendorProduct) {
 
         VendorByProductDto vendorByProductDto = new VendorByProductDto();
@@ -18,20 +23,9 @@ public class ProductVendorAssembler {
         Vendor vendor = vendorProduct.getVendor();
 
         vendorByProductDto.setProduct(assembleVendorProductDto(vendorProduct, product));
-        vendorByProductDto.setVendor(assembleVendorDto(vendor));
+        vendorByProductDto.setVendor(vendorAssembler.assembleVendor(vendor));
 
         return vendorByProductDto;
-    }
-
-    private VendorDto assembleVendorDto(Vendor vendor) {
-        VendorDto vendorDto = new VendorDto();
-        vendorDto.setVendorId(vendor.getVendorId());
-        vendorDto.setName(vendor.getName());
-        vendorDto.setAddress(vendor.getAddress());
-        vendorDto.setVendorType(vendor.getVendorType());
-        vendorDto.setLatitude(vendor.getLatitude());
-        vendorDto.setLongitude(vendor.getLongitude());
-        return vendorDto;
     }
 
     private VendorProductDto assembleVendorProductDto(VendorProduct vendorProduct, Product product) {
