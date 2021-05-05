@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(schema = "DISCOVER_VEGAN_API")
+@Table(schema = "SEARCH_SERVICE")
 public class Vendor {
 
     @Id

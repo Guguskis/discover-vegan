@@ -3,7 +3,7 @@ package lt.liutikas.model;
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "DISCOVER_VEGAN_API")
+@Table(schema = "SEARCH_SERVICE")
 public class VendorProduct {
 
     @Id
