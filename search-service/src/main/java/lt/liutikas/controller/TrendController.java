@@ -5,6 +5,7 @@ import lt.liutikas.dto.OrderByDirection;
 import lt.liutikas.dto.TrendOrderBy;
 import lt.liutikas.dto.TrendPageDto;
 import lt.liutikas.service.TrendService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,8 +34,7 @@ public class TrendController {
             @RequestParam(defaultValue = "today") LocalDate toDate
     ) {
         GetProductsTrendRequest request = new GetProductsTrendRequest();
-        request.setPageToken(pageToken);
-        request.setPageSize(pageSize);
+        request.setPageable(PageRequest.of(pageToken, pageSize));
         request.setOrderBy(orderBy);
         request.setOrderByDirection(orderByDirection);
         request.setFromDate(fromDate);
@@ -42,6 +42,5 @@ public class TrendController {
 
         return trendService.getProductTrends(request);
     }
-
 
 }

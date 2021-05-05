@@ -6,8 +6,10 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.Product;
+import lt.liutikas.model.SearchRequest;
 import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.SearchRequestRepository;
 import lt.liutikas.repository.VendorProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +30,15 @@ public class ProductService {
 
     private final ProductAssembler productAssembler;
     private final ProductRepository productRepository;
+    private final SearchRequestRepository searchRequestRepository;
     private final VendorProductRepository vendorProductRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, VendorProductRepository vendorProductRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, SearchRequestRepository searchRequestRepository, VendorProductRepository vendorProductRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
         this.productRepository = productRepository;
+        this.searchRequestRepository = searchRequestRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
@@ -109,6 +113,14 @@ public class ProductService {
             productVendorPage.setNextPageToken(nextPageable.getPageNumber());
         }
 
+        saveSearchRequest(product.get());
+
         return productVendorPage;
+    }
+
+    private void saveSearchRequest(Product product) {
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setProduct(product);
+        searchRequestRepository.save(searchRequest);
     }
 }

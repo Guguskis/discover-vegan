@@ -9,6 +9,7 @@ import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.SearchRequestRepository;
 import lt.liutikas.repository.VendorProductRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,12 +36,14 @@ public class ProductServiceTest {
     private ProductRepository productRepository;
     @Mock
     private VendorProductRepository vendorProductRepository;
+    @Mock
+    private SearchRequestRepository searchRequestRepository;
 
     private ProductService productService;
 
     @Before
     public void setUp() {
-        productService = new ProductService(new ProductAssembler(), productRepository, vendorProductRepository, new ProductVendorAssembler(new VendorAssembler()));
+        productService = new ProductService(new ProductAssembler(), productRepository, searchRequestRepository, vendorProductRepository, new ProductVendorAssembler(new VendorAssembler()));
     }
 
     @Test

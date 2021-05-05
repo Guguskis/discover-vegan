@@ -15,7 +15,7 @@ public class Product {
     @Column(nullable = false)
     private String imageUrl;
     private String producer;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")
     private List<VendorProduct> vendorProducts;
 
