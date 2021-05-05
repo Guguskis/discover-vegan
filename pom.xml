@@ -19,7 +19,7 @@
 
     <modules>
         <module>file-service</module>
-        <module>discover-vegan-api</module>
+        <module>search-service</module>
         <module>authentication-service</module>
     </modules>
 

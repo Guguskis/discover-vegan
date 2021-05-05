@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>discover-vegan-api</artifactId>
+    <artifactId>search-service</artifactId>
 
     <dependencies>
         <dependency>
