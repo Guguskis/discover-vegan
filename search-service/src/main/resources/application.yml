@@ -19,6 +19,9 @@ spring:
     hibernate:
       ddl-auto: update
 #      ddl-auto: create
+#  mvc:
+#    format:
+#      date: iso
 web:
   access-control-allow-origin: "*"
   access-control-allow-headers: "*"
