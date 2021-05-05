@@ -14,7 +14,6 @@ public class SearchRequest {
     private Long searchRequestId;
     @CreationTimestamp
     private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;

@@ -32,7 +32,11 @@ public class TrendService {
         Pageable pageable = PageRequest.of(request.getPageToken(), request.getPageSize(), sort);
 
 
-        Page<ProductsBySearchCount> searchRequestsPage = searchRequestRepository.findSearchRequestCount(pageable);
+        Page<ProductsBySearchCount> searchRequestsPage = searchRequestRepository.findSearchRequestCount(
+                pageable,
+                request.getFromDate().atStartOfDay(),
+                request.getToDate().plusDays(1).atStartOfDay()
+        );
         Pageable nextPageable = searchRequestsPage.nextPageable();
 
         List<TrendDto> trendDtos = searchRequestsPage.getContent()
