@@ -2,11 +2,18 @@ package lt.liutikas.service;
 
 import lt.liutikas.assembler.SearchRequestAssembler;
 import lt.liutikas.dto.GetProductsTrendRequest;
-import lt.liutikas.dto.SearchRequestGroupedByProduct;
+import lt.liutikas.dto.ProductsBySearchCount;
+import lt.liutikas.dto.TrendDto;
 import lt.liutikas.dto.TrendPageDto;
 import lt.liutikas.repository.SearchRequestRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TrendService {
@@ -21,13 +28,26 @@ public class TrendService {
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
 
-        Page<SearchRequestGroupedByProduct> searchRequestsPage = searchRequestRepository.findSearchRequestCount(request.getPageable());
-//        List<SearchRequestGroupedByProduct> searchRequestsPage = searchRequestRepository.findSearchRequestCount();
+        Sort sort = Sort.by(request.getSortDirection(), "searchCount");
+        Pageable pageable = PageRequest.of(request.getPageToken(), request.getPageSize(), sort);
 
+
+        Page<ProductsBySearchCount> searchRequestsPage = searchRequestRepository.findSearchRequestCount(pageable);
+        Pageable nextPageable = searchRequestsPage.nextPageable();
+
+        List<TrendDto> trendDtos = searchRequestsPage.getContent()
+                .stream()
+                .map(searchRequestAssembler::assemble)
+                .collect(Collectors.toList());
 
         TrendPageDto trendPageDto = new TrendPageDto();
+        trendPageDto.setTrends(trendDtos);
 
-        return null;
+        if (nextPageable.isPaged()) {
+            trendPageDto.setNextPageToken(nextPageable.getPageNumber());
+        }
+
+        return trendPageDto;
     }
 
 }

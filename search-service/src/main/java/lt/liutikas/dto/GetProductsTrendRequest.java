@@ -1,39 +1,39 @@
 package lt.liutikas.dto;
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 
 import java.time.LocalDate;
 
 public class GetProductsTrendRequest {
 
-    private Pageable pageable;
-    private TrendOrderBy orderBy;
-    private OrderByDirection orderByDirection;
+    private Integer pageToken;
+    private Integer pageSize;
+    private Direction sortDirection;
     private LocalDate fromDate;
     private LocalDate toDate;
 
-    public Pageable getPageable() {
-        return pageable;
+    public Integer getPageToken() {
+        return pageToken;
     }
 
-    public void setPageable(Pageable pageable) {
-        this.pageable = pageable;
+    public void setPageToken(Integer pageToken) {
+        this.pageToken = pageToken;
     }
 
-    public TrendOrderBy getOrderBy() {
-        return orderBy;
+    public Integer getPageSize() {
+        return pageSize;
     }
 
-    public void setOrderBy(TrendOrderBy orderBy) {
-        this.orderBy = orderBy;
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 
-    public OrderByDirection getOrderByDirection() {
-        return orderByDirection;
+    public Direction getSortDirection() {
+        return sortDirection;
     }
 
-    public void setOrderByDirection(OrderByDirection orderByDirection) {
-        this.orderByDirection = orderByDirection;
+    public void setSortDirection(Direction sortDirection) {
+        this.sortDirection = sortDirection;
     }
 
     public LocalDate getFromDate() {

@@ -1,6 +1,6 @@
 package lt.liutikas.repository;
 
-import lt.liutikas.dto.SearchRequestGroupedByProduct;
+import lt.liutikas.dto.ProductsBySearchCount;
 import lt.liutikas.model.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,14 +12,10 @@ import org.springframework.stereotype.Repository;
 public interface SearchRequestRepository extends JpaRepository<SearchRequest, Long> {
 
     @Query(
-            value = "SELECT new lt.liutikas.dto.SearchRequestGroupedByProduct(sr.product, COUNT(sr))" +
-                    "FROM SearchRequest sr " +
-                    "GROUP BY sr.product",
-            countQuery = "SELECT COUNT(sr)" +
+            value = "SELECT sr.product as product, COUNT(sr) as searchCount " +
                     "FROM SearchRequest sr " +
                     "GROUP BY sr.product"
     )
-//    List<SearchRequestGroupedByProduct> findSearchRequestCount();
-    Page<SearchRequestGroupedByProduct> findSearchRequestCount(Pageable pageable);
+    Page<ProductsBySearchCount> findSearchRequestCount(Pageable pageable);
 
 }
