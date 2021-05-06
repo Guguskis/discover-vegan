@@ -1,9 +1,11 @@
-package lt.liutikas.util;
+package lt.liutikas.utility;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import lt.liutikas.configuration.exception.AuthorizationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,12 +23,22 @@ public class TokenUtil {
                 .sign(getAlgorithm());
     }
 
-    public boolean tokenVerified(String token) throws JWTVerificationException {
+    public boolean verified(String token) {
+
+        if (StringUtils.isBlank(token)) {
+            throw new AuthorizationException("No authorization token provided");
+        }
+
         JWTVerifier verifier = JWT.require(getAlgorithm())
                 .withIssuer(ISSUER)
                 .build();
 
-        verifier.verify(token);
+        try {
+            verifier.verify(token);
+        } catch (JWTVerificationException e) {
+            throw new AuthorizationException("Authorization token failed verification");
+        }
+
         return true;
     }
 

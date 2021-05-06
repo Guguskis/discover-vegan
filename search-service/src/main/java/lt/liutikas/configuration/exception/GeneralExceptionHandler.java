@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
-
 @ControllerAdvice
 public class GeneralExceptionHandler {
 
@@ -28,18 +27,24 @@ public class GeneralExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(ConstraintViolationException ex) {
+    public ResponseEntity<ErrorResponse> constraintViolationException(ConstraintViolationException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorMessage(ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(BadRequestException ex) {
+    public ResponseEntity<ErrorResponse> badRequestException(BadRequestException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorMessage(ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<ErrorResponse> authorizationException(AuthorizationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     private String processFieldErrorsMessage(MethodArgumentNotValidException ex) {

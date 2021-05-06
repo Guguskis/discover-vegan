@@ -5,6 +5,7 @@ import lt.liutikas.dto.ProductVendorPage;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.service.ProductService;
+import lt.liutikas.utility.IsAuthorized;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +34,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @IsAuthorized
     public ResponseEntity<Product> createProduct(@Valid @RequestBody CreateProductDto createProductDto) {
         return ResponseEntity.ok(productService.createProduct(createProductDto));
     }
