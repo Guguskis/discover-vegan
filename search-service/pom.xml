@@ -40,6 +40,10 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         <!--TESTING DEPENDENCIES-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

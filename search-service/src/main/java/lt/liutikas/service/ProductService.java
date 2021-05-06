@@ -11,6 +11,7 @@ import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.SearchRequestRepository;
 import lt.liutikas.repository.VendorProductRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -71,6 +72,10 @@ public class ProductService {
     }
 
     public Product createProduct(CreateProductDto createProductDto) {
+        String nameWithAccents = createProductDto.getName();
+        String nameWithoutAccents = StringUtils.stripAccents(nameWithAccents);
+        createProductDto.setName(nameWithoutAccents);
+
         Product product = productAssembler.assembleProduct(createProductDto);
 
         try {
