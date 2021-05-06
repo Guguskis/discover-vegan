@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,8 +79,7 @@ public class TrendService {
 
         Product product = assertProductFound(productId);
 
-        Period difference = Period.between(fromDate, toDate.plusDays(1));
-        int differenceDays = difference.getDays();
+        int differenceDays = (int) ChronoUnit.DAYS.between(fromDate, toDate);
         double differenceInSeconds = differenceDays * 24 * 60 * 60;
         double stepSizeInSeconds = differenceInSeconds / stepCount;
 
