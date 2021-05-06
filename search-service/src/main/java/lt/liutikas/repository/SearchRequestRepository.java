@@ -1,6 +1,7 @@
 package lt.liutikas.repository;
 
 import lt.liutikas.dto.ProductsBySearchCount;
+import lt.liutikas.model.Product;
 import lt.liutikas.model.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface SearchRequestRepository extends JpaRepository<SearchRequest, Long> {
@@ -23,4 +25,5 @@ public interface SearchRequestRepository extends JpaRepository<SearchRequest, Lo
     )
     Page<ProductsBySearchCount> findSearchRequestCount(Pageable pageable, @Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
+    List<SearchRequest> findAllByProductAndCreatedAtBetween(Product product, LocalDateTime localDateTimeStart, LocalDateTime localDateTimeEnd);
 }

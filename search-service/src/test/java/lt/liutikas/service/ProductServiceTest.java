@@ -99,7 +99,7 @@ public class ProductServiceTest {
         }};
 
         List<Product> products = Collections.singletonList(product);
-        when(productRepository.findAll(any(PageRequest.class)))
+        when(productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(any(PageRequest.class), any()))
                 .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
         ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");

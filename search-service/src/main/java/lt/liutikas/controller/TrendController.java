@@ -1,19 +1,21 @@
 package lt.liutikas.controller;
 
 import lt.liutikas.dto.GetProductsTrendRequest;
+import lt.liutikas.dto.SearchRequestsTrend;
 import lt.liutikas.dto.TrendPageDto;
 import lt.liutikas.service.TrendService;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/trend")
+@Validated
 public class TrendController {
 
     private final TrendService trendService;
@@ -38,6 +40,15 @@ public class TrendController {
         request.setToDate(toDate);
 
         return trendService.getProductTrends(request);
+    }
+
+    @GetMapping("/{productId}")
+    public List<SearchRequestsTrend> getProductSearchRequests(
+            @RequestParam LocalDate fromDate,
+            @RequestParam(defaultValue = "today") LocalDate toDate,
+            @RequestParam @Min(0) @Max(50) Integer stepCount,
+            @PathVariable Integer productId) {
+        return trendService.getProductTrends(fromDate, toDate, stepCount, productId);
     }
 
 }
