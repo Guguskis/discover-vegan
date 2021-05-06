@@ -6,6 +6,8 @@ import lt.liutikas.dto.ProductsBySearchCount;
 import lt.liutikas.dto.TrendDto;
 import lt.liutikas.dto.TrendPageDto;
 import lt.liutikas.repository.SearchRequestRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class TrendService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TrendService.class);
 
     private final SearchRequestRepository searchRequestRepository;
     private final SearchRequestAssembler searchRequestAssembler;
@@ -50,6 +54,10 @@ public class TrendService {
         if (nextPageable.isPaged()) {
             trendPageDto.setNextPageToken(nextPageable.getPageNumber());
         }
+
+        LOG.info(String.format("Returned product trends { pageToken: %d, pageSize: %d, fromDate: %s, toDate: %s }",
+                request.getPageToken(), request.getPageSize(), request.getFromDate(), request.getToDate())
+        );
 
         return trendPageDto;
     }
