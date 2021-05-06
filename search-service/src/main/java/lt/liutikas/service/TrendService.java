@@ -55,8 +55,8 @@ public class TrendService {
             trendPageDto.setNextPageToken(nextPageable.getPageNumber());
         }
 
-        LOG.info(String.format("Returned product trends { pageToken: %d, pageSize: %d, fromDate: %s, toDate: %s }",
-                request.getPageToken(), request.getPageSize(), request.getFromDate(), request.getToDate())
+        LOG.info(String.format("Returned product trends { pageToken: %d, pageSize: %d, fromDate: %s, toDate: %s, sortDirection: %s }",
+                request.getPageToken(), request.getPageSize(), request.getFromDate(), request.getToDate(), request.getSortDirection().toString())
         );
 
         return trendPageDto;
