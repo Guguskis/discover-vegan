@@ -1,4 +1,4 @@
-package lt.liutikas.utility;
+package lt.liutikas.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -27,7 +27,6 @@ public class TokenUtil {
                 .build();
 
         verifier.verify(token);
-
         return true;
     }
 
