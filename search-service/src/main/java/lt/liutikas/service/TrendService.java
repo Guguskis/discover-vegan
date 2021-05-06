@@ -101,6 +101,9 @@ public class TrendService {
             searchRequestsTrends.add(searchRequestsTrend);
         }
 
+        LOG.info(String.format("Returned search requests { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+                productId, fromDate, toDate, stepCount));
+
         return searchRequestsTrends;
     }
 
