@@ -8,7 +8,6 @@ public class CreateProductDto {
     private String name;
     @NotBlank
     private String imageUrl;
-    @NotBlank
     private String producer;
 
     public String getName() {
