@@ -54,6 +54,8 @@ public class ReviewService {
 
         review = reviewRepository.save(review);
 
+        LOG.info(String.format("Created review {reviewType: %s, vendorProductId: %d }", createReviewDto.getReviewType(), vendorProduct.getVendorProductId()));
+
         return reviewAssembler.assembleReviewDto(review);
     }
 

@@ -166,6 +166,9 @@ public class TrendService {
             reviewTrends.add(reviewTrend);
         }
 
+        LOG.info(String.format("Returned review trends { vendorProductId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+                vendorProduct.getVendorProductId(), fromDate, toDate, stepCount));
+
         return reviewTrends;
     }
 
