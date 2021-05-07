@@ -1,9 +1,6 @@
 package lt.liutikas.controller;
 
-import lt.liutikas.dto.GetProductsTrendRequest;
-import lt.liutikas.dto.PriceTrend;
-import lt.liutikas.dto.SearchRequestsTrend;
-import lt.liutikas.dto.TrendPageDto;
+import lt.liutikas.dto.*;
 import lt.liutikas.service.TrendService;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.validation.annotation.Validated;
@@ -59,4 +56,13 @@ public class TrendController {
         return trendService.getProductPriceTrends(productId, vendorId);
     }
 
+    @GetMapping("/vendor/{vendorId}/product/{productId}")
+    public List<ReviewTrend> getReviewTrends(
+            @PathVariable Integer productId,
+            @PathVariable Integer vendorId,
+            @RequestParam LocalDate fromDate,
+            @RequestParam(defaultValue = "today") LocalDate toDate,
+            @RequestParam @Min(0) @Max(50) Integer stepCount) {
+        return trendService.getReviewTrends(productId, vendorId, fromDate, toDate, stepCount);
+    }
 }

@@ -4,10 +4,7 @@ import lt.liutikas.assembler.SearchRequestAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
-import lt.liutikas.model.Product;
-import lt.liutikas.model.SearchRequest;
-import lt.liutikas.model.Vendor;
-import lt.liutikas.model.VendorProduct;
+import lt.liutikas.model.*;
 import lt.liutikas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,16 +29,16 @@ public class TrendService {
     private final ProductRepository productRepository;
     private final VendorRepository vendorRepository;
     private final VendorProductRepository vendorProductRepository;
-    private final VendorProductChangeRepository vendorProductChangeRepository;
+    private final ReviewRepository reviewRepository;
 
     private final SearchRequestAssembler searchRequestAssembler;
 
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, VendorProductChangeRepository vendorProductChangeRepository, SearchRequestAssembler searchRequestAssembler) {
+    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler) {
         this.searchRequestRepository = searchRequestRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
         this.vendorProductRepository = vendorProductRepository;
-        this.vendorProductChangeRepository = vendorProductChangeRepository;
+        this.reviewRepository = reviewRepository;
         this.searchRequestAssembler = searchRequestAssembler;
     }
 
@@ -143,6 +137,51 @@ public class TrendService {
         LOG.info(String.format("Returned price trend { productId: %d }", productId));
 
         return priceTrends;
+    }
+
+    public List<ReviewTrend> getReviewTrends(Integer productId, Integer vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
+
+        Vendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(productId);
+
+        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+
+        ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
+
+        double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate.plusDays(1), stepCount);
+
+        for (int i = 0; i < stepCount; i++) {
+            double offsetStartInSeconds = stepSizeInSeconds * i;
+
+            LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
+            LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
+
+            List<Review> reviews = reviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
+
+            Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
+
+            ReviewTrend reviewTrend = new ReviewTrend();
+            reviewTrend.setCounts(reviewTrendCounts);
+            reviewTrend.setDateTime(localDateTimeEnd);
+            reviewTrends.add(reviewTrend);
+        }
+
+        return reviewTrends;
+    }
+
+    private Map<ReviewType, Integer> getReviewTrendCounts(List<Review> reviews) {
+        Map<ReviewType, Integer> reviewTrendCounts = new HashMap<>();
+
+        for (ReviewType reviewType : ReviewType.values()) {
+
+            List<Review> reviewsForType = reviews.stream()
+                    .filter(review -> review.getReviewType().equals(reviewType))
+                    .collect(Collectors.toList());
+
+            reviewTrendCounts.put(reviewType, reviewsForType.size());
+        }
+
+        return reviewTrendCounts;
     }
 
     private Product assertProductFound(Integer productId) {
