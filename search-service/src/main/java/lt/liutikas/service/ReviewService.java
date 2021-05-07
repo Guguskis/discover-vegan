@@ -4,7 +4,10 @@ import lt.liutikas.assembler.ReviewAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateReviewDto;
 import lt.liutikas.dto.ReviewDto;
-import lt.liutikas.model.*;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Review;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.ReviewRepository;
 import lt.liutikas.repository.VendorProductRepository;
@@ -13,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -34,10 +35,6 @@ public class ReviewService {
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.reviewAssembler = reviewAssembler;
-    }
-
-    public List<ReviewType> getTypes() {
-        return Arrays.asList(ReviewType.values().clone());
     }
 
     public ReviewDto createReview(CreateReviewDto createReviewDto, Integer userId) {

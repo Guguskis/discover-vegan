@@ -2,13 +2,10 @@ package lt.liutikas.controller;
 
 import lt.liutikas.dto.CreateReviewDto;
 import lt.liutikas.dto.ReviewDto;
-import lt.liutikas.model.ReviewType;
 import lt.liutikas.service.ReviewService;
 import lt.liutikas.utility.IsAuthorized;
 import lt.liutikas.utility.TokenUtil;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/review")
@@ -20,11 +17,6 @@ public class ReviewController {
     public ReviewController(ReviewService reviewService, TokenUtil tokenUtil) {
         this.reviewService = reviewService;
         this.tokenUtil = tokenUtil;
-    }
-
-    @GetMapping("/types")
-    public List<ReviewType> getReviewTypes() {
-        return reviewService.getTypes();
     }
 
     @PostMapping
