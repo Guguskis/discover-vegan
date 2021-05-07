@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -134,6 +135,10 @@ public class TrendService {
                     return priceTrend;
                 })
                 .collect(Collectors.toList());
+
+        if (priceTrends.size() > 1) {
+            priceTrends.sort(Comparator.comparing(PriceTrend::getDateTime));
+        }
 
         LOG.info(String.format("Returned price trend { productId: %d }", productId));
 
