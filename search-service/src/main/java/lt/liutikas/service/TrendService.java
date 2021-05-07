@@ -139,6 +139,20 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
+        PriceTrend firstPriceTrend = priceTrends.get(0);
+        PriceTrend lastPriceTrend = priceTrends.get(priceTrends.size() - 1);
+
+        PriceTrend dateStartPriceTrend = new PriceTrend();
+        dateStartPriceTrend.setPrice(firstPriceTrend.getPrice());
+        dateStartPriceTrend.setDateTime(localDateTimeStart);
+
+        PriceTrend dateEndPriceTrend = new PriceTrend();
+        dateEndPriceTrend.setPrice(lastPriceTrend.getPrice());
+        dateEndPriceTrend.setDateTime(localDateTimeEnd);
+
+        priceTrends.add(0, dateStartPriceTrend);
+        priceTrends.add(dateEndPriceTrend);
+
         LOG.info(String.format("Returned price trend { productId: %d, fromDate: %s, toDate: %s }",
                 productId, fromDate, toDate));
 
