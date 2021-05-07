@@ -4,10 +4,7 @@ import lt.liutikas.assembler.VendorAssembler;
 import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
-import lt.liutikas.model.Product;
-import lt.liutikas.model.Vendor;
-import lt.liutikas.model.VendorProduct;
-import lt.liutikas.model.VendorType;
+import lt.liutikas.model.*;
 import lt.liutikas.repository.PlaceRepository;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.VendorProductRepository;
@@ -144,7 +141,7 @@ public class VendorService {
         return product.get();
     }
 
-    public VendorProductDto patchProduct(Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
+    public VendorProductDto patchProduct(int userId, Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
 
         Vendor vendor = assertVendorFound(vendorId);
         assertProductFound(productId);
@@ -168,7 +165,12 @@ public class VendorService {
         VendorProduct vendorProduct = vendorProductOptional.get();
 
         if (patchVendorProductDto.getPrice() != null) {
-            vendorProduct.setPrice(patchVendorProductDto.getPrice());
+            VendorProductChange vendorProductChange = new VendorProductChange();
+            vendorProductChange.setPrice(patchVendorProductDto.getPrice());
+            vendorProductChange.setUserId(userId);
+            vendorProduct.getVendorProductChanges().add(vendorProductChange);
+
+            vendorProduct.setPrice(patchVendorProductDto.getPrice()); // todo use changes for price in assembler
         }
 
         vendorProduct = vendorProductRepository.save(vendorProduct);

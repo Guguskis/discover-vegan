@@ -3,6 +3,8 @@ package lt.liutikas.controller;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.VendorType;
 import lt.liutikas.service.VendorService;
+import lt.liutikas.utility.IsAuthorized;
+import lt.liutikas.utility.TokenUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +18,11 @@ import java.util.List;
 public class VendorController {
 
     private final VendorService vendorService;
+    private final TokenUtil tokenUtil;
 
-    public VendorController(VendorService vendorService) {
+    public VendorController(VendorService vendorService, TokenUtil tokenUtil) {
         this.vendorService = vendorService;
+        this.tokenUtil = tokenUtil;
     }
 
     @GetMapping
@@ -50,10 +54,14 @@ public class VendorController {
     }
 
     @PatchMapping("/{vendorId}/product/{productId}")
+    @IsAuthorized
     public ResponseEntity<VendorProductDto> patchProduct(@PathVariable Integer vendorId,
                                                          @PathVariable Integer productId,
-                                                         @RequestBody @Valid PatchVendorProductDto patchVendorProductDto) {
-        return ResponseEntity.ok(vendorService.patchProduct(vendorId, productId, patchVendorProductDto));
+                                                         @RequestBody @Valid PatchVendorProductDto patchVendorProductDto,
+                                                         @RequestHeader("Authorization") String token
+    ) {
+        String userId = tokenUtil.getValue(token, "userId");
+        return ResponseEntity.ok(vendorService.patchProduct(Integer.parseInt(userId), vendorId, productId, patchVendorProductDto));
     }
 
 }

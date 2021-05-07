@@ -1,6 +1,7 @@
 package lt.liutikas.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(schema = "SEARCH_SERVICE")
@@ -17,6 +18,10 @@ public class VendorProduct {
     @ManyToOne
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "VENDOR_PRODUCT_ID")
+    private List<VendorProductChange> vendorProductChanges;
 
     private Float price;
 
@@ -50,5 +55,13 @@ public class VendorProduct {
 
     public void setPrice(Float price) {
         this.price = price;
+    }
+
+    public List<VendorProductChange> getVendorProductChanges() {
+        return vendorProductChanges;
+    }
+
+    public void setVendorProductChanges(List<VendorProductChange> vendorProductChanges) {
+        this.vendorProductChanges = vendorProductChanges;
     }
 }
