@@ -1,6 +1,7 @@
 package lt.liutikas.controller;
 
 import lt.liutikas.dto.GetProductsTrendRequest;
+import lt.liutikas.dto.PriceTrend;
 import lt.liutikas.dto.SearchRequestsTrend;
 import lt.liutikas.dto.TrendPageDto;
 import lt.liutikas.service.TrendService;
@@ -49,6 +50,16 @@ public class TrendController {
             @RequestParam @Min(0) @Max(50) Integer stepCount,
             @PathVariable Integer productId) {
         return trendService.getProductSearchTrends(fromDate, toDate, stepCount, productId);
+    }
+
+    @GetMapping("/vendor/{vendorId}/product/{productId}/price")
+    public List<PriceTrend> getProductPrice(
+            @RequestParam LocalDate fromDate,
+            @RequestParam(defaultValue = "today") LocalDate toDate,
+            @RequestParam @Min(0) @Max(50) Integer stepCount,
+            @PathVariable Integer productId,
+            @PathVariable Integer vendorId) {
+        return trendService.getProductPriceTrends(fromDate, toDate, stepCount, productId, vendorId);
     }
 
 }

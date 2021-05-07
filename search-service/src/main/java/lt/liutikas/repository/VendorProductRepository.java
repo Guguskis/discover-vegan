@@ -19,4 +19,6 @@ public interface VendorProductRepository extends JpaRepository<VendorProduct, Lo
     List<VendorProduct> findAllByVendor(Vendor vendor);
 
     Page<VendorProduct> findAllByProduct(Product product, Pageable pageable);
+
+    VendorProduct findAllByProductAndVendor(Product product, Vendor vendor);
 }
