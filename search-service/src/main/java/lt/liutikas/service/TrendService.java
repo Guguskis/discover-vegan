@@ -71,7 +71,7 @@ public class TrendService {
         return trendPageDto;
     }
 
-    public List<SearchRequestsTrend> getProductTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, Integer productId) {
+    public List<SearchRequestsTrend> getProductSearchTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, Integer productId) {
 
         if (toDate.isBefore(fromDate)) {
             throw new BadRequestException("toDate must be after fromDate");
@@ -100,7 +100,7 @@ public class TrendService {
             searchRequestsTrends.add(searchRequestsTrend);
         }
 
-        LOG.info(String.format("Returned search requests { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+        LOG.info(String.format("Returned search requests trend { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
                 productId, fromDate, toDate, stepCount));
 
         return searchRequestsTrends;
