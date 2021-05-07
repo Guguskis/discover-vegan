@@ -18,7 +18,7 @@ public class VendorProductChange {
     private LocalDateTime createdAt;
     @Column(nullable = false)
     private Float price;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "VENDOR_PRODUCT_ID")
     private VendorProduct vendorProduct;
 

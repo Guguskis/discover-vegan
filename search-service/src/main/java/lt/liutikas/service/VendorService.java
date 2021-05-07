@@ -118,12 +118,12 @@ public class VendorService {
         return vendorProductPageDto;
     }
 
-    public VendorProductDto createProduct(Integer vendorId, CreateVendorProductDto createVendorProductDto) {
+    public VendorProductDto createProduct(Integer userId, Integer vendorId, CreateVendorProductDto createVendorProductDto) {
 
         Vendor vendor = assertVendorFound(vendorId);
         Product product = assertProductFound(createVendorProductDto.getProductId());
 
-        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(createVendorProductDto, vendor, product);
+        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(userId, createVendorProductDto, vendor, product);
 
         vendorProduct = vendorProductRepository.save(vendorProduct);
 
@@ -169,8 +169,6 @@ public class VendorService {
             vendorProductChange.setPrice(patchVendorProductDto.getPrice());
             vendorProductChange.setUserId(userId);
             vendorProduct.getVendorProductChanges().add(vendorProductChange);
-
-            vendorProduct.setPrice(patchVendorProductDto.getPrice()); // todo use changes for price in assembler
         }
 
         vendorProduct = vendorProductRepository.save(vendorProduct);

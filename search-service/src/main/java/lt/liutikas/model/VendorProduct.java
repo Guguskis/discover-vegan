@@ -23,8 +23,6 @@ public class VendorProduct {
     @JoinColumn(name = "VENDOR_PRODUCT_ID")
     private List<VendorProductChange> vendorProductChanges;
 
-    private Float price;
-
     public Long getVendorProductId() {
         return vendorProductId;
     }
@@ -47,14 +45,6 @@ public class VendorProduct {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public Float getPrice() {
-        return price;
-    }
-
-    public void setPrice(Float price) {
-        this.price = price;
     }
 
     public List<VendorProductChange> getVendorProductChanges() {

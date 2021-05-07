@@ -48,9 +48,13 @@ public class VendorController {
     }
 
     @PostMapping("/{vendorId}/product")
+    @IsAuthorized
     public ResponseEntity<VendorProductDto> createProduct(@PathVariable Integer vendorId,
-                                                          @RequestBody @Valid CreateVendorProductDto createVendorProductDto) {
-        return ResponseEntity.ok(vendorService.createProduct(vendorId, createVendorProductDto));
+                                                          @RequestBody @Valid CreateVendorProductDto createVendorProductDto,
+                                                          @RequestHeader("Authorization") String token) {
+
+        String userId = tokenUtil.getValue(token, "userId");
+        return ResponseEntity.ok(vendorService.createProduct(Integer.parseInt(userId), vendorId, createVendorProductDto));
     }
 
     @PatchMapping("/{vendorId}/product/{productId}")

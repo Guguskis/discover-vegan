@@ -80,10 +80,9 @@ public class VendorServiceTest {
                 .thenReturn(new VendorProduct() {{
                     setVendorProductId(1L);
                     setProduct(product);
-                    setPrice(2f);
                 }});
 
-        VendorProductDto vendorProductDto = vendorService.createProduct(1, createVendorProductDto);
+        VendorProductDto vendorProductDto = vendorService.createProduct(1, 1, createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -108,7 +107,7 @@ public class VendorServiceTest {
         when(vendorRepository.findById(1))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, createVendorProductDto);
+        vendorService.createProduct(1, 1, createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -125,7 +124,7 @@ public class VendorServiceTest {
         when(productRepository.findById(10))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, createVendorProductDto);
+        vendorService.createProduct(1, 1, createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -145,7 +144,6 @@ public class VendorServiceTest {
         VendorProduct vendorProduct = new VendorProduct() {{
             setVendorProductId(1L);
             setProduct(product);
-            setPrice(5f);
         }};
 
         List<VendorProduct> vendorProducts = Collections.singletonList(vendorProduct);
@@ -162,7 +160,6 @@ public class VendorServiceTest {
         assertEquals(product.getName(), returnedVendorProductDto.getName());
         assertEquals(product.getImageUrl(), returnedVendorProductDto.getImageUrl());
         assertEquals(product.getProducer(), returnedVendorProductDto.getProducer());
-        assertEquals(vendorProduct.getPrice(), returnedVendorProductDto.getPrice());
     }
 
     @Test
@@ -177,7 +174,6 @@ public class VendorServiceTest {
         VendorProduct vendorProduct = new VendorProduct() {{
             setVendorProductId(1L);
             setProduct(product);
-            setPrice(5f);
         }};
 
         List<VendorProduct> products = Arrays.asList(
@@ -206,7 +202,6 @@ public class VendorServiceTest {
         VendorProduct vendorProduct = new VendorProduct() {{
             setVendorProductId(1L);
             setProduct(product);
-            setPrice(5f);
         }};
 
         List<VendorProduct> products = Arrays.asList(
