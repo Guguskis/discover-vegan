@@ -42,7 +42,7 @@ public class TrendController {
         return trendService.getProductTrends(request);
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/{productId}/search")
     public List<SearchRequestsTrend> getProductSearchRequests(
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
