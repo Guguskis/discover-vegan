@@ -56,7 +56,7 @@ public class TrendController {
         return trendService.getProductPriceTrends(productId, vendorId);
     }
 
-    @GetMapping("/vendor/{vendorId}/product/{productId}")
+    @GetMapping("/vendor/{vendorId}/product/{productId}/review")
     public List<ReviewTrend> getReviewTrends(
             @PathVariable Integer productId,
             @PathVariable Integer vendorId,
