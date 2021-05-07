@@ -54,11 +54,9 @@ public class TrendController {
 
     @GetMapping("/vendor/{vendorId}/product/{productId}/price")
     public List<PriceTrend> getProductPrice(
-            @RequestParam LocalDate fromDate,
-            @RequestParam(defaultValue = "today") LocalDate toDate,
             @PathVariable Integer productId,
             @PathVariable Integer vendorId) {
-        return trendService.getProductPriceTrends(fromDate, toDate, productId, vendorId);
+        return trendService.getProductPriceTrends(productId, vendorId);
     }
 
 }

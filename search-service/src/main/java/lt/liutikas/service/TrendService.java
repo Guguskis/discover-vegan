@@ -4,7 +4,10 @@ import lt.liutikas.assembler.SearchRequestAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
-import lt.liutikas.model.*;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.SearchRequest;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
 import lt.liutikas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,22 +118,15 @@ public class TrendService {
         return differenceInSeconds / stepCount;
     }
 
-    public List<PriceTrend> getProductPriceTrends(LocalDate fromDate, LocalDate toDate, Integer productId, Integer vendorId) {
-        if (toDate.isBefore(fromDate)) {
-            throw new BadRequestException("toDate must be after fromDate");
-        }
+    public List<PriceTrend> getProductPriceTrends(Integer productId, Integer vendorId) {
 
         Product product = assertProductFound(productId);
         Vendor vendor = assertVendorFound(vendorId);
 
         VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
 
-        LocalDateTime localDateTimeStart = fromDate.atStartOfDay();
-        LocalDateTime localDateTimeEnd = toDate.atStartOfDay().plusDays(1);
-
-        List<VendorProductChange> vendorProductChanges = vendorProductChangeRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
-
-        List<PriceTrend> priceTrends = vendorProductChanges.stream()
+        List<PriceTrend> priceTrends = vendorProduct.getVendorProductChanges()
+                .stream()
                 .map(vendorProductChange -> {
                     PriceTrend priceTrend = new PriceTrend();
                     priceTrend.setDateTime(vendorProductChange.getCreatedAt());
@@ -139,22 +135,7 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
-        PriceTrend firstPriceTrend = priceTrends.get(0);
-        PriceTrend lastPriceTrend = priceTrends.get(priceTrends.size() - 1);
-
-        PriceTrend dateStartPriceTrend = new PriceTrend();
-        dateStartPriceTrend.setPrice(firstPriceTrend.getPrice());
-        dateStartPriceTrend.setDateTime(localDateTimeStart);
-
-        PriceTrend dateEndPriceTrend = new PriceTrend();
-        dateEndPriceTrend.setPrice(lastPriceTrend.getPrice());
-        dateEndPriceTrend.setDateTime(localDateTimeEnd);
-
-        priceTrends.add(0, dateStartPriceTrend);
-        priceTrends.add(dateEndPriceTrend);
-
-        LOG.info(String.format("Returned price trend { productId: %d, fromDate: %s, toDate: %s }",
-                productId, fromDate, toDate));
+        LOG.info(String.format("Returned price trend { productId: %d }", productId));
 
         return priceTrends;
     }
