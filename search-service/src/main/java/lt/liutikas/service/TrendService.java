@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -144,15 +143,6 @@ public class TrendService {
                 productId, fromDate, toDate, stepCount));
 
         return priceTrends;
-    }
-
-    private VendorProductChange getMostRecent(List<VendorProductChange> vendorProductChanges) {
-
-        if (vendorProductChanges.size() > 1) {
-            vendorProductChanges.sort(Comparator.comparing(VendorProductChange::getCreatedAt).reversed());
-        }
-
-        return vendorProductChanges.get(0);
     }
 
     private Product assertProductFound(Integer productId) {
