@@ -151,10 +151,12 @@ public class VendorService {
 
         List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor);
 
-        Optional<VendorProduct> vendorProductOptional = vendorProducts.stream().filter(vendorProductT -> vendorProductT
-                .getProduct()
-                .getProductId()
-                .equals(productId))
+        Optional<VendorProduct> vendorProductOptional = vendorProducts.stream()
+                .filter(vendorProductT -> vendorProductT
+                        .getProduct()
+                        .getProductId()
+                        .equals(productId)
+                )
                 .findFirst();
 
         if (vendorProductOptional.isEmpty()) {
