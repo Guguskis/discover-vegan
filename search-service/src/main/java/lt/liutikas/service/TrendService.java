@@ -115,7 +115,7 @@ public class TrendService {
         return differenceInSeconds / stepCount;
     }
 
-    public List<PriceTrend> getProductPriceTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, Integer productId, Integer vendorId) {
+    public List<PriceTrend> getProductPriceTrends(LocalDate fromDate, LocalDate toDate, Integer productId, Integer vendorId) {
         if (toDate.isBefore(fromDate)) {
             throw new BadRequestException("toDate must be after fromDate");
         }
@@ -139,8 +139,8 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
-        LOG.info(String.format("Returned price trend { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
-                productId, fromDate, toDate, stepCount));
+        LOG.info(String.format("Returned price trend { productId: %d, fromDate: %s, toDate: %s }",
+                productId, fromDate, toDate));
 
         return priceTrends;
     }

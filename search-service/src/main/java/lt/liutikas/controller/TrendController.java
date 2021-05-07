@@ -56,10 +56,9 @@ public class TrendController {
     public List<PriceTrend> getProductPrice(
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
-            @RequestParam @Min(0) @Max(50) Integer stepCount,
             @PathVariable Integer productId,
             @PathVariable Integer vendorId) {
-        return trendService.getProductPriceTrends(fromDate, toDate, stepCount, productId, vendorId);
+        return trendService.getProductPriceTrends(fromDate, toDate, productId, vendorId);
     }
 
 }
