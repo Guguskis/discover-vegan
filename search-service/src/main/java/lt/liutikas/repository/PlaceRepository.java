@@ -29,7 +29,7 @@ public class PlaceRepository {
         List<Place> places = new ArrayList<>();
         PlacesResponse placesResponse = new PlacesResponse();
 
-        do {
+//        do {
             ResponseEntity<PlacesResponse> responseEntity = googleRestTemplate.getForEntity(
                     PLACES_ENDPOINT,
                     PlacesResponse.class,
@@ -40,7 +40,7 @@ public class PlaceRepository {
             placesResponse = responseEntity.getBody();
             places.addAll(placesResponse.getResults());
 
-        } while (placesResponse.getNext_page_token() != null);
+//        } while (placesResponse.getNext_page_token() != null);
 
         List<Place> foodPlaces = filterFoodPlaces(places);
         foodPlaces.forEach(place -> place.setVendorType(vendorType));
