@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-service-deployment
+  labels:
+    app: search-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search-service
+  template:
+    metadata:
+      labels:
+        app: search-service
+    spec:
+      containers:
+        - name: search-service
+          image: search-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /h2databases
+              name: h2-database-volume
+          env:
+            - name: secrets.googleApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: search-service-secret
+                  key: googleApiKey
+      volumes:
+        - name: h2-database-volume
+          hostPath:
+            path: /h2database
+            type: Directory
