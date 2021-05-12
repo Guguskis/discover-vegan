@@ -4,14 +4,15 @@ metadata:
   name: ingress
   # https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/rewrite/README.md
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
-    - http:
+    # for host to work need to add text in file C:\Windows\system32\drivers\etc\hosts
+    # ingress-ip search.discovervegan.lt
+    - host: search.discovervegan.lt
+      http:
         paths:
-          # annotation rewrite-target will remove /authentication... when redirecting to
-          # internal service (which causes path mismatching and swagger/requests not working)
-          - path: /search-service(/|$)(.*)
+          - path: /(.*)
             pathType: Prefix
             backend:
               service:

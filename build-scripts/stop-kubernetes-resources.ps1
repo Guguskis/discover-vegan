@@ -1,8 +1,8 @@
 [string]$rootFolder = 'C:/Dev/bakalaurinis/discover-vegan'
 
-[bool]$stopDeployments = 0
+[bool]$stopDeployments = 1
 [bool]$stopServices = 1
-[bool]$stopIngress = 0
+[bool]$stopIngress = 1
 
 class KubernetesResource
 {
