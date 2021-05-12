@@ -20,3 +20,13 @@ spec:
                 name: search-service
                 port:
                   number: 8080
+    - host: file.discovervegan.lt
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: file-service
+                port:
+                  number: 8081
