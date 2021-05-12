@@ -27,8 +27,8 @@ spec:
             - name: secrets.googleApiKey
               valueFrom:
                 secretKeyRef:
-                  name: search-service-secret
-                  key: googleApiKey
+                  name: discover-vegan-secrets
+                  key: GOOGLE_API_KEY
       volumes:
         - name: h2-database-volume
           hostPath:
