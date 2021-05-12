@@ -2,7 +2,8 @@ server:
   port: 8082
 spring:
   datasource:
-    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/authentication-service;INIT=CREATE SCHEMA IF NOT EXISTS AUTHENTICATION_SERVICE
+    url: jdbc:h2:file:/h2database/authentication-service;INIT=CREATE SCHEMA IF NOT EXISTS AUTHENTICATION_SERVICE
+    #    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/authentication-service;INIT=CREATE SCHEMA IF NOT EXISTS AUTHENTICATION_SERVICE
     driverClassName: org.h2.Driver
     username: admin
   #    url: jdbc:sqlserver://localhost:9001

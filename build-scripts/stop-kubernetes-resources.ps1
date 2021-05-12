@@ -17,6 +17,7 @@ class KubernetesResource
 $kubernetesResources = @(
 [KubernetesResource]::new('search-service');
 [KubernetesResource]::new('file-service');
+[KubernetesResource]::new('authentication-service');
 )
 $ingressName = 'ingress'
 

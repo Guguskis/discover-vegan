@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-service-deployment
+  labels:
+    app: authentication-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication-service-app
+  template:
+    metadata:
+      labels:
+        app: authentication-service-app
+    spec:
+      containers:
+        - name: authentication-service-app
+          image: authentication-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+          volumeMounts:
+            - mountPath: /h2databases
+              name: h2-database-volume
+      volumes:
+        - name: h2-database-volume
+          hostPath:
+            path: /h2database
+            type: Directory
