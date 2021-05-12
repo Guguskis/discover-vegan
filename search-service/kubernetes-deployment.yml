@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: search-service-deployment
   labels:
-    app: search-service
+    app: search-service-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: search-service
+      app: search-service-app
   template:
     metadata:
       labels:
-        app: search-service
+        app: search-service-app
     spec:
       containers:
-        - name: search-service
+        - name: search-service-app
           image: search-service
           imagePullPolicy: Never
           ports:

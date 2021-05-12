@@ -4,7 +4,7 @@ metadata:
   name: search-service
 spec:
   selector:
-    app: search-service
+    app: search-service-app
   ports:
     - protocol: TCP
       port: 8080

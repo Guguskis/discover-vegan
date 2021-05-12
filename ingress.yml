@@ -9,10 +9,10 @@ spec:
   rules:
     - http:
         paths:
-          - pathType: Prefix
-            # annotation rewrite-target will remove /authentication... when redirecting to
-            # internal service (which causes path mismatching and swagger/requests not working)
-            path: /search-service(/|$)(.*)
+          # annotation rewrite-target will remove /authentication... when redirecting to
+          # internal service (which causes path mismatching and swagger/requests not working)
+          - path: /search-service(/|$)(.*)
+            pathType: Prefix
             backend:
               service:
                 name: search-service
