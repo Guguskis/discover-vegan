@@ -5,10 +5,7 @@ import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.*;
-import lt.liutikas.repository.PlaceRepository;
-import lt.liutikas.repository.ProductRepository;
-import lt.liutikas.repository.VendorProductRepository;
-import lt.liutikas.repository.VendorRepository;
+import lt.liutikas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -30,14 +27,16 @@ public class VendorService {
     private final VendorProductAssembler vendorProductAssembler;
 
     private final VendorRepository vendorRepository;
+    private final MongoVendorRepository mongoVendorRepository;
     private final VendorProductRepository vendorProductRepository;
     private final ProductRepository productRepository;
     private final PlaceRepository placeRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, MongoVendorRepository mongoVendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
         this.vendorRepository = vendorRepository;
+        this.mongoVendorRepository = mongoVendorRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.productRepository = productRepository;
         this.placeRepository = placeRepository;
@@ -65,8 +64,8 @@ public class VendorService {
                 .map(Place::getPlace_id)
                 .collect(Collectors.toList());
 
-        List<Vendor> vendors = vendorRepository.findByExternalPlaceIdIn(placesIds);
-        List<Vendor> newVendors = createVendorsForNewPlaces(vendors, places);
+        List<MongoVendor> vendors = mongoVendorRepository.findByExternalPlaceIdIn(placesIds);
+        List<MongoVendor> newVendors = createVendorsForNewPlaces(vendors, places);
 
         vendors.addAll(newVendors);
 
@@ -80,20 +79,20 @@ public class VendorService {
         return vendorDtos;
     }
 
-    private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {
-        List<String> vendorsIds = vendors.stream()
-                .map(Vendor::getExternalPlaceId)
+    private List<MongoVendor> createVendorsForNewPlaces(List<MongoVendor> vendors, List<Place> places) {
+        List<String> externalIds = vendors.stream()
+                .map(MongoVendor::getExternalPlaceId)
                 .collect(Collectors.toList());
 
         List<Place> newPlaces = places.stream()
-                .filter(place -> !vendorsIds.contains(place.getPlace_id()))
+                .filter(place -> !externalIds.contains(place.getPlace_id()))
                 .collect(Collectors.toList());
 
-        List<Vendor> newVendors = newPlaces.stream()
+        List<MongoVendor> newVendors = newPlaces.stream()
                 .map(vendorAssembler::assembleVendor)
                 .collect(Collectors.toList());
 
-        return vendorRepository.saveAll(newVendors);
+        return mongoVendorRepository.saveAll(newVendors);
     }
 
     public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {

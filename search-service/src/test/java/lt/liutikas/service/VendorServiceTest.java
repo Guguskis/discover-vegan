@@ -9,10 +9,7 @@ import lt.liutikas.dto.VendorProductPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorProduct;
-import lt.liutikas.repository.PlaceRepository;
-import lt.liutikas.repository.ProductRepository;
-import lt.liutikas.repository.VendorProductRepository;
-import lt.liutikas.repository.VendorRepository;
+import lt.liutikas.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +34,8 @@ public class VendorServiceTest {
     @Mock
     private VendorRepository vendorRepository;
     @Mock
+    private MongoVendorRepository mongoVendorRepository;
+    @Mock
     private VendorProductRepository vendorProductRepository;
     @Mock
     private ProductRepository productRepository;
@@ -51,6 +50,7 @@ public class VendorServiceTest {
                 new VendorAssembler(),
                 new VendorProductAssembler(),
                 vendorRepository,
+                mongoVendorRepository,
                 vendorProductRepository,
                 productRepository,
                 placeRepository);

@@ -23,10 +23,10 @@ public class VendorAssembler {
         return vendor;
     }
 
-    public Vendor assembleVendor(Place place) {
+    public MongoVendor assembleVendor(Place place) {
         Location location = place.getGeometry().getLocation();
 
-        Vendor vendor = new Vendor();
+        MongoVendor vendor = new MongoVendor();
 
         vendor.setName(place.getName());
         vendor.setExternalPlaceId(place.getPlace_id());
