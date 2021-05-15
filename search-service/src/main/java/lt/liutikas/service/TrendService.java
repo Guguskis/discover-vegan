@@ -35,8 +35,9 @@ public class TrendService {
     private final MongoVendorProductRepository mongoVendorProductRepository;
     private final MongoProductRepository mongoProductRepository;
     private final MongoVendorRepository mongoVendorRepository;
+    private final MongoReviewRepository mongoReviewRepository;
 
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository) {
+    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository) {
         this.searchRequestRepository = searchRequestRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
@@ -46,6 +47,7 @@ public class TrendService {
         this.mongoVendorProductRepository = mongoVendorProductRepository;
         this.mongoProductRepository = mongoProductRepository;
         this.mongoVendorRepository = mongoVendorRepository;
+        this.mongoReviewRepository = mongoReviewRepository;
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
@@ -138,52 +140,50 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
-        LOG.info(String.format("Returned price trend { productId: %s }", productId));
+        LOG.info(String.format("Returned price trend { vendorProductId: %s }", vendorProduct.getId()));
 
         return priceTrends;
     }
 
-    public List<ReviewTrend> getReviewTrends(Integer productId, Integer vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
+    public List<ReviewTrend> getReviewTrends(String productId, String vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
 
-        return Collections.emptyList();
+        MongoVendor vendor = assertVendorFound(vendorId);
+        MongoProduct product = assertProductFound(productId);
 
-//        Vendor vendor = assertVendorFound(vendorId);
-//        Product product = assertProductFound(productId);
-//
-//        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
-//
-//        ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
-//
-//        double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate.plusDays(1), stepCount);
-//
-//        for (int i = 0; i < stepCount; i++) {
-//            double offsetStartInSeconds = stepSizeInSeconds * i;
-//
-//            LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
-//            LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
-//
-//            List<Review> reviews = reviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
-//
-//            Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
-//
-//            ReviewTrend reviewTrend = new ReviewTrend();
-//            reviewTrend.setCounts(reviewTrendCounts);
-//            reviewTrend.setDateTime(localDateTimeEnd);
-//            reviewTrends.add(reviewTrend);
-//        }
-//
-//        LOG.info(String.format("Returned review trends { vendorProductId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
-//                vendorProduct.getVendorProductId(), fromDate, toDate, stepCount));
-//
-//        return reviewTrends;
+        MongoVendorProduct vendorProduct = mongoVendorProductRepository.findByProductAndVendor(product, vendor).get();
+
+        ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
+
+        double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate.plusDays(1), stepCount);
+
+        for (int i = 0; i < stepCount; i++) {
+            double offsetStartInSeconds = stepSizeInSeconds * i;
+
+            LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
+            LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
+
+            List<MongoReview> reviews = mongoReviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
+
+            Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
+
+            ReviewTrend reviewTrend = new ReviewTrend();
+            reviewTrend.setCounts(reviewTrendCounts);
+            reviewTrend.setDateTime(localDateTimeEnd);
+            reviewTrends.add(reviewTrend);
+        }
+
+        LOG.info(String.format("Returned review trends { vendorProductId: %s, fromDate: %s, toDate: %s, stepCount: %d }",
+                vendorProduct.getId(), fromDate, toDate, stepCount));
+
+        return reviewTrends;
     }
 
-    private Map<ReviewType, Integer> getReviewTrendCounts(List<Review> reviews) {
+    private Map<ReviewType, Integer> getReviewTrendCounts(List<MongoReview> reviews) {
         Map<ReviewType, Integer> reviewTrendCounts = new HashMap<>();
 
         for (ReviewType reviewType : ReviewType.values()) {
 
-            List<Review> reviewsForType = reviews.stream()
+            List<MongoReview> reviewsForType = reviews.stream()
                     .filter(review -> review.getReviewType().equals(reviewType))
                     .collect(Collectors.toList());
 

@@ -58,8 +58,8 @@ public class TrendController {
 
     @GetMapping("/vendor/{vendorId}/product/{productId}/review")
     public List<ReviewTrend> getReviewTrends(
-            @PathVariable Integer productId,
-            @PathVariable Integer vendorId,
+            @PathVariable String productId,
+            @PathVariable String vendorId,
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
             @RequestParam @Min(0) @Max(50) Integer stepCount) {
