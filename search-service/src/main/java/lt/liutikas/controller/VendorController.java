@@ -54,13 +54,13 @@ public class VendorController {
                                                           @RequestHeader("Authorization") String token) {
 
         String userId = tokenUtil.getValue(token, "userId");
-        return ResponseEntity.ok(vendorService.createProduct(Integer.parseInt(userId), vendorId, createVendorProductDto));
+        return ResponseEntity.ok(vendorService.createProduct(userId, vendorId, createVendorProductDto));
     }
 
     @PatchMapping("/{vendorId}/product/{productId}")
     @IsAuthorized
-    public ResponseEntity<VendorProductDto> patchProduct(@PathVariable Integer vendorId,
-                                                         @PathVariable Integer productId,
+    public ResponseEntity<VendorProductDto> patchProduct(@PathVariable String vendorId,
+                                                         @PathVariable String productId,
                                                          @RequestBody @Valid PatchVendorProductDto patchVendorProductDto,
                                                          @RequestHeader("Authorization") String token
     ) {

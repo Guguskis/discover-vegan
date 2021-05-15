@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,7 +123,7 @@ public class VendorService {
         return vendorProductPageDto;
     }
 
-    public VendorProductDto createProduct(Integer userId, String vendorId, CreateVendorProductDto createVendorProductDto) {
+    public VendorProductDto createProduct(String userId, String vendorId, CreateVendorProductDto createVendorProductDto) {
 
         MongoVendor vendor = assertVendorFound(vendorId);
         MongoProduct product = assertProductFound(createVendorProductDto.getProductId());
@@ -138,47 +139,39 @@ public class VendorService {
         Optional<MongoProduct> product = mongoProductRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
         return product.get();
     }
 
-    public VendorProductDto patchProduct(int userId, Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
+    public VendorProductDto patchProduct(String userId, String vendorId, String productId, PatchVendorProductDto patchVendorProductDto) {
 
-//        Vendor vendor = assertVendorFound(vendorId);
-        Vendor vendor = new Vendor();
-//        assertProductFound(productId);
+        MongoVendor vendor = assertVendorFound(vendorId);
+        MongoProduct product = assertProductFound(productId);
 
-        List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor);
-
-        Optional<VendorProduct> vendorProductOptional = vendorProducts.stream()
-                .filter(vendorProductT -> vendorProductT
-                        .getProduct()
-                        .getProductId()
-                        .equals(productId)
-                )
-                .findFirst();
+        Optional<MongoVendorProduct> vendorProductOptional = mongoVendorProductRepository.findByProductAndVendor(product, vendor);
 
         if (vendorProductOptional.isEmpty()) {
-            String message = String.format("Vendor product not found {vendorId: %d, productId: %d}", vendorId, productId);
+            String message = String.format("Vendor product not found {vendorId: %s, productId: %s}", vendorId, productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
 
-        VendorProduct vendorProduct = vendorProductOptional.get();
+        MongoVendorProduct vendorProduct = vendorProductOptional.get();
 
         if (patchVendorProductDto.getPrice() != null) {
-            VendorProductChange vendorProductChange = new VendorProductChange();
+            MongoVendorProductChange vendorProductChange = new MongoVendorProductChange();
             vendorProductChange.setPrice(patchVendorProductDto.getPrice());
             vendorProductChange.setUserId(userId);
+            vendorProductChange.setCreatedAt(LocalDateTime.now());
             vendorProduct.getVendorProductChanges().add(vendorProductChange);
         }
 
-        vendorProduct = vendorProductRepository.save(vendorProduct);
+        vendorProduct = mongoVendorProductRepository.save(vendorProduct);
 
-        LOG.info(String.format("Patched vendor product {vendorId: %d, productId: %d}", vendorId, productId));
+        LOG.info(String.format("Patched vendor product {vendorId: %s, productId: %s}", vendorId, productId));
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }

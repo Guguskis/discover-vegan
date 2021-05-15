@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MongoVendorProductRepository extends MongoRepository<MongoVendorProduct, String> {
 
@@ -17,5 +18,5 @@ public interface MongoVendorProductRepository extends MongoRepository<MongoVendo
 
     Page<MongoVendorProduct> findAllByProduct(MongoProduct product, Pageable pageable);
 
-    MongoVendorProduct findAllByProductAndVendor(MongoProduct product, MongoVendor vendor);
+    Optional<MongoVendorProduct> findByProductAndVendor(MongoProduct product, MongoVendor vendor);
 }

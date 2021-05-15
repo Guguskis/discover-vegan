@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 public class MongoVendorProductChange {
 
-    private Integer userId;
+    private String userId;
     private LocalDateTime createdAt;
     private Float price;
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class VendorProductAssembler {
 
-    public MongoVendorProduct assembleVendorProduct(Integer userId, CreateVendorProductDto createVendorProductDto, MongoVendor vendor, MongoProduct product) {
+    public MongoVendorProduct assembleVendorProduct(String userId, CreateVendorProductDto createVendorProductDto, MongoVendor vendor, MongoProduct product) {
         MongoVendorProduct vendorProduct = new MongoVendorProduct();
 
         vendorProduct.setVendor(vendor);

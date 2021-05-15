@@ -88,7 +88,7 @@ public class VendorServiceTest {
                     setProduct(product);
                 }});
 
-        VendorProductDto vendorProductDto = vendorService.createProduct(1, "1", createVendorProductDto);
+        VendorProductDto vendorProductDto = vendorService.createProduct("1", "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -113,7 +113,7 @@ public class VendorServiceTest {
         when(vendorRepository.findById(1))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, "1", createVendorProductDto);
+        vendorService.createProduct("1", "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -130,7 +130,7 @@ public class VendorServiceTest {
         when(productRepository.findById(10))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, "1", createVendorProductDto);
+        vendorService.createProduct("1", "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
