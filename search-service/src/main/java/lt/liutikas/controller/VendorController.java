@@ -65,7 +65,7 @@ public class VendorController {
                                                          @RequestHeader("Authorization") String token
     ) {
         String userId = tokenUtil.getValue(token, "userId");
-        return ResponseEntity.ok(vendorService.patchProduct(Integer.parseInt(userId), vendorId, productId, patchVendorProductDto));
+        return ResponseEntity.ok(vendorService.patchProduct(userId, vendorId, productId, patchVendorProductDto));
     }
 
 }
