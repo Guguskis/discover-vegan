@@ -6,15 +6,15 @@ import java.time.LocalDateTime;
 
 public class ReviewDto {
 
-    private Long reviewId;
+    private String reviewId;
     private LocalDateTime createdAt;
     private ReviewType reviewType;
 
-    public Long getReviewId() {
+    public String getReviewId() {
         return reviewId;
     }
 
-    public void setReviewId(Long reviewId) {
+    public void setReviewId(String reviewId) {
         this.reviewId = reviewId;
     }
 

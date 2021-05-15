@@ -4,23 +4,23 @@ import lt.liutikas.model.ReviewType;
 
 public class CreateReviewDto {
 
-    private Integer vendorId;
-    private Integer productId;
+    private String vendorId;
+    private String productId;
     private ReviewType reviewType;
 
-    public Integer getVendorId() {
+    public String getVendorId() {
         return vendorId;
     }
 
-    public void setVendorId(Integer vendorId) {
+    public void setVendorId(String vendorId) {
         this.vendorId = vendorId;
     }
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 
