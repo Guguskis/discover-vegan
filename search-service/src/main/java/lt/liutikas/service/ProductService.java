@@ -113,6 +113,8 @@ public class ProductService {
             productVendorPage.setNextPageToken(nextPageable.getPageNumber());
         }
 
+        LOG.info(String.format("Returned vendors where product can be bought {productId: %s}", productId));
+
 //        saveSearchRequest(product.get()); // todo migrate to mongo
 
         return productVendorPage;
