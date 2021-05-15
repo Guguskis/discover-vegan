@@ -5,7 +5,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: authentication
+      database: authentication-service
 web:
   access-control-allow-origin: "*"
   access-control-allow-headers: "*"
