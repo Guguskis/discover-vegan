@@ -32,14 +32,20 @@ public class TrendService {
     private final ReviewRepository reviewRepository;
 
     private final SearchRequestAssembler searchRequestAssembler;
+    private final MongoVendorProductRepository mongoVendorProductRepository;
+    private final MongoProductRepository mongoProductRepository;
+    private final MongoVendorRepository mongoVendorRepository;
 
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler) {
+    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository) {
         this.searchRequestRepository = searchRequestRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.reviewRepository = reviewRepository;
         this.searchRequestAssembler = searchRequestAssembler;
+        this.mongoVendorProductRepository = mongoVendorProductRepository;
+        this.mongoProductRepository = mongoProductRepository;
+        this.mongoVendorRepository = mongoVendorRepository;
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
@@ -80,7 +86,8 @@ public class TrendService {
             throw new BadRequestException("toDate must be after fromDate");
         }
 
-        Product product = assertProductFound(productId);
+//        Product product = assertProductFound(productId);
+        Product product = new Product();
 
         double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate, stepCount);
 
@@ -113,15 +120,16 @@ public class TrendService {
         return differenceInSeconds / stepCount;
     }
 
-    public List<PriceTrend> getProductPriceTrends(Integer productId, Integer vendorId) {
+    public List<PriceTrend> getProductPriceTrends(String productId, String vendorId) {
 
-        Product product = assertProductFound(productId);
-        Vendor vendor = assertVendorFound(vendorId);
+        MongoProduct product = assertProductFound(productId);
+        MongoVendor vendor = assertVendorFound(vendorId);
 
-        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+        MongoVendorProduct vendorProduct = mongoVendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         List<PriceTrend> priceTrends = vendorProduct.getVendorProductChanges()
                 .stream()
+                .sorted(Comparator.comparing(MongoVendorProductChange::getCreatedAt))
                 .map(vendorProductChange -> {
                     PriceTrend priceTrend = new PriceTrend();
                     priceTrend.setDateTime(vendorProductChange.getCreatedAt());
@@ -130,46 +138,44 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
-        if (priceTrends.size() > 1) {
-            priceTrends.sort(Comparator.comparing(PriceTrend::getDateTime));
-        }
-
-        LOG.info(String.format("Returned price trend { productId: %d }", productId));
+        LOG.info(String.format("Returned price trend { productId: %s }", productId));
 
         return priceTrends;
     }
 
     public List<ReviewTrend> getReviewTrends(Integer productId, Integer vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
 
-        Vendor vendor = assertVendorFound(vendorId);
-        Product product = assertProductFound(productId);
+        return Collections.emptyList();
 
-        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
-
-        ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
-
-        double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate.plusDays(1), stepCount);
-
-        for (int i = 0; i < stepCount; i++) {
-            double offsetStartInSeconds = stepSizeInSeconds * i;
-
-            LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
-            LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
-
-            List<Review> reviews = reviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
-
-            Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
-
-            ReviewTrend reviewTrend = new ReviewTrend();
-            reviewTrend.setCounts(reviewTrendCounts);
-            reviewTrend.setDateTime(localDateTimeEnd);
-            reviewTrends.add(reviewTrend);
-        }
-
-        LOG.info(String.format("Returned review trends { vendorProductId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
-                vendorProduct.getVendorProductId(), fromDate, toDate, stepCount));
-
-        return reviewTrends;
+//        Vendor vendor = assertVendorFound(vendorId);
+//        Product product = assertProductFound(productId);
+//
+//        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+//
+//        ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
+//
+//        double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate.plusDays(1), stepCount);
+//
+//        for (int i = 0; i < stepCount; i++) {
+//            double offsetStartInSeconds = stepSizeInSeconds * i;
+//
+//            LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
+//            LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
+//
+//            List<Review> reviews = reviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
+//
+//            Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
+//
+//            ReviewTrend reviewTrend = new ReviewTrend();
+//            reviewTrend.setCounts(reviewTrendCounts);
+//            reviewTrend.setDateTime(localDateTimeEnd);
+//            reviewTrends.add(reviewTrend);
+//        }
+//
+//        LOG.info(String.format("Returned review trends { vendorProductId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+//                vendorProduct.getVendorProductId(), fromDate, toDate, stepCount));
+//
+//        return reviewTrends;
     }
 
     private Map<ReviewType, Integer> getReviewTrendCounts(List<Review> reviews) {
@@ -187,19 +193,19 @@ public class TrendService {
         return reviewTrendCounts;
     }
 
-    private Product assertProductFound(Integer productId) {
-        Optional<Product> product = productRepository.findById(productId);
+    private MongoProduct assertProductFound(String productId) {
+        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
         return product.get();
     }
 
-    private Vendor assertVendorFound(Integer vendorId) {
-        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+    private MongoVendor assertVendorFound(String vendorId) {
+        Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
             String message = String.format("Vendor not found {vendorId: %d}", vendorId);
