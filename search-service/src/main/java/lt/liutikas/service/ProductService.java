@@ -5,12 +5,13 @@ import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
+import lt.liutikas.model.MongoProduct;
+import lt.liutikas.model.MongoVendorProduct;
 import lt.liutikas.model.Product;
 import lt.liutikas.model.SearchRequest;
-import lt.liutikas.model.VendorProduct;
-import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.MongoProductRepository;
+import lt.liutikas.repository.MongoVendorProductRepository;
 import lt.liutikas.repository.SearchRequestRepository;
-import lt.liutikas.repository.VendorProductRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,35 +31,29 @@ public class ProductService {
     private static final Logger LOG = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductAssembler productAssembler;
-    private final ProductRepository productRepository;
+    private final MongoProductRepository mongoProductRepository;
+    private final MongoVendorProductRepository mongoVendorProductRepository;
     private final SearchRequestRepository searchRequestRepository;
-    private final VendorProductRepository vendorProductRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, SearchRequestRepository searchRequestRepository, VendorProductRepository vendorProductRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, SearchRequestRepository searchRequestRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
-        this.productRepository = productRepository;
+        this.mongoProductRepository = mongoProductRepository;
+        this.mongoVendorProductRepository = mongoVendorProductRepository;
         this.searchRequestRepository = searchRequestRepository;
-        this.vendorProductRepository = vendorProductRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
 
     public ProductsPageDto getProducts(Pageable pageable, String query) {
-        String formattedQuery = "%" + query + "%";
-
-        Page<Product> productsPage = productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(pageable, formattedQuery);
+        Page<MongoProduct> productsPage = mongoProductRepository.findByNameRegexOrderByNameAsc(pageable, query);
         Pageable nextPageable = productsPage.nextPageable();
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
 
         List<ProductDto> productDtos = productsPage.getContent()
-                .stream()
-                .filter(product -> {
-                    List<VendorProduct> vendorProducts = product.getVendorProducts();
-                    return vendorProducts != null && vendorProducts.size() > 0;
-                })
-                .map(productAssembler::assembleProduct)
+                .stream()// todo filter with at least 1 VendorProduct
+                .map(productAssembler::assembleMongoProduct)
                 .collect(Collectors.toList());
 
         productsPageDto.setProducts(productDtos);
@@ -71,32 +66,32 @@ public class ProductService {
         return productsPageDto;
     }
 
-    public Product createProduct(CreateProductDto createProductDto) {
+    public ProductDto createProduct(CreateProductDto createProductDto) {
         String nameWithAccents = createProductDto.getName();
         String nameWithoutAccents = StringUtils.stripAccents(nameWithAccents);
         createProductDto.setName(nameWithoutAccents);
 
-        Product product = productAssembler.assembleProduct(createProductDto);
+        MongoProduct product = productAssembler.assembleMongoProduct(createProductDto);
 
         try {
-            product = productRepository.save(product);
+            product = mongoProductRepository.save(product);
         } catch (DataIntegrityViolationException exception) {
             String message = "Failed to insert product in database";
             LOG.error(message, exception);
             throw new BadRequestException(message);
         }
 
-        LOG.info(String.format("Created new product {productId: %d, name: '%s', producer: '%s'}",
-                product.getProductId(),
+        LOG.info(String.format("Created new product {productId: %s, name: '%s', producer: '%s'}",
+                product.getId(),
                 product.getName(),
                 product.getProducer()));
 
-        return product;
+        return productAssembler.assembleMongoProduct(product);
     }
 
-    public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, Integer productId) {
+    public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, String productId) {
 
-        Optional<Product> product = productRepository.findById(productId);
+        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %d}", productId);
@@ -104,7 +99,7 @@ public class ProductService {
             throw new NotFoundException(message);
         }
 
-        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByProduct(product.get(), pageable);
+        Page<MongoVendorProduct> vendorProductPage = mongoVendorProductRepository.findAllByProduct(product.get(), pageable); // todo check if this works
         Pageable nextPageable = vendorProductPage.nextPageable();
 
         List<VendorByProductDto> vendorByProductDtos = vendorProductPage.stream()
@@ -118,7 +113,7 @@ public class ProductService {
             productVendorPage.setNextPageToken(nextPageable.getPageNumber());
         }
 
-        saveSearchRequest(product.get());
+//        saveSearchRequest(product.get()); // todo migrate to mongo
 
         return productVendorPage;
     }

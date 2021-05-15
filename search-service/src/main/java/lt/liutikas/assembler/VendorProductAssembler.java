@@ -2,10 +2,7 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.model.Product;
-import lt.liutikas.model.Vendor;
-import lt.liutikas.model.VendorProduct;
-import lt.liutikas.model.VendorProductChange;
+import lt.liutikas.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -34,7 +31,7 @@ public class VendorProductAssembler {
         VendorProductDto vendorProductDto = new VendorProductDto();
         Product product = vendorProduct.getProduct();
 
-        vendorProductDto.setProductId(product.getProductId());
+//        vendorProductDto.setProductId(product.getProductId());
         vendorProductDto.setName(product.getName());
         vendorProductDto.setImageUrl(product.getImageUrl());
         vendorProductDto.setProducer(product.getProducer());
@@ -43,6 +40,26 @@ public class VendorProductAssembler {
 
         if (vendorProductChanges.size() > 1) {
             vendorProductChanges.sort(Comparator.comparing(VendorProductChange::getCreatedAt).reversed());
+        }
+
+        vendorProductDto.setPrice(vendorProductChanges.get(0).getPrice());
+
+        return vendorProductDto;
+    }
+
+    public VendorProductDto assembleVendorProductDto(MongoVendorProduct vendorProduct) {
+        VendorProductDto vendorProductDto = new VendorProductDto();
+        MongoProduct product = vendorProduct.getProduct();
+
+        vendorProductDto.setProductId(product.getId());
+        vendorProductDto.setName(product.getName());
+        vendorProductDto.setImageUrl(product.getImageUrl());
+        vendorProductDto.setProducer(product.getProducer());
+
+        List<MongoVendorProductChange> vendorProductChanges = vendorProduct.getVendorProductChanges();
+
+        if (vendorProductChanges.size() > 1) {
+            vendorProductChanges.sort(Comparator.comparing(MongoVendorProductChange::getCreatedAt).reversed());
         }
 
         vendorProductDto.setPrice(vendorProductChanges.get(0).getPrice());

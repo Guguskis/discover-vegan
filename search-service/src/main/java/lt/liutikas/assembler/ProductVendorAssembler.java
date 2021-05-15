@@ -1,8 +1,8 @@
 package lt.liutikas.assembler;
 
 import lt.liutikas.dto.VendorByProductDto;
-import lt.liutikas.model.Vendor;
-import lt.liutikas.model.VendorProduct;
+import lt.liutikas.model.MongoVendor;
+import lt.liutikas.model.MongoVendorProduct;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,10 +16,10 @@ public class ProductVendorAssembler {
         this.vendorProductAssembler = vendorProductAssembler;
     }
 
-    public VendorByProductDto assemble(VendorProduct vendorProduct) {
+    public VendorByProductDto assemble(MongoVendorProduct vendorProduct) {
 
         VendorByProductDto vendorByProductDto = new VendorByProductDto();
-        Vendor vendor = vendorProduct.getVendor();
+        MongoVendor vendor = vendorProduct.getVendor();
 
         vendorByProductDto.setProduct(vendorProductAssembler.assembleVendorProductDto(vendorProduct));
         vendorByProductDto.setVendor(vendorAssembler.assembleVendor(vendor));

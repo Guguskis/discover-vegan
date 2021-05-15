@@ -1,18 +1,24 @@
-package lt.liutikas.dto;
+package lt.liutikas.model;
 
-public class ProductDto {
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    private String productId;
+import javax.persistence.Id;
+
+@Document
+public class MongoProduct {
+
+    @Id
+    private String id;
     private String name;
     private String imageUrl;
     private String producer;
 
-    public String getProductId() {
-        return productId;
+    public String getId() {
+        return id;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -38,4 +44,5 @@ public class ProductDto {
     public void setProducer(String producer) {
         this.producer = producer;
     }
+
 }

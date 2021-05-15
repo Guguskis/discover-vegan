@@ -9,9 +9,7 @@ import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
-import lt.liutikas.repository.ProductRepository;
-import lt.liutikas.repository.SearchRequestRepository;
-import lt.liutikas.repository.VendorProductRepository;
+import lt.liutikas.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +34,11 @@ public class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
     @Mock
+    private MongoProductRepository mongoProductRepository;
+    @Mock
     private VendorProductRepository vendorProductRepository;
+    @Mock
+    private MongoVendorProductRepository mongoVendorProductRepository;
     @Mock
     private SearchRequestRepository searchRequestRepository;
 
@@ -44,7 +46,7 @@ public class ProductServiceTest {
 
     @Before
     public void setUp() {
-        productService = new ProductService(new ProductAssembler(), productRepository, searchRequestRepository, vendorProductRepository, new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
+        productService = new ProductService(new ProductAssembler(), mongoProductRepository, mongoVendorProductRepository, searchRequestRepository, new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class ProductServiceTest {
         when(productRepository.save(any(Product.class)))
                 .thenReturn(product);
 
-        Product createdProduct = productService.createProduct(createProductDto);
+        ProductDto createdProduct = productService.createProduct(createProductDto);
 
         verify(productRepository, times(1))
                 .save(any(Product.class));

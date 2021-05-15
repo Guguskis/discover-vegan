@@ -1,9 +1,14 @@
 server:
   port: 8080
 spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: search-service
   datasource:
-    url: jdbc:h2:file:/h2database/search-service;INIT=CREATE SCHEMA IF NOT EXISTS SEARCH_SERVICE
-    #    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/search-service;INIT=CREATE SCHEMA IF NOT EXISTS SEARCH_SERVICE
+    #    url: jdbc:h2:file:/h2database/search-service;INIT=CREATE SCHEMA IF NOT EXISTS SEARCH_SERVICE
+    url: jdbc:h2:file:C:/Dev/bakalaurinis/h2database/search-service;INIT=CREATE SCHEMA IF NOT EXISTS SEARCH_SERVICE
     driverClassName: org.h2.Driver
     username: admin
   #    url: jdbc:sqlserver://localhost:9001
