@@ -45,7 +45,7 @@ public class TrendController {
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
             @RequestParam @Min(0) @Max(50) Integer stepCount,
-            @PathVariable Integer productId) {
+            @PathVariable String productId) {
         return trendService.getProductSearchTrends(fromDate, toDate, stepCount, productId);
     }
 

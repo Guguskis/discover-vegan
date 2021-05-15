@@ -1,7 +1,11 @@
 package lt.liutikas.repository;
 
+import lt.liutikas.model.MongoProduct;
 import lt.liutikas.model.MongoSearchRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface MongoSearchRequestRepository extends MongoRepository<MongoSearchRequest, String> {
 
@@ -14,5 +18,5 @@ public interface MongoSearchRequestRepository extends MongoRepository<MongoSearc
 //    )
 //    Page<ProductsBySearchCount> findSearchRequestCount(Pageable pageable, @Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 //
-//    List<MongoSearchRequest> findAllByProductAndCreatedAtBetween(MongoProduct product, LocalDateTime localDateTimeStart, LocalDateTime localDateTimeEnd);
+    List<MongoSearchRequest> findAllByProductAndCreatedAtBetween(MongoProduct product, LocalDateTime localDateTimeStart, LocalDateTime localDateTimeEnd);
 }

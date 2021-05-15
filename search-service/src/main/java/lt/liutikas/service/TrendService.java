@@ -36,8 +36,9 @@ public class TrendService {
     private final MongoProductRepository mongoProductRepository;
     private final MongoVendorRepository mongoVendorRepository;
     private final MongoReviewRepository mongoReviewRepository;
+    private final MongoSearchRequestRepository mongoSearchRequestRepository;
 
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository) {
+    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository, MongoSearchRequestRepository mongoSearchRequestRepository) {
         this.searchRequestRepository = searchRequestRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
@@ -48,6 +49,7 @@ public class TrendService {
         this.mongoProductRepository = mongoProductRepository;
         this.mongoVendorRepository = mongoVendorRepository;
         this.mongoReviewRepository = mongoReviewRepository;
+        this.mongoSearchRequestRepository = mongoSearchRequestRepository;
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
@@ -82,14 +84,13 @@ public class TrendService {
         return trendPageDto;
     }
 
-    public List<SearchRequestsTrend> getProductSearchTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, Integer productId) {
+    public List<SearchRequestsTrend> getProductSearchTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, String productId) {
 
         if (toDate.isBefore(fromDate)) {
             throw new BadRequestException("toDate must be after fromDate");
         }
 
-//        Product product = assertProductFound(productId);
-        Product product = new Product();
+        MongoProduct product = assertProductFound(productId);
 
         double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate, stepCount);
 
@@ -101,7 +102,7 @@ public class TrendService {
             LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
             LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
 
-            List<SearchRequest> searchRequests = searchRequestRepository.findAllByProductAndCreatedAtBetween(product, localDateTimeStart, localDateTimeEnd);
+            List<MongoSearchRequest> searchRequests = mongoSearchRequestRepository.findAllByProductAndCreatedAtBetween(product, localDateTimeStart, localDateTimeEnd);
 
             SearchRequestsTrend searchRequestsTrend = new SearchRequestsTrend();
             searchRequestsTrend.setDateTime(localDateTimeEnd);
@@ -110,7 +111,7 @@ public class TrendService {
             searchRequestsTrends.add(searchRequestsTrend);
         }
 
-        LOG.info(String.format("Returned search requests trend { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+        LOG.info(String.format("Returned search requests trend { productId: %s, fromDate: %s, toDate: %s, stepCount: %d }",
                 productId, fromDate, toDate, stepCount));
 
         return searchRequestsTrends;
