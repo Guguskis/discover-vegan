@@ -21,8 +21,9 @@ public class UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
-    private final UserRepository userRepository;
     private final TokenUtil tokenUtil;
+
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository, TokenUtil tokenUtil) {
         this.userRepository = userRepository;
@@ -41,7 +42,7 @@ public class UserService {
 
         User user = optionalUser.get();
         if (!passwordsMatch(user, getTokenRequestDto.getPassword())) {
-            String message = String.format("Incorrect password {userId: %d}", user.getUserId());
+            String message = String.format("Incorrect password {userId: %d}", user.getId());
             LOG.error(message);
             throw new BadRequestException(message, "INCORRECT_PASSWORD");
         }
@@ -49,7 +50,7 @@ public class UserService {
         GetTokenResponseDto getTokenResponseDto = new GetTokenResponseDto();
 
         getTokenResponseDto.setToken(tokenUtil.getToken(
-                user.getUserId(),
+                user.getId(),
                 user.getUserType().toString()
         ));
 
@@ -77,10 +78,10 @@ public class UserService {
 
         user = userRepository.save(user);
 
-        LOG.info(String.format("New user signed up {userId: %d}", user.getUserId()));
+        LOG.info(String.format("New user signed up {userId: %s}", user.getId()));
 
         CreateUserResponseDto createUserResponseDto = new CreateUserResponseDto();
-        createUserResponseDto.setUserId(user.getUserId());
+        createUserResponseDto.setUserId(user.getId());
 
         return createUserResponseDto;
     }

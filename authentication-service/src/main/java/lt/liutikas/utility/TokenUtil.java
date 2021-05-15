@@ -14,7 +14,7 @@ public class TokenUtil {
     private static final String SECRET = "secret";
     private static final String ISSUER = "discover-vegan-auth";
 
-    public String getToken(Integer userId, String userType) {
+    public String getToken(String userId, String userType) {
 
         return JWT.create()
                 .withIssuer(ISSUER)
