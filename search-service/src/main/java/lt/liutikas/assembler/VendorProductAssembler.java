@@ -5,6 +5,7 @@ import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.model.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,15 +13,16 @@ import java.util.List;
 @Component
 public class VendorProductAssembler {
 
-    public VendorProduct assembleVendorProduct(Integer userId, CreateVendorProductDto createVendorProductDto, Vendor vendor, Product product) {
-        VendorProduct vendorProduct = new VendorProduct();
+    public MongoVendorProduct assembleVendorProduct(Integer userId, CreateVendorProductDto createVendorProductDto, MongoVendor vendor, MongoProduct product) {
+        MongoVendorProduct vendorProduct = new MongoVendorProduct();
 
         vendorProduct.setVendor(vendor);
         vendorProduct.setProduct(product);
 
-        VendorProductChange vendorProductChange = new VendorProductChange();
+        MongoVendorProductChange vendorProductChange = new MongoVendorProductChange();
         vendorProductChange.setUserId(userId);
         vendorProductChange.setPrice(createVendorProductDto.getPrice());
+        vendorProductChange.setCreatedAt(LocalDateTime.now());
 
         vendorProduct.setVendorProductChanges(Collections.singletonList(vendorProductChange));
 

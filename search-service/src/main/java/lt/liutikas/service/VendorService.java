@@ -31,8 +31,10 @@ public class VendorService {
     private final VendorProductRepository vendorProductRepository;
     private final ProductRepository productRepository;
     private final PlaceRepository placeRepository;
+    private final MongoProductRepository mongoProductRepository;
+    private final MongoVendorProductRepository mongoVendorProductRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, MongoVendorRepository mongoVendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, MongoVendorRepository mongoVendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
         this.vendorRepository = vendorRepository;
@@ -40,6 +42,8 @@ public class VendorService {
         this.vendorProductRepository = vendorProductRepository;
         this.productRepository = productRepository;
         this.placeRepository = placeRepository;
+        this.mongoProductRepository = mongoProductRepository;
+        this.mongoVendorProductRepository = mongoVendorProductRepository;
     }
 
     public List<VendorDto> getVendors(GetVendorDto getVendorDto) {
@@ -97,7 +101,8 @@ public class VendorService {
 
     public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
 
-        Vendor vendor = assertVendorFound(vendorId);
+//        Vendor vendor = assertVendorFound(vendorId);
+        Vendor vendor = new Vendor();
 
         Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor, pageRequest);
         Pageable nextVendorProductPage = vendorProductPage.nextPageable();
@@ -117,20 +122,20 @@ public class VendorService {
         return vendorProductPageDto;
     }
 
-    public VendorProductDto createProduct(Integer userId, Integer vendorId, CreateVendorProductDto createVendorProductDto) {
+    public VendorProductDto createProduct(Integer userId, String vendorId, CreateVendorProductDto createVendorProductDto) {
 
-        Vendor vendor = assertVendorFound(vendorId);
-        Product product = assertProductFound(createVendorProductDto.getProductId());
+        MongoVendor vendor = assertVendorFound(vendorId);
+        MongoProduct product = assertProductFound(createVendorProductDto.getProductId());
 
-        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(userId, createVendorProductDto, vendor, product);
+        MongoVendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(userId, createVendorProductDto, vendor, product);
 
-        vendorProduct = vendorProductRepository.save(vendorProduct);
+        vendorProduct = mongoVendorProductRepository.save(vendorProduct);
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private Product assertProductFound(Integer productId) {
-        Optional<Product> product = productRepository.findById(productId);
+    private MongoProduct assertProductFound(String productId) {
+        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %d}", productId);
@@ -142,8 +147,9 @@ public class VendorService {
 
     public VendorProductDto patchProduct(int userId, Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
 
-        Vendor vendor = assertVendorFound(vendorId);
-        assertProductFound(productId);
+//        Vendor vendor = assertVendorFound(vendorId);
+        Vendor vendor = new Vendor();
+//        assertProductFound(productId);
 
         List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor);
 
@@ -177,8 +183,8 @@ public class VendorService {
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private Vendor assertVendorFound(Integer vendorId) {
-        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
+    private MongoVendor assertVendorFound(String vendorId) {
+        Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
             String message = String.format("Vendor not found {vendorId: %d}", vendorId);

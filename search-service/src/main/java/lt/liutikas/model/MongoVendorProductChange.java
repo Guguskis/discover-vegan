@@ -1,15 +1,10 @@
 package lt.liutikas.model;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 
-@Document
 public class MongoVendorProductChange {
 
     private Integer userId;
-    @CreatedDate
     private LocalDateTime createdAt;
     private Float price;
 

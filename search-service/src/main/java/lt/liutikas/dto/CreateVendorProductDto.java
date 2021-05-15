@@ -6,16 +6,16 @@ import javax.validation.constraints.NotNull;
 public class CreateVendorProductDto {
 
     @NotNull
-    private Integer productId;
+    private String productId;
     @NotNull
     @DecimalMin("0.01")
     private Float price;
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

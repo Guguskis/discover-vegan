@@ -38,7 +38,11 @@ public class VendorServiceTest {
     @Mock
     private VendorProductRepository vendorProductRepository;
     @Mock
+    private MongoVendorProductRepository mongoVendorProductRepository;
+    @Mock
     private ProductRepository productRepository;
+    @Mock
+    private MongoProductRepository mongoProductRepository;
     @Mock
     private PlaceRepository placeRepository;
 
@@ -53,13 +57,15 @@ public class VendorServiceTest {
                 mongoVendorRepository,
                 vendorProductRepository,
                 productRepository,
-                placeRepository);
+                placeRepository,
+                mongoProductRepository,
+                mongoVendorProductRepository);
     }
 
     @Test
     public void createVendorProduct_givenExistingProductId_createsProduct() {
         CreateVendorProductDto createVendorProductDto = new CreateVendorProductDto();
-        createVendorProductDto.setProductId(10);
+        createVendorProductDto.setProductId("10");
         createVendorProductDto.setPrice(2f);
 
         Vendor vendor = new Vendor() {{
@@ -82,7 +88,7 @@ public class VendorServiceTest {
                     setProduct(product);
                 }});
 
-        VendorProductDto vendorProductDto = vendorService.createProduct(1, 1, createVendorProductDto);
+        VendorProductDto vendorProductDto = vendorService.createProduct(1, "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -101,13 +107,13 @@ public class VendorServiceTest {
     @Test(expected = NotFoundException.class)
     public void createVendorProduct_givenNonExistingVendorId_throwsNotFound() {
         CreateVendorProductDto createVendorProductDto = new CreateVendorProductDto();
-        createVendorProductDto.setProductId(10);
+        createVendorProductDto.setProductId("10");
         createVendorProductDto.setPrice(2f);
 
         when(vendorRepository.findById(1))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, 1, createVendorProductDto);
+        vendorService.createProduct(1, "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);
@@ -116,7 +122,7 @@ public class VendorServiceTest {
     @Test(expected = NotFoundException.class)
     public void createVendorProduct_givenNonExistingProductId_throwsNotFound() {
         CreateVendorProductDto createVendorProductDto = new CreateVendorProductDto();
-        createVendorProductDto.setProductId(10);
+        createVendorProductDto.setProductId("10");
         createVendorProductDto.setPrice(2f);
 
         when(vendorRepository.findById(1))
@@ -124,7 +130,7 @@ public class VendorServiceTest {
         when(productRepository.findById(10))
                 .thenReturn(Optional.empty());
 
-        vendorService.createProduct(1, 1, createVendorProductDto);
+        vendorService.createProduct(1, "1", createVendorProductDto);
 
         verify(vendorRepository, times(1))
                 .findById(1);

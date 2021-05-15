@@ -49,7 +49,7 @@ public class VendorController {
 
     @PostMapping("/{vendorId}/product")
     @IsAuthorized
-    public ResponseEntity<VendorProductDto> createProduct(@PathVariable Integer vendorId,
+    public ResponseEntity<VendorProductDto> createProduct(@PathVariable String vendorId,
                                                           @RequestBody @Valid CreateVendorProductDto createVendorProductDto,
                                                           @RequestHeader("Authorization") String token) {
 
