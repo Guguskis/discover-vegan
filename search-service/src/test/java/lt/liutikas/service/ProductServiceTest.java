@@ -41,12 +41,19 @@ public class ProductServiceTest {
     private MongoVendorProductRepository mongoVendorProductRepository;
     @Mock
     private SearchRequestRepository searchRequestRepository;
+    @Mock
+    private MongoSearchRequestRepository mongoSearchRequestRepository;
 
     private ProductService productService;
 
     @Before
     public void setUp() {
-        productService = new ProductService(new ProductAssembler(), mongoProductRepository, mongoVendorProductRepository, searchRequestRepository, new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
+        productService = new ProductService(new ProductAssembler(),
+                mongoProductRepository,
+                mongoVendorProductRepository,
+                searchRequestRepository,
+                mongoSearchRequestRepository,
+                new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
     }
 
     @Test

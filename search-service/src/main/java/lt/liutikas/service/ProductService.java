@@ -6,10 +6,10 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.MongoProduct;
+import lt.liutikas.model.MongoSearchRequest;
 import lt.liutikas.model.MongoVendorProduct;
-import lt.liutikas.model.Product;
-import lt.liutikas.model.SearchRequest;
 import lt.liutikas.repository.MongoProductRepository;
+import lt.liutikas.repository.MongoSearchRequestRepository;
 import lt.liutikas.repository.MongoVendorProductRepository;
 import lt.liutikas.repository.SearchRequestRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,14 +35,16 @@ public class ProductService {
     private final MongoProductRepository mongoProductRepository;
     private final MongoVendorProductRepository mongoVendorProductRepository;
     private final SearchRequestRepository searchRequestRepository;
+    private final MongoSearchRequestRepository mongoSearchRequestRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, SearchRequestRepository searchRequestRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, SearchRequestRepository searchRequestRepository, MongoSearchRequestRepository mongoSearchRequestRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
         this.mongoProductRepository = mongoProductRepository;
         this.mongoVendorProductRepository = mongoVendorProductRepository;
         this.searchRequestRepository = searchRequestRepository;
+        this.mongoSearchRequestRepository = mongoSearchRequestRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
 
@@ -94,7 +97,7 @@ public class ProductService {
         Optional<MongoProduct> product = mongoProductRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
@@ -115,14 +118,15 @@ public class ProductService {
 
         LOG.info(String.format("Returned vendors where product can be bought {productId: %s}", productId));
 
-//        saveSearchRequest(product.get()); // todo migrate to mongo
+        saveSearchRequest(product.get());
 
         return productVendorPage;
     }
 
-    private void saveSearchRequest(Product product) {
-        SearchRequest searchRequest = new SearchRequest();
+    private void saveSearchRequest(MongoProduct product) {
+        MongoSearchRequest searchRequest = new MongoSearchRequest();
         searchRequest.setProduct(product);
-        searchRequestRepository.save(searchRequest);
+        searchRequest.setCreatedAt(LocalDateTime.now());
+        mongoSearchRequestRepository.save(searchRequest);
     }
 }
