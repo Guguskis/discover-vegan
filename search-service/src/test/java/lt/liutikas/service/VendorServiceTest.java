@@ -158,7 +158,7 @@ public class VendorServiceTest {
         when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(vendorProducts, pageRequest, vendorProducts.size()));
 
-        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertEquals(1, vendorProductPageDto.getProducts().size());
         VendorProductDto returnedVendorProductDto = vendorProductPageDto.getProducts().get(0);
 
@@ -192,7 +192,7 @@ public class VendorServiceTest {
         when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
-        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertEquals(Integer.valueOf(1), vendorProductPageDto.getNextPageToken());
     }
 
@@ -220,7 +220,7 @@ public class VendorServiceTest {
         when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
-        VendorProductPageDto vendorProductPageDto = vendorService.getProducts(10, pageRequest);
+        VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertNull(vendorProductPageDto.getNextPageToken());
     }
 

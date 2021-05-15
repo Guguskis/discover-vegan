@@ -100,12 +100,11 @@ public class VendorService {
         return mongoVendorRepository.saveAll(newVendors);
     }
 
-    public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
+    public VendorProductPageDto getProducts(String vendorId, PageRequest pageRequest) {
 
-//        Vendor vendor = assertVendorFound(vendorId);
-        Vendor vendor = new Vendor();
+        MongoVendor vendor = assertVendorFound(vendorId);
 
-        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor, pageRequest);
+        Page<MongoVendorProduct> vendorProductPage = mongoVendorProductRepository.findAllByVendor(vendor, pageRequest);
         Pageable nextVendorProductPage = vendorProductPage.nextPageable();
         List<VendorProductDto> products = vendorProductPage.get()
                 .map(vendorProductAssembler::assembleVendorProductDto)
@@ -118,7 +117,7 @@ public class VendorService {
             vendorProductPageDto.setNextPageToken(nextVendorProductPage.getPageNumber());
         }
 
-        LOG.info(String.format("Returned products for vendor {vendorId: %d}", vendorId));
+        LOG.info(String.format("Returned products for vendor {vendorId: %s}", vendorId));
 
         return vendorProductPageDto;
     }

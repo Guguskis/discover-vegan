@@ -40,7 +40,7 @@ public class VendorController {
     }
 
     @GetMapping("/{vendorId}/product")
-    public ResponseEntity<VendorProductPageDto> getProducts(@PathVariable Integer vendorId,
+    public ResponseEntity<VendorProductPageDto> getProducts(@PathVariable String vendorId,
                                                             @Min(0) @RequestParam(value = "pageToken", defaultValue = "0") Integer pageToken,
                                                             @Min(1) @RequestParam(value = "pageSize", defaultValue = "50") Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageToken, pageSize);
