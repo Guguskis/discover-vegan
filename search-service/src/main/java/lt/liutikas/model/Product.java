@@ -1,8 +1,8 @@
 package lt.liutikas.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Id;
 
 @Document
 public class Product {
