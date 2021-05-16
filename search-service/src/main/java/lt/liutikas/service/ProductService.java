@@ -52,7 +52,7 @@ public class ProductService {
         ProductsPageDto productsPageDto = new ProductsPageDto();
 
         List<ProductDto> productDtos = productsPage.getContent()
-                .stream()// todo filter with at least 1 VendorProduct
+                .stream()
                 .map(productAssembler::assembleProduct)
                 .collect(Collectors.toList());
 
@@ -99,7 +99,7 @@ public class ProductService {
             throw new NotFoundException(message);
         }
 
-        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByProduct(product.get(), pageable); // todo check if this works
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByProduct(product.get(), pageable);
         Pageable nextPageable = vendorProductPage.nextPageable();
 
         List<VendorByProductDto> vendorByProductDtos = vendorProductPage.stream()
