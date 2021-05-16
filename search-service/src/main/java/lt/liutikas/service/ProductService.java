@@ -53,7 +53,7 @@ public class ProductService {
 
         List<ProductDto> productDtos = productsPage.getContent()
                 .stream()// todo filter with at least 1 VendorProduct
-                .map(productAssembler::assembleMongoProduct)
+                .map(productAssembler::assembleProduct)
                 .collect(Collectors.toList());
 
         productsPageDto.setProducts(productDtos);
@@ -71,7 +71,7 @@ public class ProductService {
         String nameWithoutAccents = StringUtils.stripAccents(nameWithAccents);
         createProductDto.setName(nameWithoutAccents);
 
-        Product product = productAssembler.assembleMongoProduct(createProductDto);
+        Product product = productAssembler.assembleProduct(createProductDto);
 
         try {
             product = productRepository.save(product);
@@ -86,7 +86,7 @@ public class ProductService {
                 product.getName(),
                 product.getProducer()));
 
-        return productAssembler.assembleMongoProduct(product);
+        return productAssembler.assembleProduct(product);
     }
 
     public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, String productId) {

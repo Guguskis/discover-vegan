@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductAssembler {
 
-    public Product assembleMongoProduct(CreateProductDto createProductDto) {
+    public Product assembleProduct(CreateProductDto createProductDto) {
         Product product = new Product();
 
         product.setName(createProductDto.getName());
@@ -19,17 +19,6 @@ public class ProductAssembler {
     }
 
     public ProductDto assembleProduct(Product product) {
-        ProductDto productDto = new ProductDto();
-
-        productDto.setProductId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setImageUrl(product.getImageUrl());
-        productDto.setProducer(product.getProducer());
-
-        return productDto;
-    }
-
-    public ProductDto assembleMongoProduct(Product product) {
         ProductDto productDto = new ProductDto();
 
         productDto.setProductId(product.getId());
