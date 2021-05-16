@@ -1,7 +1,10 @@
 package lt.liutikas.model;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.persistence.Id;
 
+@Document
 public class Vendor {
 
     @Id

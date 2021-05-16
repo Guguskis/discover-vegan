@@ -75,10 +75,23 @@ public class VendorService {
                 .map(vendorAssembler::assembleVendor)
                 .collect(Collectors.toList());
 
+        List<VendorProductCountAggregate> vendorProductCountAggregates = vendorProductRepository.groupBy(vendors);
+
+        vendorProductCountAggregates.forEach(vendorProductCountAggregate ->
+                enrichProductCount(vendorProductCountAggregate, vendorDtos)
+        );
+
         LOG.info(String.format("Returned vendors for location {latitude: %f, longitude: %f}",
                 location.getLat(), location.getLng()));
 
         return vendorDtos;
+    }
+
+    private void enrichProductCount(VendorProductCountAggregate vendorProductCountAggregate, List<VendorDto> vendorDtos) {
+        vendorDtos.stream()
+                .filter(vendorDto -> vendorDto.getVendorId().equals(vendorProductCountAggregate.getVendor().getId()))
+                .findFirst()
+                .ifPresent(vendorDto -> vendorDto.setProductCount(vendorProductCountAggregate.getCount()));
     }
 
     private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {

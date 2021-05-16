@@ -35,13 +35,6 @@ public class VendorAssembler {
         vendorDto.setAddress(vendor.getAddress());
         vendorDto.setVendorType(vendor.getVendorType());
 
-//        if (vendor.getVendorProducts() != null) {
-//            vendorDto.setProductCount(vendor.getVendorProducts().size());
-//        } else {
-//            vendorDto.setProductCount(0);
-//        }
-        vendorDto.setProductCount(1); // todo set actual product count
-
         return vendorDto;
     }
 }

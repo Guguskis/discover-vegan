@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface VendorProductRepository extends MongoRepository<VendorProduct, String> {
+public interface VendorProductRepository extends MongoRepository<VendorProduct, String>, CustomVendorProductRepository {
 
     Page<VendorProduct> findAllByVendor(Vendor vendor, Pageable pageable);
 
