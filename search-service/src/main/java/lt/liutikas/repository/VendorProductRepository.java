@@ -5,20 +5,15 @@ import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+import java.util.Optional;
 
-@Repository
-public interface VendorProductRepository extends JpaRepository<VendorProduct, Long> {
-
+public interface VendorProductRepository extends MongoRepository<VendorProduct, String>, CustomVendorProductRepository {
 
     Page<VendorProduct> findAllByVendor(Vendor vendor, Pageable pageable);
 
-    List<VendorProduct> findAllByVendor(Vendor vendor);
-
     Page<VendorProduct> findAllByProduct(Product product, Pageable pageable);
 
-    VendorProduct findAllByProductAndVendor(Product product, Vendor vendor);
+    Optional<VendorProduct> findByProductAndVendor(Product product, Vendor vendor);
 }

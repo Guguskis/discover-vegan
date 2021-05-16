@@ -8,6 +8,7 @@ import lt.liutikas.model.VendorProduct;
 import lt.liutikas.model.VendorProductChange;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Component
 public class VendorProductAssembler {
 
-    public VendorProduct assembleVendorProduct(Integer userId, CreateVendorProductDto createVendorProductDto, Vendor vendor, Product product) {
+    public VendorProduct assembleVendorProduct(String userId, CreateVendorProductDto createVendorProductDto, Vendor vendor, Product product) {
         VendorProduct vendorProduct = new VendorProduct();
 
         vendorProduct.setVendor(vendor);
@@ -24,6 +25,7 @@ public class VendorProductAssembler {
         VendorProductChange vendorProductChange = new VendorProductChange();
         vendorProductChange.setUserId(userId);
         vendorProductChange.setPrice(createVendorProductDto.getPrice());
+        vendorProductChange.setCreatedAt(LocalDateTime.now());
 
         vendorProduct.setVendorProductChanges(Collections.singletonList(vendorProductChange));
 
@@ -34,7 +36,7 @@ public class VendorProductAssembler {
         VendorProductDto vendorProductDto = new VendorProductDto();
         Product product = vendorProduct.getProduct();
 
-        vendorProductDto.setProductId(product.getProductId());
+        vendorProductDto.setProductId(product.getId());
         vendorProductDto.setName(product.getName());
         vendorProductDto.setImageUrl(product.getImageUrl());
         vendorProductDto.setProducer(product.getProducer());

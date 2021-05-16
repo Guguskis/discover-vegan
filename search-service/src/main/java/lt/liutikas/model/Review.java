@@ -1,40 +1,35 @@
 package lt.liutikas.model;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
+@Document
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long reviewId;
-    @Column(nullable = false)
-    private Integer userId;
-    @Column(nullable = false)
+    private String id;
+    private String userId;
     private ReviewType reviewType;
-    @CreationTimestamp
     private LocalDateTime createdAt;
-    @ManyToOne
-    @JoinColumn(name = "VENDOR_PRODUCT_ID")
+    @DBRef
     private VendorProduct vendorProduct;
 
-    public Long getReviewId() {
-        return reviewId;
+    public String getId() {
+        return id;
     }
 
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

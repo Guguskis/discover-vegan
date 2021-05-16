@@ -1,40 +1,18 @@
 package lt.liutikas.model;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
 public class VendorProductChange {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long vendorProductChangeId;
-    @Column(nullable = false)
-    private Integer userId;
-    @CreationTimestamp
+    private String userId;
     private LocalDateTime createdAt;
-    @Column(nullable = false)
     private Float price;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "VENDOR_PRODUCT_ID")
-    private VendorProduct vendorProduct;
 
-    public Long getVendorProductChangeId() {
-        return vendorProductChangeId;
-    }
-
-    public void setVendorProductChangeId(Long vendorProductChangeId) {
-        this.vendorProductChangeId = vendorProductChangeId;
-    }
-
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -54,11 +32,4 @@ public class VendorProductChange {
         this.price = price;
     }
 
-    public VendorProduct getVendorProduct() {
-        return vendorProduct;
-    }
-
-    public void setVendorProduct(VendorProduct vendorProduct) {
-        this.vendorProduct = vendorProduct;
-    }
 }

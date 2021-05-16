@@ -1,29 +1,26 @@
 package lt.liutikas.model;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
+@Document
 public class SearchRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long searchRequestId;
-    @CreationTimestamp
+    private String id;
     private LocalDateTime createdAt;
-    @ManyToOne
-    @JoinColumn(name = "PRODUCT_ID")
+    @DBRef
     private Product product;
 
-    public Long getSearchRequestId() {
-        return searchRequestId;
+    public String getId() {
+        return id;
     }
 
-    public void setSearchRequestId(Long searchRequestId) {
-        this.searchRequestId = searchRequestId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public LocalDateTime getCreatedAt() {

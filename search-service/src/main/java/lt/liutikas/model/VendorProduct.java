@@ -1,34 +1,28 @@
 package lt.liutikas.model;
 
-import javax.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.Id;
 import java.util.List;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
+@Document
 public class VendorProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long vendorProductId;
-
-    @ManyToOne
-    @JoinColumn(name = "VENDOR_ID")
+    private String id;
+    @DBRef
     private Vendor vendor;
-
-    @ManyToOne
-    @JoinColumn(name = "PRODUCT_ID")
+    @DBRef
     private Product product;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "VENDOR_PRODUCT_ID")
     private List<VendorProductChange> vendorProductChanges;
 
-    public Long getVendorProductId() {
-        return vendorProductId;
+    public String getId() {
+        return id;
     }
 
-    public void setVendorProductId(Long vendorProductId) {
-        this.vendorProductId = vendorProductId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Vendor getVendor() {

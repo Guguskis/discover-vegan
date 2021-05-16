@@ -1,27 +1,23 @@
 package lt.liutikas.model;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity(name = "_USER")
-@Table(schema = "AUTHENTICATION_SERVICE")
+@Document
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer userId;
-    @Column(nullable = false)
+    private String id;
     private String passwordHash;
-    @Column(nullable = false)
     private String email;
-    @Column(nullable = false)
     private UserType userType;
 
-    public Integer getUserId() {
-        return userId;
+    public String getId() {
+        return id;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPasswordHash() {

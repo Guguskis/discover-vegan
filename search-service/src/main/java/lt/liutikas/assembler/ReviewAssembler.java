@@ -10,7 +10,7 @@ public class ReviewAssembler {
     public ReviewDto assembleReviewDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
 
-        reviewDto.setReviewId(review.getReviewId());
+        reviewDto.setReviewId(review.getId());
         reviewDto.setCreatedAt(review.getCreatedAt());
         reviewDto.setReviewType(review.getReviewType());
 

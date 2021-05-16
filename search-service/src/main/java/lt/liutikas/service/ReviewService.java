@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -23,40 +24,41 @@ public class ReviewService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewService.class);
 
-    private final VendorProductRepository vendorProductRepository;
-    private final VendorRepository vendorRepository;
     private final ProductRepository productRepository;
-    private final ReviewRepository reviewRepository;
+    private final VendorRepository vendorRepository;
     private final ReviewAssembler reviewAssembler;
+    private final VendorProductRepository vendorProductRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ReviewService(VendorProductRepository vendorProductRepository, VendorRepository vendorRepository, ProductRepository productRepository, ReviewRepository reviewRepository, ReviewAssembler reviewAssembler) {
-        this.vendorProductRepository = vendorProductRepository;
+    public ReviewService(VendorRepository vendorRepository, ProductRepository productRepository, ReviewAssembler reviewAssembler, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository) {
         this.vendorRepository = vendorRepository;
         this.productRepository = productRepository;
-        this.reviewRepository = reviewRepository;
         this.reviewAssembler = reviewAssembler;
+        this.vendorProductRepository = vendorProductRepository;
+        this.reviewRepository = reviewRepository;
     }
 
-    public ReviewDto createReview(CreateReviewDto createReviewDto, Integer userId) {
+    public ReviewDto createReview(CreateReviewDto createReviewDto, String userId) {
 
         Vendor vendor = assertVendorFound(createReviewDto.getVendorId());
         Product product = assertProductFound(createReviewDto.getProductId());
 
-        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         Review review = new Review();
         review.setReviewType(createReviewDto.getReviewType());
         review.setUserId(userId);
         review.setVendorProduct(vendorProduct);
+        review.setCreatedAt(LocalDateTime.now());
 
         review = reviewRepository.save(review);
 
-        LOG.info(String.format("Created review {reviewType: %s, vendorProductId: %d }", createReviewDto.getReviewType(), vendorProduct.getVendorProductId()));
+        LOG.info(String.format("Created review {reviewType: %s, vendorProductId: %s }", createReviewDto.getReviewType(), vendorProduct.getId()));
 
         return reviewAssembler.assembleReviewDto(review);
     }
 
-    private Vendor assertVendorFound(Integer vendorId) {
+    private Vendor assertVendorFound(String vendorId) {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
@@ -68,11 +70,11 @@ public class ReviewService {
         return vendor.get();
     }
 
-    private Product assertProductFound(Integer productId) {
+    private Product assertProductFound(String productId) {
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }

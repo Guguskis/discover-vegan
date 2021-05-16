@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +31,17 @@ public class VendorService {
     private final VendorProductAssembler vendorProductAssembler;
 
     private final VendorRepository vendorRepository;
-    private final VendorProductRepository vendorProductRepository;
-    private final ProductRepository productRepository;
     private final PlaceRepository placeRepository;
+    private final ProductRepository productRepository;
+    private final VendorProductRepository vendorProductRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, PlaceRepository placeRepository, ProductRepository productRepository, VendorProductRepository vendorProductRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
         this.vendorRepository = vendorRepository;
-        this.vendorProductRepository = vendorProductRepository;
-        this.productRepository = productRepository;
         this.placeRepository = placeRepository;
+        this.productRepository = productRepository;
+        this.vendorProductRepository = vendorProductRepository;
     }
 
     public List<VendorDto> getVendors(GetVendorDto getVendorDto) {
@@ -74,19 +75,32 @@ public class VendorService {
                 .map(vendorAssembler::assembleVendor)
                 .collect(Collectors.toList());
 
+        List<VendorProductCountAggregate> vendorProductCountAggregates = vendorProductRepository.groupBy(vendors);
+
+        vendorProductCountAggregates.forEach(vendorProductCountAggregate ->
+                enrichProductCount(vendorProductCountAggregate, vendorDtos)
+        );
+
         LOG.info(String.format("Returned vendors for location {latitude: %f, longitude: %f}",
                 location.getLat(), location.getLng()));
 
         return vendorDtos;
     }
 
+    private void enrichProductCount(VendorProductCountAggregate vendorProductCountAggregate, List<VendorDto> vendorDtos) {
+        vendorDtos.stream()
+                .filter(vendorDto -> vendorDto.getVendorId().equals(vendorProductCountAggregate.getVendor().getId()))
+                .findFirst()
+                .ifPresent(vendorDto -> vendorDto.setProductCount(vendorProductCountAggregate.getCount()));
+    }
+
     private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {
-        List<String> vendorsIds = vendors.stream()
+        List<String> externalIds = vendors.stream()
                 .map(Vendor::getExternalPlaceId)
                 .collect(Collectors.toList());
 
         List<Place> newPlaces = places.stream()
-                .filter(place -> !vendorsIds.contains(place.getPlace_id()))
+                .filter(place -> !externalIds.contains(place.getPlace_id()))
                 .collect(Collectors.toList());
 
         List<Vendor> newVendors = newPlaces.stream()
@@ -96,7 +110,7 @@ public class VendorService {
         return vendorRepository.saveAll(newVendors);
     }
 
-    public VendorProductPageDto getProducts(Integer vendorId, PageRequest pageRequest) {
+    public VendorProductPageDto getProducts(String vendorId, PageRequest pageRequest) {
 
         Vendor vendor = assertVendorFound(vendorId);
 
@@ -113,12 +127,12 @@ public class VendorService {
             vendorProductPageDto.setNextPageToken(nextVendorProductPage.getPageNumber());
         }
 
-        LOG.info(String.format("Returned products for vendor {vendorId: %d}", vendorId));
+        LOG.info(String.format("Returned products for vendor {vendorId: %s}", vendorId));
 
         return vendorProductPageDto;
     }
 
-    public VendorProductDto createProduct(Integer userId, Integer vendorId, CreateVendorProductDto createVendorProductDto) {
+    public VendorProductDto createProduct(String userId, String vendorId, CreateVendorProductDto createVendorProductDto) {
 
         Vendor vendor = assertVendorFound(vendorId);
         Product product = assertProductFound(createVendorProductDto.getProductId());
@@ -130,34 +144,26 @@ public class VendorService {
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private Product assertProductFound(Integer productId) {
+    private Product assertProductFound(String productId) {
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
         return product.get();
     }
 
-    public VendorProductDto patchProduct(int userId, Integer vendorId, Integer productId, PatchVendorProductDto patchVendorProductDto) {
+    public VendorProductDto patchProduct(String userId, String vendorId, String productId, PatchVendorProductDto patchVendorProductDto) {
 
         Vendor vendor = assertVendorFound(vendorId);
-        assertProductFound(productId);
+        Product product = assertProductFound(productId);
 
-        List<VendorProduct> vendorProducts = vendorProductRepository.findAllByVendor(vendor);
-
-        Optional<VendorProduct> vendorProductOptional = vendorProducts.stream()
-                .filter(vendorProductT -> vendorProductT
-                        .getProduct()
-                        .getProductId()
-                        .equals(productId)
-                )
-                .findFirst();
+        Optional<VendorProduct> vendorProductOptional = vendorProductRepository.findByProductAndVendor(product, vendor);
 
         if (vendorProductOptional.isEmpty()) {
-            String message = String.format("Vendor product not found {vendorId: %d, productId: %d}", vendorId, productId);
+            String message = String.format("Vendor product not found {vendorId: %s, productId: %s}", vendorId, productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
@@ -168,21 +174,22 @@ public class VendorService {
             VendorProductChange vendorProductChange = new VendorProductChange();
             vendorProductChange.setPrice(patchVendorProductDto.getPrice());
             vendorProductChange.setUserId(userId);
+            vendorProductChange.setCreatedAt(LocalDateTime.now());
             vendorProduct.getVendorProductChanges().add(vendorProductChange);
         }
 
         vendorProduct = vendorProductRepository.save(vendorProduct);
 
-        LOG.info(String.format("Patched vendor product {vendorId: %d, productId: %d}", vendorId, productId));
+        LOG.info(String.format("Patched vendor product {vendorId: %s, productId: %s}", vendorId, productId));
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private Vendor assertVendorFound(Integer vendorId) {
+    private Vendor assertVendorFound(String vendorId) {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            String message = String.format("Vendor not found {vendorId: %s}", vendorId);
             LOG.error(message);
             throw new NotFoundException(message);
         }

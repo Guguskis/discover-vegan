@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,33 +32,27 @@ public class ProductService {
 
     private final ProductAssembler productAssembler;
     private final ProductRepository productRepository;
-    private final SearchRequestRepository searchRequestRepository;
     private final VendorProductRepository vendorProductRepository;
+    private final SearchRequestRepository searchRequestRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, SearchRequestRepository searchRequestRepository, VendorProductRepository vendorProductRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, VendorProductRepository vendorProductRepository, SearchRequestRepository searchRequestRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
         this.productRepository = productRepository;
-        this.searchRequestRepository = searchRequestRepository;
         this.vendorProductRepository = vendorProductRepository;
+        this.searchRequestRepository = searchRequestRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
 
     public ProductsPageDto getProducts(Pageable pageable, String query) {
-        String formattedQuery = "%" + query + "%";
-
-        Page<Product> productsPage = productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(pageable, formattedQuery);
+        Page<Product> productsPage = productRepository.findByNameRegexOrderByNameAsc(pageable, query);
         Pageable nextPageable = productsPage.nextPageable();
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
 
         List<ProductDto> productDtos = productsPage.getContent()
                 .stream()
-                .filter(product -> {
-                    List<VendorProduct> vendorProducts = product.getVendorProducts();
-                    return vendorProducts != null && vendorProducts.size() > 0;
-                })
                 .map(productAssembler::assembleProduct)
                 .collect(Collectors.toList());
 
@@ -71,7 +66,7 @@ public class ProductService {
         return productsPageDto;
     }
 
-    public Product createProduct(CreateProductDto createProductDto) {
+    public ProductDto createProduct(CreateProductDto createProductDto) {
         String nameWithAccents = createProductDto.getName();
         String nameWithoutAccents = StringUtils.stripAccents(nameWithAccents);
         createProductDto.setName(nameWithoutAccents);
@@ -86,20 +81,20 @@ public class ProductService {
             throw new BadRequestException(message);
         }
 
-        LOG.info(String.format("Created new product {productId: %d, name: '%s', producer: '%s'}",
-                product.getProductId(),
+        LOG.info(String.format("Created new product {productId: %s, name: '%s', producer: '%s'}",
+                product.getId(),
                 product.getName(),
                 product.getProducer()));
 
-        return product;
+        return productAssembler.assembleProduct(product);
     }
 
-    public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, Integer productId) {
+    public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, String productId) {
 
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
@@ -118,6 +113,8 @@ public class ProductService {
             productVendorPage.setNextPageToken(nextPageable.getPageNumber());
         }
 
+        LOG.info(String.format("Returned vendors where product can be bought {productId: %s}", productId));
+
         saveSearchRequest(product.get());
 
         return productVendorPage;
@@ -126,6 +123,7 @@ public class ProductService {
     private void saveSearchRequest(Product product) {
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.setProduct(product);
+        searchRequest.setCreatedAt(LocalDateTime.now());
         searchRequestRepository.save(searchRequest);
     }
 }

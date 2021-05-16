@@ -1,16 +1,15 @@
 package lt.liutikas.dto;
 
 import lt.liutikas.model.Product;
+import org.springframework.data.annotation.Id;
 
-public class SearchRequestGroupedByProduct {
+public class SearchRequestAggregate {
 
+    @Id
     private Product product;
-    private Long count;
+    private int count;
 
-    public SearchRequestGroupedByProduct() {
-    }
-
-    public SearchRequestGroupedByProduct(Product product, Long count) {
+    public SearchRequestAggregate(Product product, int count) {
         this.product = product;
         this.count = count;
     }
@@ -23,11 +22,11 @@ public class SearchRequestGroupedByProduct {
         this.product = product;
     }
 
-    public Long getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(int count) {
         this.count = count;
     }
 }

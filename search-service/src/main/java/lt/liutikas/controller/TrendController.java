@@ -45,21 +45,21 @@ public class TrendController {
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
             @RequestParam @Min(0) @Max(50) Integer stepCount,
-            @PathVariable Integer productId) {
+            @PathVariable String productId) {
         return trendService.getProductSearchTrends(fromDate, toDate, stepCount, productId);
     }
 
     @GetMapping("/vendor/{vendorId}/product/{productId}/price")
     public List<PriceTrend> getProductPrice(
-            @PathVariable Integer productId,
-            @PathVariable Integer vendorId) {
+            @PathVariable String productId,
+            @PathVariable String vendorId) {
         return trendService.getProductPriceTrends(productId, vendorId);
     }
 
     @GetMapping("/vendor/{vendorId}/product/{productId}/review")
     public List<ReviewTrend> getReviewTrends(
-            @PathVariable Integer productId,
-            @PathVariable Integer vendorId,
+            @PathVariable String productId,
+            @PathVariable String vendorId,
             @RequestParam LocalDate fromDate,
             @RequestParam(defaultValue = "today") LocalDate toDate,
             @RequestParam @Min(0) @Max(50) Integer stepCount) {

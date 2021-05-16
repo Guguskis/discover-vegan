@@ -1,13 +1,11 @@
 package lt.liutikas.repository;
 
 import lt.liutikas.model.Vendor;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-@Repository
-public interface VendorRepository extends JpaRepository<Vendor, Integer> {
+public interface VendorRepository extends MongoRepository<Vendor, String> {
 
     List<Vendor> findByExternalPlaceIdIn(List<String> placesIds);
 }

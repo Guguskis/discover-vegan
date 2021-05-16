@@ -2,13 +2,13 @@ package lt.liutikas.dto;
 
 public class CreateUserResponseDto {
 
-    private Integer userId;
+    private String userId;
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 }

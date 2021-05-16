@@ -2,16 +2,16 @@ package lt.liutikas.dto;
 
 public class ProductDto {
 
-    private Integer productId;
+    private String productId;
     private String name;
     private String imageUrl;
     private String producer;
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

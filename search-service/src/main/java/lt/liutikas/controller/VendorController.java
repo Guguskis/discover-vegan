@@ -28,7 +28,7 @@ public class VendorController {
     @GetMapping
     public ResponseEntity<List<VendorDto>> getVendors(@RequestParam Double latitude,
                                                       @RequestParam Double longitude,
-                                                      @RequestParam(required = false) VendorType type) {// todo add VendorType {PHYSICAL, DIGITAL}, return all if not provided
+                                                      @RequestParam(required = false) VendorType type) {
         Location location = new Location();
         location.setLat(latitude);
         location.setLng(longitude);
@@ -40,7 +40,7 @@ public class VendorController {
     }
 
     @GetMapping("/{vendorId}/product")
-    public ResponseEntity<VendorProductPageDto> getProducts(@PathVariable Integer vendorId,
+    public ResponseEntity<VendorProductPageDto> getProducts(@PathVariable String vendorId,
                                                             @Min(0) @RequestParam(value = "pageToken", defaultValue = "0") Integer pageToken,
                                                             @Min(1) @RequestParam(value = "pageSize", defaultValue = "50") Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageToken, pageSize);
@@ -49,23 +49,23 @@ public class VendorController {
 
     @PostMapping("/{vendorId}/product")
     @IsAuthorized
-    public ResponseEntity<VendorProductDto> createProduct(@PathVariable Integer vendorId,
+    public ResponseEntity<VendorProductDto> createProduct(@PathVariable String vendorId,
                                                           @RequestBody @Valid CreateVendorProductDto createVendorProductDto,
                                                           @RequestHeader("Authorization") String token) {
 
         String userId = tokenUtil.getValue(token, "userId");
-        return ResponseEntity.ok(vendorService.createProduct(Integer.parseInt(userId), vendorId, createVendorProductDto));
+        return ResponseEntity.ok(vendorService.createProduct(userId, vendorId, createVendorProductDto));
     }
 
     @PatchMapping("/{vendorId}/product/{productId}")
     @IsAuthorized
-    public ResponseEntity<VendorProductDto> patchProduct(@PathVariable Integer vendorId,
-                                                         @PathVariable Integer productId,
+    public ResponseEntity<VendorProductDto> patchProduct(@PathVariable String vendorId,
+                                                         @PathVariable String productId,
                                                          @RequestBody @Valid PatchVendorProductDto patchVendorProductDto,
                                                          @RequestHeader("Authorization") String token
     ) {
         String userId = tokenUtil.getValue(token, "userId");
-        return ResponseEntity.ok(vendorService.patchProduct(Integer.parseInt(userId), vendorId, productId, patchVendorProductDto));
+        return ResponseEntity.ok(vendorService.patchProduct(userId, vendorId, productId, patchVendorProductDto));
     }
 
 }

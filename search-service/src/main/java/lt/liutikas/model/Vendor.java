@@ -1,37 +1,28 @@
 package lt.liutikas.model;
 
-import javax.persistence.*;
-import java.util.List;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
+import javax.persistence.Id;
+
+@Document
 public class Vendor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer vendorId;
-    @Column(nullable = false)
+    private String id;
     private String externalPlaceId;
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
     private Double latitude;
-    @Column(nullable = false)
     private Double longitude;
     private String address;
     private String imageUrl;
-    @Column(nullable = false)
     private VendorType vendorType;
-    @OneToMany
-    @JoinColumn(name = "VENDOR_ID")
-    private List<VendorProduct> vendorProducts;
 
-    public Integer getVendorId() {
-        return vendorId;
+    public String getId() {
+        return id;
     }
 
-    public void setVendorId(Integer id) {
-        this.vendorId = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getExternalPlaceId() {
@@ -90,11 +81,4 @@ public class Vendor {
         this.vendorType = vendorType;
     }
 
-    public List<VendorProduct> getVendorProducts() {
-        return vendorProducts;
-    }
-
-    public void setVendorProducts(List<VendorProduct> vendorProducts) {
-        this.vendorProducts = vendorProducts;
-    }
 }

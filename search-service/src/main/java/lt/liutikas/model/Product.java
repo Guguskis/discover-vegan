@@ -1,30 +1,24 @@
 package lt.liutikas.model;
 
-import javax.persistence.*;
-import java.util.List;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(schema = "SEARCH_SERVICE")
+import javax.persistence.Id;
+
+@Document
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer productId;
-    @Column(nullable = false)
+    private String id;
     private String name;
-    @Column(nullable = false)
     private String imageUrl;
     private String producer;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCT_ID")
-    private List<VendorProduct> vendorProducts;
 
-    public Integer getProductId() {
-        return productId;
+    public String getId() {
+        return id;
     }
 
-    public void setProductId(Integer id) {
-        this.productId = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -51,11 +45,4 @@ public class Product {
         this.producer = producer;
     }
 
-    public List<VendorProduct> getVendorProducts() {
-        return vendorProducts;
-    }
-
-    public void setVendorProducts(List<VendorProduct> vendorProducts) {
-        this.vendorProducts = vendorProducts;
-    }
 }

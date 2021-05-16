@@ -24,6 +24,6 @@ public class ReviewController {
     public ReviewDto createReview(@RequestBody CreateReviewDto createReviewDto,
                                   @RequestHeader("Authorization") String token) {
         String userId = tokenUtil.getValue(token, "userId");
-        return reviewService.createReview(createReviewDto, Integer.parseInt(userId));
+        return reviewService.createReview(createReviewDto, userId);
     }
 }

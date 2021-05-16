@@ -1,6 +1,6 @@
 package lt.liutikas.assembler;
 
-import lt.liutikas.dto.ProductsBySearchCount;
+import lt.liutikas.dto.SearchRequestAggregate;
 import lt.liutikas.dto.TrendDto;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +13,11 @@ public class SearchRequestAssembler {
         this.productAssembler = productAssembler;
     }
 
-    public TrendDto assemble(ProductsBySearchCount productsBySearchCount) {
+    public TrendDto assemble(SearchRequestAggregate searchRequestAggregate) {
         TrendDto trendDto = new TrendDto();
 
-        trendDto.setProduct(productAssembler.assembleProduct(productsBySearchCount.getProduct()));
-        trendDto.setSearchCount(productsBySearchCount.getSearchCount());
+        trendDto.setProduct(productAssembler.assembleProduct(searchRequestAggregate.getProduct()));
+        trendDto.setSearchCount(searchRequestAggregate.getCount());
 
         return trendDto;
     }

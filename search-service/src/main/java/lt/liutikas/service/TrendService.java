@@ -8,7 +8,6 @@ import lt.liutikas.model.*;
 import lt.liutikas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,37 +24,39 @@ public class TrendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrendService.class);
 
-    private final SearchRequestRepository searchRequestRepository;
+    private final SearchRequestAssembler searchRequestAssembler;
+    private final VendorProductRepository vendorProductRepository;
     private final ProductRepository productRepository;
     private final VendorRepository vendorRepository;
-    private final VendorProductRepository vendorProductRepository;
     private final ReviewRepository reviewRepository;
+    private final SearchRequestRepository searchRequestRepository;
 
-    private final SearchRequestAssembler searchRequestAssembler;
-
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler) {
-        this.searchRequestRepository = searchRequestRepository;
+    public TrendService(SearchRequestAssembler searchRequestAssembler, VendorProductRepository vendorProductRepository, ProductRepository productRepository, VendorRepository vendorRepository, ReviewRepository reviewRepository, SearchRequestRepository searchRequestRepository) {
+        this.searchRequestAssembler = searchRequestAssembler;
+        this.vendorProductRepository = vendorProductRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
-        this.vendorProductRepository = vendorProductRepository;
         this.reviewRepository = reviewRepository;
-        this.searchRequestAssembler = searchRequestAssembler;
+        this.searchRequestRepository = searchRequestRepository;
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
+        Integer pageToken = request.getPageToken();
+        Integer pageSize = request.getPageSize();
 
-        Sort sort = Sort.by(request.getSortDirection(), "searchCount");
-        Pageable pageable = PageRequest.of(request.getPageToken(), request.getPageSize(), sort);
+        Sort sort = Sort.by(request.getSortDirection(), "count");
+        Pageable pageable = PageRequest.of(pageToken, pageSize, sort);
 
+        LocalDateTime startDateTime = request.getFromDate().atStartOfDay();
+        LocalDateTime endDateTime = request.getToDate().plusDays(1).atStartOfDay();
 
-        Page<ProductsBySearchCount> searchRequestsPage = searchRequestRepository.findSearchRequestCount(
-                pageable,
-                request.getFromDate().atStartOfDay(),
-                request.getToDate().plusDays(1).atStartOfDay()
+        List<SearchRequestAggregate> searchRequestAggregates = searchRequestRepository.groupByProductAndCreatedAtBetween(
+                startDateTime,
+                endDateTime,
+                pageable
         );
-        Pageable nextPageable = searchRequestsPage.nextPageable();
 
-        List<TrendDto> trendDtos = searchRequestsPage.getContent()
+        List<TrendDto> trendDtos = searchRequestAggregates
                 .stream()
                 .map(searchRequestAssembler::assemble)
                 .collect(Collectors.toList());
@@ -63,18 +64,18 @@ public class TrendService {
         TrendPageDto trendPageDto = new TrendPageDto();
         trendPageDto.setTrends(trendDtos);
 
-        if (nextPageable.isPaged()) {
-            trendPageDto.setNextPageToken(nextPageable.getPageNumber());
+        if (searchRequestAggregates.size() == pageSize) {
+            trendPageDto.setNextPageToken(pageToken + 1);
         }
 
         LOG.info(String.format("Returned product trends { pageToken: %d, pageSize: %d, fromDate: %s, toDate: %s, sortDirection: %s }",
-                request.getPageToken(), request.getPageSize(), request.getFromDate(), request.getToDate(), request.getSortDirection().toString())
+                pageToken, pageSize, request.getFromDate(), request.getToDate(), request.getSortDirection().toString())
         );
 
         return trendPageDto;
     }
 
-    public List<SearchRequestsTrend> getProductSearchTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, Integer productId) {
+    public List<SearchRequestsTrend> getProductSearchTrends(LocalDate fromDate, LocalDate toDate, Integer stepCount, String productId) {
 
         if (toDate.isBefore(fromDate)) {
             throw new BadRequestException("toDate must be after fromDate");
@@ -101,7 +102,7 @@ public class TrendService {
             searchRequestsTrends.add(searchRequestsTrend);
         }
 
-        LOG.info(String.format("Returned search requests trend { productId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
+        LOG.info(String.format("Returned search requests trend { productId: %s, fromDate: %s, toDate: %s, stepCount: %d }",
                 productId, fromDate, toDate, stepCount));
 
         return searchRequestsTrends;
@@ -113,15 +114,16 @@ public class TrendService {
         return differenceInSeconds / stepCount;
     }
 
-    public List<PriceTrend> getProductPriceTrends(Integer productId, Integer vendorId) {
+    public List<PriceTrend> getProductPriceTrends(String productId, String vendorId) {
 
         Product product = assertProductFound(productId);
         Vendor vendor = assertVendorFound(vendorId);
 
-        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         List<PriceTrend> priceTrends = vendorProduct.getVendorProductChanges()
                 .stream()
+                .sorted(Comparator.comparing(VendorProductChange::getCreatedAt))
                 .map(vendorProductChange -> {
                     PriceTrend priceTrend = new PriceTrend();
                     priceTrend.setDateTime(vendorProductChange.getCreatedAt());
@@ -130,21 +132,17 @@ public class TrendService {
                 })
                 .collect(Collectors.toList());
 
-        if (priceTrends.size() > 1) {
-            priceTrends.sort(Comparator.comparing(PriceTrend::getDateTime));
-        }
-
-        LOG.info(String.format("Returned price trend { productId: %d }", productId));
+        LOG.info(String.format("Returned price trend { vendorProductId: %s }", vendorProduct.getId()));
 
         return priceTrends;
     }
 
-    public List<ReviewTrend> getReviewTrends(Integer productId, Integer vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
+    public List<ReviewTrend> getReviewTrends(String productId, String vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
 
         Vendor vendor = assertVendorFound(vendorId);
         Product product = assertProductFound(productId);
 
-        VendorProduct vendorProduct = vendorProductRepository.findAllByProductAndVendor(product, vendor);
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
 
@@ -166,8 +164,8 @@ public class TrendService {
             reviewTrends.add(reviewTrend);
         }
 
-        LOG.info(String.format("Returned review trends { vendorProductId: %d, fromDate: %s, toDate: %s, stepCount: %d }",
-                vendorProduct.getVendorProductId(), fromDate, toDate, stepCount));
+        LOG.info(String.format("Returned review trends { vendorProductId: %s, fromDate: %s, toDate: %s, stepCount: %d }",
+                vendorProduct.getId(), fromDate, toDate, stepCount));
 
         return reviewTrends;
     }
@@ -187,18 +185,18 @@ public class TrendService {
         return reviewTrendCounts;
     }
 
-    private Product assertProductFound(Integer productId) {
+    private Product assertProductFound(String productId) {
         Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
-            String message = String.format("Product not found {productId: %d}", productId);
+            String message = String.format("Product not found {productId: %s}", productId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
         return product.get();
     }
 
-    private Vendor assertVendorFound(Integer vendorId) {
+    private Vendor assertVendorFound(String vendorId) {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
