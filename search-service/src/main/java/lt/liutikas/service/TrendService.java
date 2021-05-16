@@ -8,7 +8,6 @@ import lt.liutikas.model.*;
 import lt.liutikas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -53,19 +52,22 @@ public class TrendService {
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
+        Integer pageToken = request.getPageToken();
+        Integer pageSize = request.getPageSize();
 
-        Sort sort = Sort.by(request.getSortDirection(), "searchCount");
-        Pageable pageable = PageRequest.of(request.getPageToken(), request.getPageSize(), sort);
+        Sort sort = Sort.by(request.getSortDirection(), "count");
+        Pageable pageable = PageRequest.of(pageToken, pageSize, sort);
 
+        LocalDateTime startDateTime = request.getFromDate().atStartOfDay();
+        LocalDateTime endDateTime = request.getToDate().plusDays(1).atStartOfDay();
 
-        Page<ProductsBySearchCount> searchRequestsPage = searchRequestRepository.findSearchRequestCount(
-                pageable,
-                request.getFromDate().atStartOfDay(),
-                request.getToDate().plusDays(1).atStartOfDay()
+        List<SearchRequestAggregate> searchRequestAggregates = mongoSearchRequestRepository.groupByProductAndCreatedAtBetween(
+                startDateTime,
+                endDateTime,
+                pageable
         );
-        Pageable nextPageable = searchRequestsPage.nextPageable();
 
-        List<TrendDto> trendDtos = searchRequestsPage.getContent()
+        List<TrendDto> trendDtos = searchRequestAggregates
                 .stream()
                 .map(searchRequestAssembler::assemble)
                 .collect(Collectors.toList());
@@ -73,12 +75,12 @@ public class TrendService {
         TrendPageDto trendPageDto = new TrendPageDto();
         trendPageDto.setTrends(trendDtos);
 
-        if (nextPageable.isPaged()) {
-            trendPageDto.setNextPageToken(nextPageable.getPageNumber());
+        if (searchRequestAggregates.size() == pageSize) {
+            trendPageDto.setNextPageToken(pageToken + 1);
         }
 
         LOG.info(String.format("Returned product trends { pageToken: %d, pageSize: %d, fromDate: %s, toDate: %s, sortDirection: %s }",
-                request.getPageToken(), request.getPageSize(), request.getFromDate(), request.getToDate(), request.getSortDirection().toString())
+                pageToken, pageSize, request.getFromDate(), request.getToDate(), request.getSortDirection().toString())
         );
 
         return trendPageDto;

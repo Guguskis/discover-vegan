@@ -29,10 +29,10 @@ public class ProductAssembler {
         return product;
     }
 
-    public ProductDto assembleProduct(Product product) {
+    public ProductDto assembleProduct(MongoProduct product) {
         ProductDto productDto = new ProductDto();
 
-//        productDto.setProductId(product.getProductId());
+        productDto.setProductId(product.getId());
         productDto.setName(product.getName());
         productDto.setImageUrl(product.getImageUrl());
         productDto.setProducer(product.getProducer());
