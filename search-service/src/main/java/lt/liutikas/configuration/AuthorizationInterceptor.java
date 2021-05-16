@@ -2,6 +2,7 @@ package lt.liutikas.configuration;
 
 import lt.liutikas.utility.IsAuthorized;
 import lt.liutikas.utility.TokenUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,10 +37,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         }
 
         String authorizationHeader = request.getHeader("Authorization");
+
+        if (StringUtils.isBlank(authorizationHeader)) {
+            return false;
+        }
+
         String token = authorizationHeader.replace("Bearer ", "");
 
-        boolean verified = tokenUtil.verified(token);
-
-        return verified;
+        return tokenUtil.verified(token);
     }
 }
