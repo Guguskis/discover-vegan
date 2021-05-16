@@ -9,14 +9,14 @@ import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
 import lt.liutikas.model.Product;
-import lt.liutikas.repository.*;
+import lt.liutikas.repository.MongoProductRepository;
+import lt.liutikas.repository.MongoSearchRequestRepository;
+import lt.liutikas.repository.MongoVendorProductRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
@@ -25,22 +25,14 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductServiceTest {
 
     @Mock
-    private ProductRepository productRepository;
-    @Mock
     private MongoProductRepository mongoProductRepository;
     @Mock
-    private VendorProductRepository vendorProductRepository;
-    @Mock
     private MongoVendorProductRepository mongoVendorProductRepository;
-    @Mock
-    private SearchRequestRepository searchRequestRepository;
     @Mock
     private MongoSearchRequestRepository mongoSearchRequestRepository;
 
@@ -51,7 +43,6 @@ public class ProductServiceTest {
         productService = new ProductService(new ProductAssembler(),
                 mongoProductRepository,
                 mongoVendorProductRepository,
-                searchRequestRepository,
                 mongoSearchRequestRepository,
                 new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
     }
@@ -71,13 +62,13 @@ public class ProductServiceTest {
             setImageUrl("https://www.test.com/image.png");
         }};
 
-        when(productRepository.save(any(Product.class)))
-                .thenReturn(product);
+//        when(productRepository.save(any(Product.class)))
+//                .thenReturn(product);
 
         ProductDto createdProduct = productService.createProduct(createProductDto);
 
-        verify(productRepository, times(1))
-                .save(any(Product.class));
+//        verify(productRepository, times(1))
+//                .save(any(Product.class));
 
         assertEquals(product.getProductId(), createdProduct.getProductId());
         assertEquals(product.getName(), createdProduct.getName());
@@ -92,8 +83,8 @@ public class ProductServiceTest {
             setName("Tofu");
         }};
 
-        when(productRepository.save(any(Product.class)))
-                .thenThrow(DataIntegrityViolationException.class);
+//        when(productRepository.save(any(Product.class)))
+//                .thenThrow(DataIntegrityViolationException.class);
 
         productService.createProduct(createProductDto);
     }
@@ -109,8 +100,8 @@ public class ProductServiceTest {
         }};
 
         List<Product> products = Collections.singletonList(product);
-        when(productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(any(PageRequest.class), any()))
-                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+//        when(productRepository.findByNameLikeIgnoreCaseOrderByNameAsc(any(PageRequest.class), any()))
+//                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
         ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
         assertEquals(1, productsPageDto.getProducts().size());
@@ -131,13 +122,13 @@ public class ProductServiceTest {
                 new Product()
         );
 
-        when(productRepository.findAll(any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(products, pageRequest, 3));
+//        when(productRepository.findAll(any(PageRequest.class)))
+//                .thenReturn(new PageImpl<>(products, pageRequest, 3));
 
         ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
 
-        verify(productRepository, times(1))
-                .findAll(any(PageRequest.class));
+//        verify(productRepository, times(1))
+//                .findAll(any(PageRequest.class));
         assertEquals(3, productsPageDto.getProducts().size());
         assertEquals(Integer.valueOf(1), productsPageDto.getNextPageToken());
     }
@@ -150,13 +141,13 @@ public class ProductServiceTest {
                 new Product()
         );
 
-        when(productRepository.findAll(any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(products, pageRequest, 2));
+//        when(productRepository.findAll(any(PageRequest.class)))
+//                .thenReturn(new PageImpl<>(products, pageRequest, 2));
 
         ProductsPageDto productsPageDto = productService.getProducts(pageRequest, "test query");
 
-        verify(productRepository, times(1))
-                .findAll(any(PageRequest.class));
+//        verify(productRepository, times(1))
+//                .findAll(any(PageRequest.class));
         assertEquals(2, productsPageDto.getProducts().size());
         assertNull(productsPageDto.getNextPageToken());
     }

@@ -24,12 +24,6 @@ public class TrendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrendService.class);
 
-    private final SearchRequestRepository searchRequestRepository;
-    private final ProductRepository productRepository;
-    private final VendorRepository vendorRepository;
-    private final VendorProductRepository vendorProductRepository;
-    private final ReviewRepository reviewRepository;
-
     private final SearchRequestAssembler searchRequestAssembler;
     private final MongoVendorProductRepository mongoVendorProductRepository;
     private final MongoProductRepository mongoProductRepository;
@@ -37,12 +31,7 @@ public class TrendService {
     private final MongoReviewRepository mongoReviewRepository;
     private final MongoSearchRequestRepository mongoSearchRequestRepository;
 
-    public TrendService(SearchRequestRepository searchRequestRepository, ProductRepository productRepository, VendorRepository vendorRepository, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository, MongoSearchRequestRepository mongoSearchRequestRepository) {
-        this.searchRequestRepository = searchRequestRepository;
-        this.productRepository = productRepository;
-        this.vendorRepository = vendorRepository;
-        this.vendorProductRepository = vendorProductRepository;
-        this.reviewRepository = reviewRepository;
+    public TrendService(SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository, MongoSearchRequestRepository mongoSearchRequestRepository) {
         this.searchRequestAssembler = searchRequestAssembler;
         this.mongoVendorProductRepository = mongoVendorProductRepository;
         this.mongoProductRepository = mongoProductRepository;

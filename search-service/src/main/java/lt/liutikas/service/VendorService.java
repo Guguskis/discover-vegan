@@ -5,7 +5,10 @@ import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.*;
-import lt.liutikas.repository.*;
+import lt.liutikas.repository.MongoProductRepository;
+import lt.liutikas.repository.MongoVendorProductRepository;
+import lt.liutikas.repository.MongoVendorRepository;
+import lt.liutikas.repository.PlaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,21 +30,15 @@ public class VendorService {
     private final VendorAssembler vendorAssembler;
     private final VendorProductAssembler vendorProductAssembler;
 
-    private final VendorRepository vendorRepository;
     private final MongoVendorRepository mongoVendorRepository;
-    private final VendorProductRepository vendorProductRepository;
-    private final ProductRepository productRepository;
     private final PlaceRepository placeRepository;
     private final MongoProductRepository mongoProductRepository;
     private final MongoVendorProductRepository mongoVendorProductRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, MongoVendorRepository mongoVendorRepository, VendorProductRepository vendorProductRepository, ProductRepository productRepository, PlaceRepository placeRepository, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, MongoVendorRepository mongoVendorRepository, PlaceRepository placeRepository, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
-        this.vendorRepository = vendorRepository;
         this.mongoVendorRepository = mongoVendorRepository;
-        this.vendorProductRepository = vendorProductRepository;
-        this.productRepository = productRepository;
         this.placeRepository = placeRepository;
         this.mongoProductRepository = mongoProductRepository;
         this.mongoVendorProductRepository = mongoVendorProductRepository;
@@ -179,7 +176,7 @@ public class VendorService {
         Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            String message = String.format("Vendor not found {vendorId: %s}", vendorId);
             LOG.error(message);
             throw new NotFoundException(message);
         }

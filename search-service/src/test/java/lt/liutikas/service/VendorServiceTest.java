@@ -9,38 +9,31 @@ import lt.liutikas.dto.VendorProductPageDto;
 import lt.liutikas.model.Product;
 import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorProduct;
-import lt.liutikas.repository.*;
+import lt.liutikas.repository.MongoProductRepository;
+import lt.liutikas.repository.MongoVendorProductRepository;
+import lt.liutikas.repository.MongoVendorRepository;
+import lt.liutikas.repository.PlaceRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VendorServiceTest {
 
     @Mock
-    private VendorRepository vendorRepository;
-    @Mock
     private MongoVendorRepository mongoVendorRepository;
     @Mock
-    private VendorProductRepository vendorProductRepository;
-    @Mock
     private MongoVendorProductRepository mongoVendorProductRepository;
-    @Mock
-    private ProductRepository productRepository;
     @Mock
     private MongoProductRepository mongoProductRepository;
     @Mock
@@ -53,10 +46,7 @@ public class VendorServiceTest {
         vendorService = new VendorService(
                 new VendorAssembler(),
                 new VendorProductAssembler(),
-                vendorRepository,
                 mongoVendorRepository,
-                vendorProductRepository,
-                productRepository,
                 placeRepository,
                 mongoProductRepository,
                 mongoVendorProductRepository);
@@ -78,24 +68,24 @@ public class VendorServiceTest {
             setImageUrl("https://www.test.com/image.png");
         }};
 
-        when(vendorRepository.findById(1))
-                .thenReturn(Optional.of(vendor));
-        when(productRepository.findById(10))
-                .thenReturn(Optional.of(product));
-        when(vendorProductRepository.save(any(VendorProduct.class)))
-                .thenReturn(new VendorProduct() {{
-                    setVendorProductId(1L);
-                    setProduct(product);
-                }});
+//        when(vendorRepository.findById(1))
+//                .thenReturn(Optional.of(vendor));
+//        when(productRepository.findById(10))
+//                .thenReturn(Optional.of(product));
+//        when(vendorProductRepository.save(any(VendorProduct.class)))
+//                .thenReturn(new VendorProduct() {{
+//                    setVendorProductId(1L);
+//                    setProduct(product);
+//                }});
 
         VendorProductDto vendorProductDto = vendorService.createProduct("1", "1", createVendorProductDto);
 
-        verify(vendorRepository, times(1))
-                .findById(1);
-        verify(productRepository, times(1))
-                .findById(10);
-        verify(vendorProductRepository, times(1))
-                .save(any(VendorProduct.class));
+//        verify(vendorRepository, times(1))
+//                .findById(1);
+//        verify(productRepository, times(1))
+//                .findById(10);
+//        verify(vendorProductRepository, times(1))
+//                .save(any(VendorProduct.class));
 
         assertEquals(product.getProductId(), vendorProductDto.getProductId());
         assertEquals(product.getName(), vendorProductDto.getName());
@@ -110,13 +100,13 @@ public class VendorServiceTest {
         createVendorProductDto.setProductId("10");
         createVendorProductDto.setPrice(2f);
 
-        when(vendorRepository.findById(1))
-                .thenReturn(Optional.empty());
+//        when(vendorRepository.findById(1))
+//                .thenReturn(Optional.empty());
 
         vendorService.createProduct("1", "1", createVendorProductDto);
 
-        verify(vendorRepository, times(1))
-                .findById(1);
+//        verify(vendorRepository, times(1))
+//                .findById(1);
     }
 
     @Test(expected = NotFoundException.class)
@@ -125,17 +115,17 @@ public class VendorServiceTest {
         createVendorProductDto.setProductId("10");
         createVendorProductDto.setPrice(2f);
 
-        when(vendorRepository.findById(1))
-                .thenReturn(Optional.of(new Vendor()));
-        when(productRepository.findById(10))
-                .thenReturn(Optional.empty());
+//        when(vendorRepository.findById(1))
+//                .thenReturn(Optional.of(new Vendor()));
+//        when(productRepository.findById(10))
+//                .thenReturn(Optional.empty());
 
         vendorService.createProduct("1", "1", createVendorProductDto);
 
-        verify(vendorRepository, times(1))
-                .findById(1);
-        verify(productRepository, times(1))
-                .findById(10);
+//        verify(vendorRepository, times(1))
+//                .findById(1);
+//        verify(productRepository, times(1))
+//                .findById(10);
     }
 
     @Test
@@ -153,10 +143,10 @@ public class VendorServiceTest {
         }};
 
         List<VendorProduct> vendorProducts = Collections.singletonList(vendorProduct);
-        when(vendorRepository.findById(10))
-                .thenReturn(Optional.of(new Vendor()));
-        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(vendorProducts, pageRequest, vendorProducts.size()));
+//        when(vendorRepository.findById(10))
+//                .thenReturn(Optional.of(new Vendor()));
+//        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+//                .thenReturn(new PageImpl<>(vendorProducts, pageRequest, vendorProducts.size()));
 
         VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertEquals(1, vendorProductPageDto.getProducts().size());
@@ -187,10 +177,10 @@ public class VendorServiceTest {
                 vendorProduct,
                 vendorProduct
         );
-        when(vendorRepository.findById(10))
-                .thenReturn(Optional.of(new Vendor()));
-        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+//        when(vendorRepository.findById(10))
+//                .thenReturn(Optional.of(new Vendor()));
+//        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+//                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
         VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertEquals(Integer.valueOf(1), vendorProductPageDto.getNextPageToken());
@@ -215,10 +205,10 @@ public class VendorServiceTest {
                 vendorProduct,
                 vendorProduct
         );
-        when(vendorRepository.findById(10))
-                .thenReturn(Optional.of(new Vendor()));
-        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
+//        when(vendorRepository.findById(10))
+//                .thenReturn(Optional.of(new Vendor()));
+//        when(vendorProductRepository.findAllByVendor(any(Vendor.class), any(PageRequest.class)))
+//                .thenReturn(new PageImpl<>(products, pageRequest, products.size()));
 
         VendorProductPageDto vendorProductPageDto = vendorService.getProducts("10", pageRequest);
         assertNull(vendorProductPageDto.getNextPageToken());

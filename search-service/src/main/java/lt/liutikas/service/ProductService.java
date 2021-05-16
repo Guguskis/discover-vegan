@@ -11,7 +11,6 @@ import lt.liutikas.model.MongoVendorProduct;
 import lt.liutikas.repository.MongoProductRepository;
 import lt.liutikas.repository.MongoSearchRequestRepository;
 import lt.liutikas.repository.MongoVendorProductRepository;
-import lt.liutikas.repository.SearchRequestRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +33,14 @@ public class ProductService {
     private final ProductAssembler productAssembler;
     private final MongoProductRepository mongoProductRepository;
     private final MongoVendorProductRepository mongoVendorProductRepository;
-    private final SearchRequestRepository searchRequestRepository;
     private final MongoSearchRequestRepository mongoSearchRequestRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, SearchRequestRepository searchRequestRepository, MongoSearchRequestRepository mongoSearchRequestRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, MongoSearchRequestRepository mongoSearchRequestRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
         this.mongoProductRepository = mongoProductRepository;
         this.mongoVendorProductRepository = mongoVendorProductRepository;
-        this.searchRequestRepository = searchRequestRepository;
         this.mongoSearchRequestRepository = mongoSearchRequestRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
