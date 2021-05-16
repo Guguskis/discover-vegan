@@ -8,7 +8,6 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
-import lt.liutikas.model.Product;
 import lt.liutikas.repository.MongoProductRepository;
 import lt.liutikas.repository.MongoSearchRequestRepository;
 import lt.liutikas.repository.MongoVendorProductRepository;

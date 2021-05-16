@@ -2,7 +2,10 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.model.*;
+import lt.liutikas.model.MongoProduct;
+import lt.liutikas.model.MongoVendor;
+import lt.liutikas.model.MongoVendorProduct;
+import lt.liutikas.model.MongoVendorProductChange;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -27,26 +30,6 @@ public class VendorProductAssembler {
         vendorProduct.setVendorProductChanges(Collections.singletonList(vendorProductChange));
 
         return vendorProduct;
-    }
-
-    public VendorProductDto assembleVendorProductDto(VendorProduct vendorProduct) {
-        VendorProductDto vendorProductDto = new VendorProductDto();
-        Product product = vendorProduct.getProduct();
-
-//        vendorProductDto.setProductId(product.getProductId());
-        vendorProductDto.setName(product.getName());
-        vendorProductDto.setImageUrl(product.getImageUrl());
-        vendorProductDto.setProducer(product.getProducer());
-
-        List<VendorProductChange> vendorProductChanges = vendorProduct.getVendorProductChanges();
-
-        if (vendorProductChanges.size() > 1) {
-            vendorProductChanges.sort(Comparator.comparing(VendorProductChange::getCreatedAt).reversed());
-        }
-
-        vendorProductDto.setPrice(vendorProductChanges.get(0).getPrice());
-
-        return vendorProductDto;
     }
 
     public VendorProductDto assembleVendorProductDto(MongoVendorProduct vendorProduct) {
