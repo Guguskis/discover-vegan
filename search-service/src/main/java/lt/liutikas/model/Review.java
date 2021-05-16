@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Document
-public class MongoReview {
+public class Review {
 
     @Id
     private String id;
@@ -15,7 +15,7 @@ public class MongoReview {
     private ReviewType reviewType;
     private LocalDateTime createdAt;
     @DBRef
-    private MongoVendorProduct vendorProduct;
+    private VendorProduct vendorProduct;
 
     public String getId() {
         return id;
@@ -49,11 +49,11 @@ public class MongoReview {
         this.createdAt = createdAt;
     }
 
-    public MongoVendorProduct getVendorProduct() {
+    public VendorProduct getVendorProduct() {
         return vendorProduct;
     }
 
-    public void setVendorProduct(MongoVendorProduct vendorProduct) {
+    public void setVendorProduct(VendorProduct vendorProduct) {
         this.vendorProduct = vendorProduct;
     }
 }

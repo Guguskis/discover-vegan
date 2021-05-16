@@ -8,9 +8,9 @@ import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
 import lt.liutikas.dto.ProductsPageDto;
-import lt.liutikas.repository.MongoProductRepository;
-import lt.liutikas.repository.MongoSearchRequestRepository;
-import lt.liutikas.repository.MongoVendorProductRepository;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.SearchRequestRepository;
+import lt.liutikas.repository.VendorProductRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,20 +29,20 @@ import static org.junit.Assert.assertNull;
 public class ProductServiceTest {
 
     @Mock
-    private MongoProductRepository mongoProductRepository;
+    private ProductRepository productRepository;
     @Mock
-    private MongoVendorProductRepository mongoVendorProductRepository;
+    private VendorProductRepository vendorProductRepository;
     @Mock
-    private MongoSearchRequestRepository mongoSearchRequestRepository;
+    private SearchRequestRepository searchRequestRepository;
 
     private ProductService productService;
 
     @Before
     public void setUp() {
         productService = new ProductService(new ProductAssembler(),
-                mongoProductRepository,
-                mongoVendorProductRepository,
-                mongoSearchRequestRepository,
+                productRepository,
+                vendorProductRepository,
+                searchRequestRepository,
                 new ProductVendorAssembler(new VendorAssembler(), new VendorProductAssembler()));
     }
 

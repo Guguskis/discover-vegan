@@ -25,19 +25,19 @@ public class TrendService {
     private static final Logger LOG = LoggerFactory.getLogger(TrendService.class);
 
     private final SearchRequestAssembler searchRequestAssembler;
-    private final MongoVendorProductRepository mongoVendorProductRepository;
-    private final MongoProductRepository mongoProductRepository;
-    private final MongoVendorRepository mongoVendorRepository;
-    private final MongoReviewRepository mongoReviewRepository;
-    private final MongoSearchRequestRepository mongoSearchRequestRepository;
+    private final VendorProductRepository vendorProductRepository;
+    private final ProductRepository productRepository;
+    private final VendorRepository vendorRepository;
+    private final ReviewRepository reviewRepository;
+    private final SearchRequestRepository searchRequestRepository;
 
-    public TrendService(SearchRequestAssembler searchRequestAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoProductRepository mongoProductRepository, MongoVendorRepository mongoVendorRepository, MongoReviewRepository mongoReviewRepository, MongoSearchRequestRepository mongoSearchRequestRepository) {
+    public TrendService(SearchRequestAssembler searchRequestAssembler, VendorProductRepository vendorProductRepository, ProductRepository productRepository, VendorRepository vendorRepository, ReviewRepository reviewRepository, SearchRequestRepository searchRequestRepository) {
         this.searchRequestAssembler = searchRequestAssembler;
-        this.mongoVendorProductRepository = mongoVendorProductRepository;
-        this.mongoProductRepository = mongoProductRepository;
-        this.mongoVendorRepository = mongoVendorRepository;
-        this.mongoReviewRepository = mongoReviewRepository;
-        this.mongoSearchRequestRepository = mongoSearchRequestRepository;
+        this.vendorProductRepository = vendorProductRepository;
+        this.productRepository = productRepository;
+        this.vendorRepository = vendorRepository;
+        this.reviewRepository = reviewRepository;
+        this.searchRequestRepository = searchRequestRepository;
     }
 
     public TrendPageDto getProductTrends(GetProductsTrendRequest request) {
@@ -50,7 +50,7 @@ public class TrendService {
         LocalDateTime startDateTime = request.getFromDate().atStartOfDay();
         LocalDateTime endDateTime = request.getToDate().plusDays(1).atStartOfDay();
 
-        List<SearchRequestAggregate> searchRequestAggregates = mongoSearchRequestRepository.groupByProductAndCreatedAtBetween(
+        List<SearchRequestAggregate> searchRequestAggregates = searchRequestRepository.groupByProductAndCreatedAtBetween(
                 startDateTime,
                 endDateTime,
                 pageable
@@ -81,7 +81,7 @@ public class TrendService {
             throw new BadRequestException("toDate must be after fromDate");
         }
 
-        MongoProduct product = assertProductFound(productId);
+        Product product = assertProductFound(productId);
 
         double stepSizeInSeconds = getStepSizeInSeconds(fromDate, toDate, stepCount);
 
@@ -93,7 +93,7 @@ public class TrendService {
             LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
             LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
 
-            List<MongoSearchRequest> searchRequests = mongoSearchRequestRepository.findAllByProductAndCreatedAtBetween(product, localDateTimeStart, localDateTimeEnd);
+            List<SearchRequest> searchRequests = searchRequestRepository.findAllByProductAndCreatedAtBetween(product, localDateTimeStart, localDateTimeEnd);
 
             SearchRequestsTrend searchRequestsTrend = new SearchRequestsTrend();
             searchRequestsTrend.setDateTime(localDateTimeEnd);
@@ -116,14 +116,14 @@ public class TrendService {
 
     public List<PriceTrend> getProductPriceTrends(String productId, String vendorId) {
 
-        MongoProduct product = assertProductFound(productId);
-        MongoVendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(productId);
+        Vendor vendor = assertVendorFound(vendorId);
 
-        MongoVendorProduct vendorProduct = mongoVendorProductRepository.findByProductAndVendor(product, vendor).get();
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         List<PriceTrend> priceTrends = vendorProduct.getVendorProductChanges()
                 .stream()
-                .sorted(Comparator.comparing(MongoVendorProductChange::getCreatedAt))
+                .sorted(Comparator.comparing(VendorProductChange::getCreatedAt))
                 .map(vendorProductChange -> {
                     PriceTrend priceTrend = new PriceTrend();
                     priceTrend.setDateTime(vendorProductChange.getCreatedAt());
@@ -139,10 +139,10 @@ public class TrendService {
 
     public List<ReviewTrend> getReviewTrends(String productId, String vendorId, LocalDate fromDate, LocalDate toDate, Integer stepCount) {
 
-        MongoVendor vendor = assertVendorFound(vendorId);
-        MongoProduct product = assertProductFound(productId);
+        Vendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(productId);
 
-        MongoVendorProduct vendorProduct = mongoVendorProductRepository.findByProductAndVendor(product, vendor).get();
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
         ArrayList<ReviewTrend> reviewTrends = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class TrendService {
             LocalDateTime localDateTimeStart = fromDate.atStartOfDay().plusSeconds((long) offsetStartInSeconds);
             LocalDateTime localDateTimeEnd = localDateTimeStart.plusSeconds((long) stepSizeInSeconds);
 
-            List<MongoReview> reviews = mongoReviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
+            List<Review> reviews = reviewRepository.findAllByVendorProductAndCreatedAtBetween(vendorProduct, localDateTimeStart, localDateTimeEnd);
 
             Map<ReviewType, Integer> reviewTrendCounts = getReviewTrendCounts(reviews);
 
@@ -170,12 +170,12 @@ public class TrendService {
         return reviewTrends;
     }
 
-    private Map<ReviewType, Integer> getReviewTrendCounts(List<MongoReview> reviews) {
+    private Map<ReviewType, Integer> getReviewTrendCounts(List<Review> reviews) {
         Map<ReviewType, Integer> reviewTrendCounts = new HashMap<>();
 
         for (ReviewType reviewType : ReviewType.values()) {
 
-            List<MongoReview> reviewsForType = reviews.stream()
+            List<Review> reviewsForType = reviews.stream()
                     .filter(review -> review.getReviewType().equals(reviewType))
                     .collect(Collectors.toList());
 
@@ -185,8 +185,8 @@ public class TrendService {
         return reviewTrendCounts;
     }
 
-    private MongoProduct assertProductFound(String productId) {
-        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
+    private Product assertProductFound(String productId) {
+        Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %s}", productId);
@@ -196,8 +196,8 @@ public class TrendService {
         return product.get();
     }
 
-    private MongoVendor assertVendorFound(String vendorId) {
-        Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
+    private Vendor assertVendorFound(String vendorId) {
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
             String message = String.format("Vendor not found {vendorId: %d}", vendorId);

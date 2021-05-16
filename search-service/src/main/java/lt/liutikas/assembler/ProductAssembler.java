@@ -2,14 +2,14 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateProductDto;
 import lt.liutikas.dto.ProductDto;
-import lt.liutikas.model.MongoProduct;
+import lt.liutikas.model.Product;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductAssembler {
 
-    public MongoProduct assembleMongoProduct(CreateProductDto createProductDto) {
-        MongoProduct product = new MongoProduct();
+    public Product assembleMongoProduct(CreateProductDto createProductDto) {
+        Product product = new Product();
 
         product.setName(createProductDto.getName());
         product.setImageUrl(createProductDto.getImageUrl());
@@ -18,7 +18,7 @@ public class ProductAssembler {
         return product;
     }
 
-    public ProductDto assembleProduct(MongoProduct product) {
+    public ProductDto assembleProduct(Product product) {
         ProductDto productDto = new ProductDto();
 
         productDto.setProductId(product.getId());
@@ -29,7 +29,7 @@ public class ProductAssembler {
         return productDto;
     }
 
-    public ProductDto assembleMongoProduct(MongoProduct product) {
+    public ProductDto assembleMongoProduct(Product product) {
         ProductDto productDto = new ProductDto();
 
         productDto.setProductId(product.getId());

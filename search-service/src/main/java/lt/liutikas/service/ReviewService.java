@@ -4,14 +4,14 @@ import lt.liutikas.assembler.ReviewAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateReviewDto;
 import lt.liutikas.dto.ReviewDto;
-import lt.liutikas.model.MongoProduct;
-import lt.liutikas.model.MongoReview;
-import lt.liutikas.model.MongoVendor;
-import lt.liutikas.model.MongoVendorProduct;
-import lt.liutikas.repository.MongoProductRepository;
-import lt.liutikas.repository.MongoReviewRepository;
-import lt.liutikas.repository.MongoVendorProductRepository;
-import lt.liutikas.repository.MongoVendorRepository;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Review;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.ReviewRepository;
+import lt.liutikas.repository.VendorProductRepository;
+import lt.liutikas.repository.VendorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,42 +24,42 @@ public class ReviewService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewService.class);
 
-    private final MongoProductRepository mongoProductRepository;
-    private final MongoVendorRepository mongoVendorRepository;
+    private final ProductRepository productRepository;
+    private final VendorRepository vendorRepository;
     private final ReviewAssembler reviewAssembler;
-    private final MongoVendorProductRepository mongoVendorProductRepository;
-    private final MongoReviewRepository mongoReviewRepository;
+    private final VendorProductRepository vendorProductRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ReviewService(MongoVendorRepository mongoVendorRepository, MongoProductRepository mongoProductRepository, ReviewAssembler reviewAssembler, MongoVendorProductRepository mongoVendorProductRepository, MongoReviewRepository mongoReviewRepository) {
-        this.mongoVendorRepository = mongoVendorRepository;
-        this.mongoProductRepository = mongoProductRepository;
+    public ReviewService(VendorRepository vendorRepository, ProductRepository productRepository, ReviewAssembler reviewAssembler, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository) {
+        this.vendorRepository = vendorRepository;
+        this.productRepository = productRepository;
         this.reviewAssembler = reviewAssembler;
-        this.mongoVendorProductRepository = mongoVendorProductRepository;
-        this.mongoReviewRepository = mongoReviewRepository;
+        this.vendorProductRepository = vendorProductRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public ReviewDto createReview(CreateReviewDto createReviewDto, String userId) {
 
-        MongoVendor vendor = assertVendorFound(createReviewDto.getVendorId());
-        MongoProduct product = assertProductFound(createReviewDto.getProductId());
+        Vendor vendor = assertVendorFound(createReviewDto.getVendorId());
+        Product product = assertProductFound(createReviewDto.getProductId());
 
-        MongoVendorProduct vendorProduct = mongoVendorProductRepository.findByProductAndVendor(product, vendor).get();
+        VendorProduct vendorProduct = vendorProductRepository.findByProductAndVendor(product, vendor).get();
 
-        MongoReview review = new MongoReview();
+        Review review = new Review();
         review.setReviewType(createReviewDto.getReviewType());
         review.setUserId(userId);
         review.setVendorProduct(vendorProduct);
         review.setCreatedAt(LocalDateTime.now());
 
-        review = mongoReviewRepository.save(review);
+        review = reviewRepository.save(review);
 
         LOG.info(String.format("Created review {reviewType: %s, vendorProductId: %s }", createReviewDto.getReviewType(), vendorProduct.getId()));
 
         return reviewAssembler.assembleReviewDto(review);
     }
 
-    private MongoVendor assertVendorFound(String vendorId) {
-        Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
+    private Vendor assertVendorFound(String vendorId) {
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
             String message = String.format("Vendor not found {vendorId: %d}", vendorId);
@@ -70,8 +70,8 @@ public class ReviewService {
         return vendor.get();
     }
 
-    private MongoProduct assertProductFound(String productId) {
-        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
+    private Product assertProductFound(String productId) {
+        Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %s}", productId);

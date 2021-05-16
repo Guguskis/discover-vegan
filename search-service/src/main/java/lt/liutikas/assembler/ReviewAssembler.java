@@ -1,13 +1,13 @@
 package lt.liutikas.assembler;
 
 import lt.liutikas.dto.ReviewDto;
-import lt.liutikas.model.MongoReview;
+import lt.liutikas.model.Review;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReviewAssembler {
 
-    public ReviewDto assembleReviewDto(MongoReview review) {
+    public ReviewDto assembleReviewDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
 
         reviewDto.setReviewId(review.getId());

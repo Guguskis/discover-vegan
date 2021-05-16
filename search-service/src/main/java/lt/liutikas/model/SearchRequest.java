@@ -7,13 +7,13 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Document
-public class MongoSearchRequest {
+public class SearchRequest {
 
     @Id
     private String id;
     private LocalDateTime createdAt;
     @DBRef
-    private MongoProduct product;
+    private Product product;
 
     public String getId() {
         return id;
@@ -31,11 +31,11 @@ public class MongoSearchRequest {
         this.createdAt = createdAt;
     }
 
-    public MongoProduct getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(MongoProduct product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 }

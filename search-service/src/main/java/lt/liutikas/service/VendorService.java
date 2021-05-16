@@ -5,10 +5,10 @@ import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
 import lt.liutikas.model.*;
-import lt.liutikas.repository.MongoProductRepository;
-import lt.liutikas.repository.MongoVendorProductRepository;
-import lt.liutikas.repository.MongoVendorRepository;
 import lt.liutikas.repository.PlaceRepository;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.VendorProductRepository;
+import lt.liutikas.repository.VendorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -30,18 +30,18 @@ public class VendorService {
     private final VendorAssembler vendorAssembler;
     private final VendorProductAssembler vendorProductAssembler;
 
-    private final MongoVendorRepository mongoVendorRepository;
+    private final VendorRepository vendorRepository;
     private final PlaceRepository placeRepository;
-    private final MongoProductRepository mongoProductRepository;
-    private final MongoVendorProductRepository mongoVendorProductRepository;
+    private final ProductRepository productRepository;
+    private final VendorProductRepository vendorProductRepository;
 
-    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, MongoVendorRepository mongoVendorRepository, PlaceRepository placeRepository, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository) {
+    public VendorService(VendorAssembler vendorAssembler, VendorProductAssembler vendorProductAssembler, VendorRepository vendorRepository, PlaceRepository placeRepository, ProductRepository productRepository, VendorProductRepository vendorProductRepository) {
         this.vendorAssembler = vendorAssembler;
         this.vendorProductAssembler = vendorProductAssembler;
-        this.mongoVendorRepository = mongoVendorRepository;
+        this.vendorRepository = vendorRepository;
         this.placeRepository = placeRepository;
-        this.mongoProductRepository = mongoProductRepository;
-        this.mongoVendorProductRepository = mongoVendorProductRepository;
+        this.productRepository = productRepository;
+        this.vendorProductRepository = vendorProductRepository;
     }
 
     public List<VendorDto> getVendors(GetVendorDto getVendorDto) {
@@ -66,8 +66,8 @@ public class VendorService {
                 .map(Place::getPlace_id)
                 .collect(Collectors.toList());
 
-        List<MongoVendor> vendors = mongoVendorRepository.findByExternalPlaceIdIn(placesIds);
-        List<MongoVendor> newVendors = createVendorsForNewPlaces(vendors, places);
+        List<Vendor> vendors = vendorRepository.findByExternalPlaceIdIn(placesIds);
+        List<Vendor> newVendors = createVendorsForNewPlaces(vendors, places);
 
         vendors.addAll(newVendors);
 
@@ -81,27 +81,27 @@ public class VendorService {
         return vendorDtos;
     }
 
-    private List<MongoVendor> createVendorsForNewPlaces(List<MongoVendor> vendors, List<Place> places) {
+    private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {
         List<String> externalIds = vendors.stream()
-                .map(MongoVendor::getExternalPlaceId)
+                .map(Vendor::getExternalPlaceId)
                 .collect(Collectors.toList());
 
         List<Place> newPlaces = places.stream()
                 .filter(place -> !externalIds.contains(place.getPlace_id()))
                 .collect(Collectors.toList());
 
-        List<MongoVendor> newVendors = newPlaces.stream()
+        List<Vendor> newVendors = newPlaces.stream()
                 .map(vendorAssembler::assembleVendor)
                 .collect(Collectors.toList());
 
-        return mongoVendorRepository.saveAll(newVendors);
+        return vendorRepository.saveAll(newVendors);
     }
 
     public VendorProductPageDto getProducts(String vendorId, PageRequest pageRequest) {
 
-        MongoVendor vendor = assertVendorFound(vendorId);
+        Vendor vendor = assertVendorFound(vendorId);
 
-        Page<MongoVendorProduct> vendorProductPage = mongoVendorProductRepository.findAllByVendor(vendor, pageRequest);
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByVendor(vendor, pageRequest);
         Pageable nextVendorProductPage = vendorProductPage.nextPageable();
         List<VendorProductDto> products = vendorProductPage.get()
                 .map(vendorProductAssembler::assembleVendorProductDto)
@@ -121,18 +121,18 @@ public class VendorService {
 
     public VendorProductDto createProduct(String userId, String vendorId, CreateVendorProductDto createVendorProductDto) {
 
-        MongoVendor vendor = assertVendorFound(vendorId);
-        MongoProduct product = assertProductFound(createVendorProductDto.getProductId());
+        Vendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(createVendorProductDto.getProductId());
 
-        MongoVendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(userId, createVendorProductDto, vendor, product);
+        VendorProduct vendorProduct = vendorProductAssembler.assembleVendorProduct(userId, createVendorProductDto, vendor, product);
 
-        vendorProduct = mongoVendorProductRepository.save(vendorProduct);
+        vendorProduct = vendorProductRepository.save(vendorProduct);
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private MongoProduct assertProductFound(String productId) {
-        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
+    private Product assertProductFound(String productId) {
+        Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %s}", productId);
@@ -144,10 +144,10 @@ public class VendorService {
 
     public VendorProductDto patchProduct(String userId, String vendorId, String productId, PatchVendorProductDto patchVendorProductDto) {
 
-        MongoVendor vendor = assertVendorFound(vendorId);
-        MongoProduct product = assertProductFound(productId);
+        Vendor vendor = assertVendorFound(vendorId);
+        Product product = assertProductFound(productId);
 
-        Optional<MongoVendorProduct> vendorProductOptional = mongoVendorProductRepository.findByProductAndVendor(product, vendor);
+        Optional<VendorProduct> vendorProductOptional = vendorProductRepository.findByProductAndVendor(product, vendor);
 
         if (vendorProductOptional.isEmpty()) {
             String message = String.format("Vendor product not found {vendorId: %s, productId: %s}", vendorId, productId);
@@ -155,25 +155,25 @@ public class VendorService {
             throw new NotFoundException(message);
         }
 
-        MongoVendorProduct vendorProduct = vendorProductOptional.get();
+        VendorProduct vendorProduct = vendorProductOptional.get();
 
         if (patchVendorProductDto.getPrice() != null) {
-            MongoVendorProductChange vendorProductChange = new MongoVendorProductChange();
+            VendorProductChange vendorProductChange = new VendorProductChange();
             vendorProductChange.setPrice(patchVendorProductDto.getPrice());
             vendorProductChange.setUserId(userId);
             vendorProductChange.setCreatedAt(LocalDateTime.now());
             vendorProduct.getVendorProductChanges().add(vendorProductChange);
         }
 
-        vendorProduct = mongoVendorProductRepository.save(vendorProduct);
+        vendorProduct = vendorProductRepository.save(vendorProduct);
 
         LOG.info(String.format("Patched vendor product {vendorId: %s, productId: %s}", vendorId, productId));
 
         return vendorProductAssembler.assembleVendorProductDto(vendorProduct);
     }
 
-    private MongoVendor assertVendorFound(String vendorId) {
-        Optional<MongoVendor> vendor = mongoVendorRepository.findById(vendorId);
+    private Vendor assertVendorFound(String vendorId) {
+        Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
             String message = String.format("Vendor not found {vendorId: %s}", vendorId);

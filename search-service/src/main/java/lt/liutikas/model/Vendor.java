@@ -2,7 +2,7 @@ package lt.liutikas.model;
 
 import javax.persistence.Id;
 
-public class MongoVendor {
+public class Vendor {
 
     @Id
     private String id;

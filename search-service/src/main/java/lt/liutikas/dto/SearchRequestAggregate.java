@@ -1,24 +1,24 @@
 package lt.liutikas.dto;
 
-import lt.liutikas.model.MongoProduct;
+import lt.liutikas.model.Product;
 import org.springframework.data.annotation.Id;
 
 public class SearchRequestAggregate {
 
     @Id
-    private MongoProduct product;
+    private Product product;
     private int count;
 
-    public SearchRequestAggregate(MongoProduct product, int count) {
+    public SearchRequestAggregate(Product product, int count) {
         this.product = product;
         this.count = count;
     }
 
-    public MongoProduct getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(MongoProduct product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 

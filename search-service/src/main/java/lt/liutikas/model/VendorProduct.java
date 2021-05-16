@@ -7,15 +7,15 @@ import javax.persistence.Id;
 import java.util.List;
 
 @Document
-public class MongoVendorProduct {
+public class VendorProduct {
 
     @Id
     private String id;
     @DBRef
-    private MongoVendor vendor;
+    private Vendor vendor;
     @DBRef
-    private MongoProduct product;
-    private List<MongoVendorProductChange> vendorProductChanges;
+    private Product product;
+    private List<VendorProductChange> vendorProductChanges;
 
     public String getId() {
         return id;
@@ -25,27 +25,27 @@ public class MongoVendorProduct {
         this.id = id;
     }
 
-    public MongoVendor getVendor() {
+    public Vendor getVendor() {
         return vendor;
     }
 
-    public void setVendor(MongoVendor vendor) {
+    public void setVendor(Vendor vendor) {
         this.vendor = vendor;
     }
 
-    public MongoProduct getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(MongoProduct product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 
-    public List<MongoVendorProductChange> getVendorProductChanges() {
+    public List<VendorProductChange> getVendorProductChanges() {
         return vendorProductChanges;
     }
 
-    public void setVendorProductChanges(List<MongoVendorProductChange> vendorProductChanges) {
+    public void setVendorProductChanges(List<VendorProductChange> vendorProductChanges) {
         this.vendorProductChanges = vendorProductChanges;
     }
 }

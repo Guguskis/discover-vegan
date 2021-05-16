@@ -6,10 +6,10 @@ import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
 import lt.liutikas.dto.VendorProductPageDto;
-import lt.liutikas.repository.MongoProductRepository;
-import lt.liutikas.repository.MongoVendorProductRepository;
-import lt.liutikas.repository.MongoVendorRepository;
 import lt.liutikas.repository.PlaceRepository;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.VendorProductRepository;
+import lt.liutikas.repository.VendorRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +24,11 @@ import static org.junit.Assert.assertNull;
 public class VendorServiceTest {
 
     @Mock
-    private MongoVendorRepository mongoVendorRepository;
+    private VendorRepository vendorRepository;
     @Mock
-    private MongoVendorProductRepository mongoVendorProductRepository;
+    private VendorProductRepository vendorProductRepository;
     @Mock
-    private MongoProductRepository mongoProductRepository;
+    private ProductRepository productRepository;
     @Mock
     private PlaceRepository placeRepository;
 
@@ -39,10 +39,10 @@ public class VendorServiceTest {
         vendorService = new VendorService(
                 new VendorAssembler(),
                 new VendorProductAssembler(),
-                mongoVendorRepository,
+                vendorRepository,
                 placeRepository,
-                mongoProductRepository,
-                mongoVendorProductRepository);
+                productRepository,
+                vendorProductRepository);
     }
 
     @Test

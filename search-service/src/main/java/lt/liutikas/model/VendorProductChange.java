@@ -2,7 +2,7 @@ package lt.liutikas.model;
 
 import java.time.LocalDateTime;
 
-public class MongoVendorProductChange {
+public class VendorProductChange {
 
     private String userId;
     private LocalDateTime createdAt;

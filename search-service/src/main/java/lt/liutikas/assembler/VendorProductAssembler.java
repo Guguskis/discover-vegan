@@ -2,10 +2,10 @@ package lt.liutikas.assembler;
 
 import lt.liutikas.dto.CreateVendorProductDto;
 import lt.liutikas.dto.VendorProductDto;
-import lt.liutikas.model.MongoProduct;
-import lt.liutikas.model.MongoVendor;
-import lt.liutikas.model.MongoVendorProduct;
-import lt.liutikas.model.MongoVendorProductChange;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
+import lt.liutikas.model.VendorProductChange;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,13 +16,13 @@ import java.util.List;
 @Component
 public class VendorProductAssembler {
 
-    public MongoVendorProduct assembleVendorProduct(String userId, CreateVendorProductDto createVendorProductDto, MongoVendor vendor, MongoProduct product) {
-        MongoVendorProduct vendorProduct = new MongoVendorProduct();
+    public VendorProduct assembleVendorProduct(String userId, CreateVendorProductDto createVendorProductDto, Vendor vendor, Product product) {
+        VendorProduct vendorProduct = new VendorProduct();
 
         vendorProduct.setVendor(vendor);
         vendorProduct.setProduct(product);
 
-        MongoVendorProductChange vendorProductChange = new MongoVendorProductChange();
+        VendorProductChange vendorProductChange = new VendorProductChange();
         vendorProductChange.setUserId(userId);
         vendorProductChange.setPrice(createVendorProductDto.getPrice());
         vendorProductChange.setCreatedAt(LocalDateTime.now());
@@ -32,19 +32,19 @@ public class VendorProductAssembler {
         return vendorProduct;
     }
 
-    public VendorProductDto assembleVendorProductDto(MongoVendorProduct vendorProduct) {
+    public VendorProductDto assembleVendorProductDto(VendorProduct vendorProduct) {
         VendorProductDto vendorProductDto = new VendorProductDto();
-        MongoProduct product = vendorProduct.getProduct();
+        Product product = vendorProduct.getProduct();
 
         vendorProductDto.setProductId(product.getId());
         vendorProductDto.setName(product.getName());
         vendorProductDto.setImageUrl(product.getImageUrl());
         vendorProductDto.setProducer(product.getProducer());
 
-        List<MongoVendorProductChange> vendorProductChanges = vendorProduct.getVendorProductChanges();
+        List<VendorProductChange> vendorProductChanges = vendorProduct.getVendorProductChanges();
 
         if (vendorProductChanges.size() > 1) {
-            vendorProductChanges.sort(Comparator.comparing(MongoVendorProductChange::getCreatedAt).reversed());
+            vendorProductChanges.sort(Comparator.comparing(VendorProductChange::getCreatedAt).reversed());
         }
 
         vendorProductDto.setPrice(vendorProductChanges.get(0).getPrice());

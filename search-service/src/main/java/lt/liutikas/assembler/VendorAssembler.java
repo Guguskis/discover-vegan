@@ -3,17 +3,17 @@ package lt.liutikas.assembler;
 import lt.liutikas.dto.Location;
 import lt.liutikas.dto.Place;
 import lt.liutikas.dto.VendorDto;
-import lt.liutikas.model.MongoVendor;
+import lt.liutikas.model.Vendor;
 import lt.liutikas.model.VendorType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VendorAssembler {
 
-    public MongoVendor assembleVendor(Place place) {
+    public Vendor assembleVendor(Place place) {
         Location location = place.getGeometry().getLocation();
 
-        MongoVendor vendor = new MongoVendor();
+        Vendor vendor = new Vendor();
 
         vendor.setName(place.getName());
         vendor.setExternalPlaceId(place.getPlace_id());
@@ -25,7 +25,7 @@ public class VendorAssembler {
         return vendor;
     }
 
-    public VendorDto assembleVendor(MongoVendor vendor) {
+    public VendorDto assembleVendor(Vendor vendor) {
         VendorDto vendorDto = new VendorDto();
 
         vendorDto.setVendorId(vendor.getId());

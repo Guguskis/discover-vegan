@@ -5,12 +5,12 @@ import lt.liutikas.assembler.ProductVendorAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
 import lt.liutikas.dto.*;
-import lt.liutikas.model.MongoProduct;
-import lt.liutikas.model.MongoSearchRequest;
-import lt.liutikas.model.MongoVendorProduct;
-import lt.liutikas.repository.MongoProductRepository;
-import lt.liutikas.repository.MongoSearchRequestRepository;
-import lt.liutikas.repository.MongoVendorProductRepository;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.SearchRequest;
+import lt.liutikas.model.VendorProduct;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.SearchRequestRepository;
+import lt.liutikas.repository.VendorProductRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +31,22 @@ public class ProductService {
     private static final Logger LOG = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductAssembler productAssembler;
-    private final MongoProductRepository mongoProductRepository;
-    private final MongoVendorProductRepository mongoVendorProductRepository;
-    private final MongoSearchRequestRepository mongoSearchRequestRepository;
+    private final ProductRepository productRepository;
+    private final VendorProductRepository vendorProductRepository;
+    private final SearchRequestRepository searchRequestRepository;
     private final ProductVendorAssembler productVendorAssembler;
 
 
-    public ProductService(ProductAssembler productAssembler, MongoProductRepository mongoProductRepository, MongoVendorProductRepository mongoVendorProductRepository, MongoSearchRequestRepository mongoSearchRequestRepository, ProductVendorAssembler productVendorAssembler) {
+    public ProductService(ProductAssembler productAssembler, ProductRepository productRepository, VendorProductRepository vendorProductRepository, SearchRequestRepository searchRequestRepository, ProductVendorAssembler productVendorAssembler) {
         this.productAssembler = productAssembler;
-        this.mongoProductRepository = mongoProductRepository;
-        this.mongoVendorProductRepository = mongoVendorProductRepository;
-        this.mongoSearchRequestRepository = mongoSearchRequestRepository;
+        this.productRepository = productRepository;
+        this.vendorProductRepository = vendorProductRepository;
+        this.searchRequestRepository = searchRequestRepository;
         this.productVendorAssembler = productVendorAssembler;
     }
 
     public ProductsPageDto getProducts(Pageable pageable, String query) {
-        Page<MongoProduct> productsPage = mongoProductRepository.findByNameRegexOrderByNameAsc(pageable, query);
+        Page<Product> productsPage = productRepository.findByNameRegexOrderByNameAsc(pageable, query);
         Pageable nextPageable = productsPage.nextPageable();
 
         ProductsPageDto productsPageDto = new ProductsPageDto();
@@ -71,10 +71,10 @@ public class ProductService {
         String nameWithoutAccents = StringUtils.stripAccents(nameWithAccents);
         createProductDto.setName(nameWithoutAccents);
 
-        MongoProduct product = productAssembler.assembleMongoProduct(createProductDto);
+        Product product = productAssembler.assembleMongoProduct(createProductDto);
 
         try {
-            product = mongoProductRepository.save(product);
+            product = productRepository.save(product);
         } catch (DataIntegrityViolationException exception) {
             String message = "Failed to insert product in database";
             LOG.error(message, exception);
@@ -91,7 +91,7 @@ public class ProductService {
 
     public ProductVendorPage getVendorsAndProductDetails(PageRequest pageable, String productId) {
 
-        Optional<MongoProduct> product = mongoProductRepository.findById(productId);
+        Optional<Product> product = productRepository.findById(productId);
 
         if (product.isEmpty()) {
             String message = String.format("Product not found {productId: %s}", productId);
@@ -99,7 +99,7 @@ public class ProductService {
             throw new NotFoundException(message);
         }
 
-        Page<MongoVendorProduct> vendorProductPage = mongoVendorProductRepository.findAllByProduct(product.get(), pageable); // todo check if this works
+        Page<VendorProduct> vendorProductPage = vendorProductRepository.findAllByProduct(product.get(), pageable); // todo check if this works
         Pageable nextPageable = vendorProductPage.nextPageable();
 
         List<VendorByProductDto> vendorByProductDtos = vendorProductPage.stream()
@@ -120,10 +120,10 @@ public class ProductService {
         return productVendorPage;
     }
 
-    private void saveSearchRequest(MongoProduct product) {
-        MongoSearchRequest searchRequest = new MongoSearchRequest();
+    private void saveSearchRequest(Product product) {
+        SearchRequest searchRequest = new SearchRequest();
         searchRequest.setProduct(product);
         searchRequest.setCreatedAt(LocalDateTime.now());
-        mongoSearchRequestRepository.save(searchRequest);
+        searchRequestRepository.save(searchRequest);
     }
 }

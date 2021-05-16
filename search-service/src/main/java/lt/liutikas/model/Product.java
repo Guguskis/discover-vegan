@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.Id;
 
 @Document
-public class MongoProduct {
+public class Product {
 
     @Id
     private String id;
