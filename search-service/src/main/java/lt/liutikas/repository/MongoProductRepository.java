@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MongoProductRepository extends MongoRepository<MongoProduct, String> {
 
-    Page<MongoProduct> findByNameLikeIgnoreCaseOrderByNameAsc(Pageable pageable, String name);
-
     Page<MongoProduct> findByNameRegexOrderByNameAsc(Pageable pageable, String name);
 
 }
