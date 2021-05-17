@@ -3,8 +3,20 @@ package lt.liutikas.service;
 import lt.liutikas.assembler.VendorAssembler;
 import lt.liutikas.assembler.VendorProductAssembler;
 import lt.liutikas.configuration.exception.NotFoundException;
-import lt.liutikas.dto.*;
-import lt.liutikas.model.*;
+import lt.liutikas.dto.CreateVendorProductDto;
+import lt.liutikas.dto.GetVendorDto;
+import lt.liutikas.dto.Location;
+import lt.liutikas.dto.PatchVendorProductDto;
+import lt.liutikas.dto.Place;
+import lt.liutikas.dto.VendorDto;
+import lt.liutikas.dto.VendorProductCountAggregate;
+import lt.liutikas.dto.VendorProductDto;
+import lt.liutikas.dto.VendorProductPageDto;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
+import lt.liutikas.model.VendorProductChange;
+import lt.liutikas.model.VendorType;
 import lt.liutikas.repository.PlaceRepository;
 import lt.liutikas.repository.ProductRepository;
 import lt.liutikas.repository.VendorProductRepository;
@@ -85,13 +97,6 @@ public class VendorService {
                 location.getLat(), location.getLng()));
 
         return vendorDtos;
-    }
-
-    private void enrichProductCount(VendorProductCountAggregate vendorProductCountAggregate, List<VendorDto> vendorDtos) {
-        vendorDtos.stream()
-                .filter(vendorDto -> vendorDto.getVendorId().equals(vendorProductCountAggregate.getVendor().getId()))
-                .findFirst()
-                .ifPresent(vendorDto -> vendorDto.setProductCount(vendorProductCountAggregate.getCount()));
     }
 
     private List<Vendor> createVendorsForNewPlaces(List<Vendor> vendors, List<Place> places) {
@@ -195,5 +200,12 @@ public class VendorService {
         }
 
         return vendor.get();
+    }
+
+    private void enrichProductCount(VendorProductCountAggregate vendorProductCountAggregate, List<VendorDto> vendorDtos) {
+        vendorDtos.stream()
+                .filter(vendorDto -> vendorDto.getVendorId().equals(vendorProductCountAggregate.getVendor().getId()))
+                .findFirst()
+                .ifPresent(vendorDto -> vendorDto.setProductCount(vendorProductCountAggregate.getCount()));
     }
 }
