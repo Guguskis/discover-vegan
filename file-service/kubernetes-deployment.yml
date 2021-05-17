@@ -20,9 +20,6 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8081
-          volumeMounts:
-            - mountPath: /h2databases
-              name: h2-database-volume
           env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
@@ -34,8 +31,3 @@ spec:
                 secretKeyRef:
                   name: discover-vegan-secrets
                   key: AWS_SECRET_ACCESS_KEY
-      volumes:
-        - name: h2-database-volume
-          hostPath:
-            path: /h2database
-            type: Directory

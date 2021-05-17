@@ -3,6 +3,7 @@
 [bool]$startDeployments = 1
 [bool]$startServices = 1
 [bool]$startIngress = 1
+[bool]$startAdditionalResources = 1
 
 class KubernetesResource
 {
@@ -29,8 +30,15 @@ docker build -t $_.module "$rootFolder/$($_.module)"
 }
 Write-Output "----------------docker images built   ----------------------------------------------"
 
-If ($startServices) {
+If ($startAdditionalResources) {
+Write-Output "----------------starting kubernetes additional resources------------------------"
+kubectl apply -f "$rootFolder/additional-kubernetes-resources/mongodb-statefulset.yml"
+kubectl apply -f "$rootFolder/additional-kubernetes-resources/mongodb-service.yml"
+} else {
+Write-Output "----------------kubernetes additional resourcse start was turned off------------"
+}
 
+If ($startServices) {
 Write-Output "----------------starting kubernetes services------------------------------------"
 $kubernetesResources | ForEach-Object {
 kubectl apply -f "$rootFolder/$($_.module)/kubernetes-service.yml"
@@ -38,6 +46,7 @@ kubectl apply -f "$rootFolder/$($_.module)/kubernetes-service.yml"
 } else {
 Write-Output "----------------kubernetes services start was turned off------------------------"
 }
+
 If ($startDeployments) {
 Write-Output "----------------starting kubernetes deployments---------------------------------"
 $kubernetesResources | ForEach-Object {

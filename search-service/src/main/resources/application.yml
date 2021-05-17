@@ -3,7 +3,7 @@ server:
 spring:
   data:
     mongodb:
-      host: localhost
+      host: mongodb-service
       port: 27017
       database: search-service
 web:

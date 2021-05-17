@@ -20,17 +20,9 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - mountPath: /h2databases
-              name: h2-database-volume
           env:
             - name: secrets.googleApiKey
               valueFrom:
                 secretKeyRef:
                   name: discover-vegan-secrets
                   key: GOOGLE_API_KEY
-      volumes:
-        - name: h2-database-volume
-          hostPath:
-            path: /h2database
-            type: Directory

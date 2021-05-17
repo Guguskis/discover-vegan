@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-deployment
+spec:
+  serviceName: mongodb-service
+  replicas: 3
+  selector:
+    matchLabels:
+      role: mongo
+  template:
+    metadata:
+      labels:
+        role: mongo
+        replicaset: MainRepSet
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongodb-deployment-container
+          image: mongo
+          command:
+            - "mongod"
+            - "--bind_ip"
+            - "0.0.0.0"
+            - "--replSet"
+            - "MainRepSet"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-persistent-storage-claim
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-persistent-storage-claim
+        annotations:
+          volume.beta.kubernetes.io/storage-class: "standard"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+
+# more info https://deeptiman.medium.com/mongodb-statefulset-in-kubernetes-87c2f5974821
+# need to configure replicaset in mongodb and setup master node with these commands
+# kubectl exec -it mongodb-deployment-0 -c mongodb-deployment-container bash
+# mongo
+# rs.initiate({ _id: "MainRepSet", version: 1, members: [  { _id: 0, host: "mongodb-deployment-0.mongodb-service.default.svc.cluster.local:27017" },  { _id: 1, host: "mongodb-deployment-1.mongodb-service.default.svc.cluster.local:27017" },  { _id: 2, host: "mongodb-deployment-2.mongodb-service.default.svc.cluster.local:27017" } ]});
+# cfg = rs.conf()     <-- forces current node to become master
