@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -29,13 +30,15 @@ public class ReviewService {
     private final ReviewAssembler reviewAssembler;
     private final VendorProductRepository vendorProductRepository;
     private final ReviewRepository reviewRepository;
+    private final Clock clock;
 
-    public ReviewService(VendorRepository vendorRepository, ProductRepository productRepository, ReviewAssembler reviewAssembler, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository) {
+    public ReviewService(VendorRepository vendorRepository, ProductRepository productRepository, ReviewAssembler reviewAssembler, VendorProductRepository vendorProductRepository, ReviewRepository reviewRepository, Clock clock) {
         this.vendorRepository = vendorRepository;
         this.productRepository = productRepository;
         this.reviewAssembler = reviewAssembler;
         this.vendorProductRepository = vendorProductRepository;
         this.reviewRepository = reviewRepository;
+        this.clock = clock;
     }
 
     public ReviewDto createReview(CreateReviewDto createReviewDto, String userId) {
@@ -49,7 +52,7 @@ public class ReviewService {
         review.setReviewType(createReviewDto.getReviewType());
         review.setUserId(userId);
         review.setVendorProduct(vendorProduct);
-        review.setCreatedAt(LocalDateTime.now());
+        review.setCreatedAt(LocalDateTime.now(clock));
 
         review = reviewRepository.save(review);
 
@@ -62,7 +65,7 @@ public class ReviewService {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            String message = String.format("Vendor not found {vendorId: %s}", vendorId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
