@@ -397,13 +397,12 @@ public class ProductServiceTest {
     }
 
     private Product createProduct() {
-        Product product = new Product() {{
+        return new Product() {{
             setId("1");
             setName("Tofu");
             setProducer("Sun wheat");
             setImageUrl("https://www.test.com/image.png");
         }};
-        return product;
     }
 
 }

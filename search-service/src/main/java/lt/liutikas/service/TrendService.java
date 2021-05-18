@@ -3,9 +3,25 @@ package lt.liutikas.service;
 import lt.liutikas.assembler.SearchRequestAssembler;
 import lt.liutikas.configuration.exception.BadRequestException;
 import lt.liutikas.configuration.exception.NotFoundException;
-import lt.liutikas.dto.*;
-import lt.liutikas.model.*;
-import lt.liutikas.repository.*;
+import lt.liutikas.dto.GetProductsTrendRequest;
+import lt.liutikas.dto.PriceTrend;
+import lt.liutikas.dto.ReviewTrend;
+import lt.liutikas.dto.SearchRequestAggregate;
+import lt.liutikas.dto.SearchRequestsTrend;
+import lt.liutikas.dto.TrendDto;
+import lt.liutikas.dto.TrendPageDto;
+import lt.liutikas.model.Product;
+import lt.liutikas.model.Review;
+import lt.liutikas.model.ReviewType;
+import lt.liutikas.model.SearchRequest;
+import lt.liutikas.model.Vendor;
+import lt.liutikas.model.VendorProduct;
+import lt.liutikas.model.VendorProductChange;
+import lt.liutikas.repository.ProductRepository;
+import lt.liutikas.repository.ReviewRepository;
+import lt.liutikas.repository.SearchRequestRepository;
+import lt.liutikas.repository.VendorProductRepository;
+import lt.liutikas.repository.VendorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +32,12 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -200,7 +221,7 @@ public class TrendService {
         Optional<Vendor> vendor = vendorRepository.findById(vendorId);
 
         if (vendor.isEmpty()) {
-            String message = String.format("Vendor not found {vendorId: %d}", vendorId);
+            String message = String.format("Vendor not found {vendorId: %s}", vendorId);
             LOG.error(message);
             throw new NotFoundException(message);
         }
