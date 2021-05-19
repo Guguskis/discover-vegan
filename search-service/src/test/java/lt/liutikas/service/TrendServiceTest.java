@@ -358,7 +358,6 @@ public class TrendServiceTest {
             setLongitude(1.);
             setVendorType(VendorType.STORE);
             setAddress("test");
-            setImageUrl("url");
             setName("Iki");
         }};
     }

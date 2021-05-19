@@ -392,7 +392,6 @@ public class ProductServiceTest {
             setLatitude(4.);
             setLongitude(20.);
             setVendorType(VendorType.STORE);
-            setImageUrl("asd");
         }};
     }
 

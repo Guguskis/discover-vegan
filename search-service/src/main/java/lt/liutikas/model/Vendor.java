@@ -14,7 +14,6 @@ public class Vendor {
     private Double latitude;
     private Double longitude;
     private String address;
-    private String imageUrl;
     private VendorType vendorType;
 
     public String getId() {
@@ -39,14 +38,6 @@ public class Vendor {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public String getAddress() {
