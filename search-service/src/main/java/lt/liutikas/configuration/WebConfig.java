@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.Clock;
 
 @Component
 public class WebConfig {
@@ -27,6 +28,11 @@ public class WebConfig {
             return execution.execute(modifiedRequest, body);
         });
         return restTemplate;
+    }
+
+    @Bean
+    public Clock clock() {
+        return Clock.systemUTC();
     }
 
     private HttpRequest appendQueryParameter(HttpRequest request, String key, String value) {
