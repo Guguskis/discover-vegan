@@ -1,6 +1,7 @@
 package lt.liutikas.configuration;
 
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
@@ -14,9 +15,16 @@ public class StorageConfig {
 
     @Bean
     public AmazonS3 getAmazonS3(AmazonProperties amazonProperties) {
+
+        String accessKey = amazonProperties.getS3AccessKey();
+        String secretKey = amazonProperties.getS3SecretKey();
+
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+
         return AmazonS3ClientBuilder
                 .standard()
-                .withCredentials(new EnvironmentVariableCredentialsProvider())
+                .withCredentials(credentialsProvider)
                 .withRegion(amazonProperties.getRegion())
                 .build();
     }

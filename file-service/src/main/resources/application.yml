@@ -4,6 +4,8 @@ server:
 aws:
   bucket: discover-vegan-images
   region: eu-north-1
+  s3AccessKey: "notARealValue"
+  s3SecretKey: "notARealValue"
 web:
   access-control-allow-origin: "*"
   access-control-allow-headers: "*"

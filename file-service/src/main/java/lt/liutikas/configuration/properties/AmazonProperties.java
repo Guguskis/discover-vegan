@@ -10,6 +10,8 @@ public class AmazonProperties {
 
     private String bucket;
     private Regions region;
+    private String s3AccessKey;
+    private String s3SecretKey;
 
     public String getBucket() {
         return bucket;
@@ -25,5 +27,21 @@ public class AmazonProperties {
 
     public void setRegion(Regions region) {
         this.region = region;
+    }
+
+    public String getS3AccessKey() {
+        return s3AccessKey;
+    }
+
+    public void setS3AccessKey(String s3AccessKey) {
+        this.s3AccessKey = s3AccessKey;
+    }
+
+    public String getS3SecretKey() {
+        return s3SecretKey;
+    }
+
+    public void setS3SecretKey(String s3SecretKey) {
+        this.s3SecretKey = s3SecretKey;
     }
 }
